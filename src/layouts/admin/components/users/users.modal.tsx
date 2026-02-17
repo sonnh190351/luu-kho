@@ -1,0 +1,246 @@
+import {
+    Button,
+    Grid,
+    Modal,
+    Select,
+    Stack,
+    Text,
+    Switch,
+    TextInput,
+    Divider,
+    PasswordInput,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import type { UserDetails } from "../../../../models/user.ts";
+import { USER_ROLES } from "../../../../enums/roles.ts";
+import { DatePickerInput } from "@mantine/dates";
+import { useEffect, useState } from "react";
+import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import UserService from "../../../../services/operations/user.service.ts";
+import dayjs from "dayjs";
+
+interface UserDetailsModalProps {
+    user: UserDetails | null;
+    open: boolean;
+    refresh: any;
+    close: any;
+}
+
+interface UserDetailsFormValues {
+    email: string;
+    password: string;
+    first_name: string;
+    last_name: string;
+    address: string;
+    dob: string | null;
+    role: number;
+    status: boolean;
+}
+
+export default function UserDetailsModal({
+    user,
+    open = false,
+    close,
+    refresh,
+}: UserDetailsModalProps) {
+    const isEdit = Boolean(user);
+
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    const form = useForm<UserDetailsFormValues>({
+        initialValues: {
+            email: "",
+            password: "",
+            first_name: "",
+            last_name: "",
+            address: "",
+            dob: dayjs().format("YYYY-MM-DD"),
+            role: -1,
+            status: false,
+        },
+        validate: {},
+    });
+
+    useEffect(() => {
+        if (user) {
+            form.setValues({
+                email: user.email!,
+                password: user.password!,
+                first_name: user.first_name!,
+                last_name: user.last_name!,
+                address: user.address!,
+                dob: user.dob,
+                role: user.role!,
+                status: user.status,
+            });
+        }
+    }, [isEdit]);
+
+    async function handleSubmit() {
+        try {
+            const service = UserService.getInstance();
+
+            if (isEdit) {
+                await service.editUser(user!.id, form.getValues());
+            } else {
+                await service.registerUser(form.getValues());
+            }
+
+            refresh();
+            handleClose();
+            NotificationsService.success(
+                `${isEdit ? "Edit" : "Add"} User`,
+                `New user has been ${isEdit ? "edit" : "added"} successfully!`,
+            );
+        } catch (e: any) {
+            console.log(e);
+            NotificationsService.error(
+                `${isEdit ? "Edit" : "Add"} User`,
+                e.toString(),
+            );
+        }
+        refresh();
+    }
+
+    function handleClose() {
+        form.reset();
+        close();
+    }
+
+    return (
+        <Modal
+            opened={open}
+            onClose={handleClose}
+            centered
+            title={isEdit ? "Edit User" : "Add User"}>
+            <form onSubmit={form.onSubmit(handleSubmit)}>
+                <Stack gap="xs">
+                    <Text
+                        style={{
+                            fontWeight: 700,
+                        }}>
+                        Authentication Information
+                    </Text>
+                    <TextInput
+                        required
+                        label={"Email"}
+                        value={form.values.email}
+                        onChange={(e) =>
+                            form.setValues({
+                                email: e.target.value,
+                            })
+                        }
+                    />
+                    <PasswordInput
+                        visible={showPassword}
+                        onVisibilityChange={(e) => setShowPassword(e)}
+                        required
+                        label={"Password"}
+                        value={form.values.password}
+                        onChange={(e) =>
+                            form.setValues({
+                                password: e.target.value,
+                            })
+                        }
+                    />
+                    <Select
+                        value={String(form.values.role)}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setValues({
+                                    role: Number(value),
+                                });
+                            }
+                        }}
+                        required
+                        searchable
+                        label={"Role"}
+                        data={Object.entries(USER_ROLES)
+                            .filter(([_, v]) => v > 0)
+                            .map(([k, v]) => {
+                                return { label: k, value: String(v) };
+                            })}
+                    />
+                    <Divider mt={"md"} mb="sm" />
+                    <Text
+                        style={{
+                            fontWeight: 700,
+                        }}>
+                        Personal Information
+                    </Text>
+                    <Grid>
+                        <Grid.Col span={6}>
+                            <TextInput
+                                required
+                                label={"First Name"}
+                                value={form.values.first_name}
+                                onChange={(e) =>
+                                    form.setValues({
+                                        first_name: e.target.value,
+                                    })
+                                }
+                            />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                            <TextInput
+                                required
+                                label={"Last Name"}
+                                value={form.values.last_name}
+                                onChange={(e) =>
+                                    form.setValues({
+                                        last_name: e.target.value,
+                                    })
+                                }
+                            />
+                        </Grid.Col>
+                    </Grid>
+                    <DatePickerInput
+                        label={"Date of Birth"}
+                        required={true}
+                        value={
+                            form.values.dob
+                                ? new Date(form.values.dob)
+                                : new Date()
+                        }
+                        onChange={(e) => {
+                            if (e) {
+                                form.setValues({
+                                    dob: dayjs(e).format("YYYY-MM-DD"),
+                                });
+                            }
+                        }}
+                    />
+                    <TextInput
+                        required
+                        label={"Address"}
+                        value={form.values.address}
+                        onChange={(e) =>
+                            form.setValues({
+                                address: e.target.value,
+                            })
+                        }
+                    />
+                    <Divider mt={"md"} mb="sm" />
+                    <Text
+                        style={{
+                            fontWeight: 700,
+                        }}>
+                        Account Status
+                    </Text>
+                    <Switch
+                        mt={"xs"}
+                        label={"Activate Status"}
+                        checked={form.values.status}
+                        onChange={(e) =>
+                            form.setValues({ status: e.currentTarget.checked })
+                        }
+                    />
+
+                    <Button type="submit" fullWidth mt="md">
+                        Submit
+                    </Button>
+                </Stack>
+            </form>
+        </Modal>
+    );
+}
