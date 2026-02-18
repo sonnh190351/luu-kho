@@ -100,6 +100,7 @@ export default function TagsTab() {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: Tags) => {
                 return (
                     <Group>

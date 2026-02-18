@@ -1,13 +1,14 @@
 import { Button, Modal, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import type { Inventories } from "../../../../models/inventories.ts";
 import { useEffect, useState } from "react";
 import type { Warehouses } from "../../../../models/warehouses.ts";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import { DatabaseTables } from "../../../../enums/tables.ts";
+import dayjs from "dayjs";
+import { DatePickerInput } from "@mantine/dates";
+import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 
 interface InventoriesModalProps {
-    inventory: Inventories | null;
     open: boolean;
     refresh: any;
     close: any;
@@ -15,19 +16,18 @@ interface InventoriesModalProps {
 
 interface InventoriesFormValues {
     warehouse_id: number;
+    date: string | null;
 }
 
 export default function InventoriesModal({
-    inventory,
     open = false,
     close,
     refresh,
 }: InventoriesModalProps) {
-    const isEdit = inventory !== null;
-
     const form = useForm<InventoriesFormValues>({
         initialValues: {
-            warehouse_id: inventory ? inventory!.id : -1,
+            warehouse_id: -1,
+            date: dayjs().format("YYYY-MM-DD"),
         },
         validate: {},
     });
@@ -40,20 +40,40 @@ export default function InventoriesModal({
 
     async function fetchWarehouses() {
         const service = InventoryService.getInstance();
-        const data = await service.getAllRows(DatabaseTables.Suppliers);
+        const data = await service.getAllRows(DatabaseTables.Warehouses);
         setWarehouses(data);
     }
 
-    function handleSubmit() {
+    async function handleSubmit() {
+        try {
+            const service = InventoryService.getInstance();
+
+            await service.addInventory(form.getValues());
+
+            refresh();
+            handleClose();
+            NotificationsService.success(
+                `Add Inventory`,
+                `New Inventory has been added successfully!`,
+            );
+        } catch (e: any) {
+            console.log(e);
+            NotificationsService.error(`Add Inventory`, e.toString());
+        }
         refresh();
+    }
+
+    function handleClose() {
+        form.reset();
+        close();
     }
 
     return (
         <Modal
             opened={open}
-            onClose={close}
+            onClose={handleClose}
             centered
-            title={isEdit ? "Edit Inventory" : "Add Inventory"}>
+            title={"Add Inventory"}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <Select
@@ -71,6 +91,22 @@ export default function InventoriesModal({
                         data={warehouses.map((s) => {
                             return { label: s.name!, value: String(s.id) };
                         })}
+                    />
+                    <DatePickerInput
+                        label={"Date"}
+                        required={true}
+                        value={
+                            form.values.date
+                                ? new Date(form.values.date)
+                                : new Date()
+                        }
+                        onChange={(e) => {
+                            if (e) {
+                                form.setValues({
+                                    date: dayjs(e).format("YYYY-MM-DD"),
+                                });
+                            }
+                        }}
                     />
 
                     <Button type="submit" fullWidth mt="md">

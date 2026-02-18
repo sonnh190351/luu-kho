@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import {
     IconEdit,
+    IconInfoCircle,
     IconPlus,
     IconRefresh,
     IconSearch,
@@ -136,22 +137,49 @@ export default function ItemsTab() {
             accessor: "category_id",
             title: "Category ID",
             sortable: true,
-            render: ({}: any) => {
-                return <Button>Details</Button>;
+            width: 135,
+            render: ({ category_id }: any) => {
+                return (
+                    <Button
+                        leftSection={<IconInfoCircle />}
+                        onClick={() => {
+                            InformationService.getInstance().showItemDetailsById(
+                                DatabaseTables.Categories,
+                                "Category Details",
+                                category_id!,
+                            );
+                        }}>
+                        Details
+                    </Button>
+                );
             },
         },
         {
             accessor: "supplier_id",
             title: "Supplier ID",
             sortable: true,
-            render: ({}: any) => {
-                return <Button>Details</Button>;
+            width: 135,
+            render: ({ supplier_id }: any) => {
+                return (
+                    <Button
+                        leftSection={<IconInfoCircle />}
+                        onClick={() => {
+                            InformationService.getInstance().showItemDetailsById(
+                                DatabaseTables.Suppliers,
+                                "Supplier Details",
+                                supplier_id!,
+                            );
+                        }}>
+                        Details
+                    </Button>
+                );
             },
         },
         {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: any) => {
                 return (
                     <Group>

@@ -100,6 +100,7 @@ export default function RequestsTab() {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: Requests) => {
                 return (
                     <Group>

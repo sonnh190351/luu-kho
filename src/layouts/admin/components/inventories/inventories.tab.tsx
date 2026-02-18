@@ -8,9 +8,11 @@ import {
     Text,
     TextInput,
     Title,
+    Tooltip,
 } from "@mantine/core";
 import {
     IconEdit,
+    IconInfoCircle,
     IconPlus,
     IconRefresh,
     IconSearch,
@@ -76,8 +78,33 @@ export default function InventoriesTab() {
             accessor: "warehouse_id",
             title: "Warehouse ID",
             sortable: true,
+            width: 135,
             render: ({ warehouse_id }: Inventories) => {
-                return <Group>{warehouse_id}</Group>;
+                return (
+                    <Button
+                        leftSection={<IconInfoCircle />}
+                        onClick={() => {
+                            InformationService.getInstance().showItemDetailsById(
+                                DatabaseTables.Warehouses,
+                                "Warehouse Details",
+                                warehouse_id!,
+                            );
+                        }}>
+                        Details
+                    </Button>
+                );
+            },
+        },
+        {
+            accessor: "date",
+            title: "Date",
+            sortable: true,
+            render: ({ date }: Inventories) => {
+                return (
+                    <Group>
+                        <Text>{date}</Text>
+                    </Group>
+                );
             },
         },
         {
@@ -89,17 +116,10 @@ export default function InventoriesTab() {
             },
         },
         {
-            accessor: "updated_at",
-            title: "Last Updated At",
-            sortable: true,
-            render: ({ updated_at }: Inventories) => {
-                return <Group>{updated_at}</Group>;
-            },
-        },
-        {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 260,
             render: ({ id }: Inventories) => {
                 return (
                     <Group>
@@ -108,9 +128,12 @@ export default function InventoriesTab() {
                             size={"lg"}>
                             <IconTrash />
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
-                            <IconEdit />
-                        </ActionIcon>
+                        <Button
+                            leftSection={<IconInfoCircle />}
+                            onClick={() => handleDelete(id)}
+                            size={"sm"}>
+                            View Items Details
+                        </Button>
                     </Group>
                 );
             },
@@ -131,14 +154,6 @@ export default function InventoriesTab() {
             }
             await fetchInventories();
         });
-    }
-
-    function handleEdit(id: number) {
-        const matching = items.find((i) => i.id === id);
-        if (matching) {
-            setSelectedItem(matching);
-            setOpenItemModal(true);
-        }
     }
 
     return (
@@ -186,7 +201,6 @@ export default function InventoriesTab() {
 
             {/*Item modal*/}
             <InventoriesModal
-                inventory={selectedItem}
                 open={openItemModal}
                 refresh={fetchInventories}
                 close={handleCloseItemModal}

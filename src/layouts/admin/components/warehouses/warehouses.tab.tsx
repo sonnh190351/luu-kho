@@ -108,6 +108,7 @@ export default function WarehousesTab() {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: Warehouses) => {
                 return (
                     <Group>

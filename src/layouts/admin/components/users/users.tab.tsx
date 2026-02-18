@@ -172,6 +172,7 @@ export default function UserDetailsTab() {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: UserDetails) => {
                 return (
                     <Group>

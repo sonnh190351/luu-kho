@@ -24,7 +24,6 @@ export default function CategoriesModal({
     refresh,
 }: CategoriesModalProps) {
     const isEdit = Boolean(category);
-    console.log(category);
 
     const form = useForm<CategoriesFormValues>({
         initialValues: {

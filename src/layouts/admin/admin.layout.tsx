@@ -39,7 +39,7 @@ import type { TabGroup } from "./admin.types.ts";
 const openMenuWidth = 200;
 
 export default function AdminLayout() {
-    const { colorScheme, setColorScheme } = useMantineColorScheme();
+    const { colorScheme } = useMantineColorScheme();
 
     const isDarkMode = colorScheme === "dark";
 

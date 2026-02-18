@@ -99,6 +99,7 @@ export default function SuppliersTab() {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: Suppliers) => {
                 return (
                     <Group>

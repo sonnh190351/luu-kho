@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
-import '@mantine/dates/styles.css';
+import "@mantine/dates/styles.css";
 import "./app.scss";
 
 import "mantine-datatable/styles.layer.css";
@@ -18,6 +18,7 @@ import NavigationBar from "./components/navigation/navigationBar.tsx";
 import AdminLayout from "./layouts/admin/admin.layout.tsx";
 import { ModalsProvider } from "@mantine/modals";
 import UserDetailsLayout from "./layouts/user_details/user.layout.tsx";
+import { InformationModal } from "./components/modals/information.modal.tsx";
 
 export default function App() {
     const router = createBrowserRouter([
@@ -52,7 +53,10 @@ export default function App() {
     return (
         <MantineProvider theme={theme} defaultColorScheme={"dark"}>
             <Notifications />
-            <ModalsProvider>
+            <ModalsProvider
+                modals={{
+                    information: InformationModal,
+                }}>
                 <RouterProvider router={router} />
             </ModalsProvider>
         </MantineProvider>

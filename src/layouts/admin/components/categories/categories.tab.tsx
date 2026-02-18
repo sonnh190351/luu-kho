@@ -102,6 +102,7 @@ export default function CategoriesTab() {
             accessor: "id",
             title: "Actions",
             sortable: true,
+            width: 120,
             render: ({ id }: Categories) => {
                 return (
                     <Group>

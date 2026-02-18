@@ -28,34 +28,39 @@ export class InformationService {
         });
     }
 
-    private openModal(title: string, body: string) {
+    private openInformationModal(title: string, information: any) {
         modals.openContextModal({
-            modal: "details",
+            size: "lg",
+            modal: `information`,
             title: title,
             innerProps: {
-                ModalBody: body,
+                information: information,
             },
             centered: true,
         });
     }
 
-    async showCategoryDetails(id: number) {
-        const category = await DatabaseService.getInstance().getByField(
-            DatabaseTables.Categories,
+    async showItemDetailsById(
+        table: DatabaseTables,
+        title: string,
+        id: number,
+    ) {
+        const response = await DatabaseService.getInstance().getByField(
+            table,
             "id",
-            String(id),
+            id,
         );
 
-        if (category.error) {
+        if (response.error) {
             NotificationsService.error(
-                "Failed to get category details",
-                category.error.toString(),
+                "Failed to get item details",
+                response.error.toString(),
             );
             return;
         }
 
-        if (category.data!.length > 0) {
-            this.openModal("Category Details", "Test");
+        if (response.data!.length > 0) {
+            this.openInformationModal(title, response.data[0]);
         }
     }
 }
