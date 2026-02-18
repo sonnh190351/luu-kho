@@ -23,11 +23,15 @@ import { useEffect, useState } from "react";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import UserDetailsModal from "./users.modal.tsx";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {
+    DatabaseTables,
+    DISPLAY_TIME_FORMAT,
+} from "../../../../enums/tables.ts";
 import type { UserDetails } from "../../../../models/user.ts";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../../services/utils.ts";
+import dayjs from "dayjs";
 
 export default function UserDetailsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -141,7 +145,11 @@ export default function UserDetailsTab() {
             title: "Created At",
             sortable: true,
             render: ({ created_at }: UserDetails) => {
-                return <Group>{created_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
             },
         },
         {
@@ -149,7 +157,11 @@ export default function UserDetailsTab() {
             title: "Last Updated At",
             sortable: true,
             render: ({ updated_at }: UserDetails) => {
-                return <Group>{updated_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
             },
         },
         {
@@ -247,7 +259,9 @@ export default function UserDetailsTab() {
                                 leftSection={<IconPlus />}>
                                 Add
                             </Button>
-                            <Button leftSection={<IconRefresh />}>
+                            <Button
+                                onClick={fetchUserDetails}
+                                leftSection={<IconRefresh />}>
                                 Refresh
                             </Button>
                         </Group>

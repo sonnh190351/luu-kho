@@ -19,6 +19,57 @@ export default class InventoryService {
         return InventoryService.instance;
     }
 
+    public async getAllMatchingInventoryItem(id: number) {
+        const db = this.database.getDatabase();
+
+        const response = await db
+            .from(DatabaseTables.InventoryTickets)
+            .select(
+                `
+                id,
+                created_at,
+                updated_at,
+                expired_at,
+                quantity,
+                inventory_id,
+                items(
+                    name,
+                    tags,
+                    quantity_type
+                )
+            `,
+            )
+            .eq("inventory_id", id);
+
+        if (response.error) {
+            NotificationsService.error(
+                "Inventory Service",
+                `Failed to get items: ${response.error}`,
+            );
+            return [];
+        }
+        console.log(response);
+        return response.data;
+    }
+
+    public async getAllMatching(
+        table: DatabaseTables,
+        column: string,
+        value: any,
+    ) {
+        const response = await this.database.getByField(table, column, value);
+
+        if (response.error) {
+            NotificationsService.error(
+                "Inventory Service",
+                `Failed to get items: ${response.error}`,
+            );
+            return [];
+        }
+
+        return response.data;
+    }
+
     public async getAllRows(table: DatabaseTables) {
         const response = await this.database.getAll(table);
 

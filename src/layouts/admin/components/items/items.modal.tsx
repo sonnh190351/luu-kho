@@ -67,7 +67,7 @@ export default function ItemsModal({
                 quantity_type: item.quantity_type!,
                 supplier_id: item.supplier_id!,
                 tags: item.tags! ?? [],
-                warning_limit: item?.warning_limit!,
+                warning_limit: Number(item.warning_limit) ?? 0,
             });
         }
     }, [isEdit]);
@@ -219,11 +219,13 @@ export default function ItemsModal({
                         required
                         label={"Warning Limit"}
                         value={form.values.name}
-                        onChange={(e) =>
-                            form.setValues({
-                                warning_limit: Number(e),
-                            })
-                        }
+                        onChange={(e) => {
+                            if (e) {
+                                form.setValues({
+                                    warning_limit: Number(e),
+                                });
+                            }
+                        }}
                     />
 
                     <Button type="submit" fullWidth mt="md">

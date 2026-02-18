@@ -23,10 +23,14 @@ import type { Items } from "../../../../models/items.ts";
 import ItemsModal from "./items.modal.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {
+    DatabaseTables,
+    DISPLAY_TIME_FORMAT,
+} from "../../../../enums/tables.ts";
 import type { DataTableColumn } from "mantine-datatable";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import dayjs from "dayjs";
 
 export default function ItemsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -122,7 +126,11 @@ export default function ItemsTab() {
             title: "Created At",
             sortable: true,
             render: ({ created_at }: any) => {
-                return <Group>{created_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
             },
         },
         {
@@ -130,17 +138,24 @@ export default function ItemsTab() {
             title: "Last Updated At",
             sortable: true,
             render: ({ updated_at }: any) => {
-                return <Group>{updated_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
             },
         },
         {
             accessor: "category_id",
             title: "Category ID",
             sortable: true,
-            width: 135,
+            width: 175,
             render: ({ category_id }: any) => {
                 return (
                     <Button
+                        style={{
+                            width: "100%",
+                        }}
                         leftSection={<IconInfoCircle />}
                         onClick={() => {
                             InformationService.getInstance().showItemDetailsById(
@@ -149,7 +164,7 @@ export default function ItemsTab() {
                                 category_id!,
                             );
                         }}>
-                        Details
+                        Details ({category_id})
                     </Button>
                 );
             },
@@ -158,10 +173,13 @@ export default function ItemsTab() {
             accessor: "supplier_id",
             title: "Supplier ID",
             sortable: true,
-            width: 135,
+            width: 175,
             render: ({ supplier_id }: any) => {
                 return (
                     <Button
+                        style={{
+                            width: "100%",
+                        }}
                         leftSection={<IconInfoCircle />}
                         onClick={() => {
                             InformationService.getInstance().showItemDetailsById(
@@ -170,7 +188,7 @@ export default function ItemsTab() {
                                 supplier_id!,
                             );
                         }}>
-                        Details
+                        Details ({supplier_id})
                     </Button>
                 );
             },
@@ -254,7 +272,9 @@ export default function ItemsTab() {
                                 leftSection={<IconPlus />}>
                                 Add
                             </Button>
-                            <Button leftSection={<IconRefresh />}>
+                            <Button
+                                onClick={() => fetchItems()}
+                                leftSection={<IconRefresh />}>
                                 Refresh
                             </Button>
                         </Group>

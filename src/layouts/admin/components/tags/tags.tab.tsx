@@ -21,9 +21,13 @@ import type { Tags } from "../../../../models/tags.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import TagsModal from "./tags.modal.tsx";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {
+    DatabaseTables,
+    DISPLAY_TIME_FORMAT,
+} from "../../../../enums/tables.ts";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import dayjs from "dayjs";
 
 export default function TagsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -85,7 +89,11 @@ export default function TagsTab() {
             title: "Created At",
             sortable: true,
             render: ({ created_at }: Tags) => {
-                return <Group>{created_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
             },
         },
         {
@@ -93,7 +101,11 @@ export default function TagsTab() {
             title: "Last Updated At",
             sortable: true,
             render: ({ updated_at }: Tags) => {
-                return <Group>{updated_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
             },
         },
         {
@@ -175,7 +187,9 @@ export default function TagsTab() {
                                 leftSection={<IconPlus />}>
                                 Add
                             </Button>
-                            <Button leftSection={<IconRefresh />}>
+                            <Button
+                                onClick={fetchTags}
+                                leftSection={<IconRefresh />}>
                                 Refresh
                             </Button>
                         </Group>

@@ -8,10 +8,8 @@ import {
     Text,
     TextInput,
     Title,
-    Tooltip,
 } from "@mantine/core";
 import {
-    IconEdit,
     IconInfoCircle,
     IconPlus,
     IconRefresh,
@@ -23,9 +21,14 @@ import type { Inventories } from "../../../../models/inventories.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import InventoriesModal from "./inventories.modal.tsx";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {
+    DatabaseTables,
+    DISPLAY_TIME_FORMAT,
+} from "../../../../enums/tables.ts";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import InventoryTicketsModal from "./inventories.items.modal.tsx";
+import dayjs from "dayjs";
 
 export default function InventoriesTab() {
     const [isLoading, setLoading] = useState(true);
@@ -36,6 +39,8 @@ export default function InventoriesTab() {
 
     const [selectedItem, setSelectedItem] = useState<Inventories | null>(null);
     const [openItemModal, setOpenItemModal] = useState<boolean>(false);
+    const [openInventoryTicketsModal, setOpenInventoryTicketsModal] =
+        useState<boolean>(false);
 
     useEffect(() => {
         (async () => await fetchInventories())();
@@ -56,6 +61,10 @@ export default function InventoriesTab() {
 
     function handleCloseItemModal() {
         setOpenItemModal(false);
+    }
+
+    function handleCloseInventoryTicketsModal() {
+        setOpenInventoryTicketsModal(false);
         setTimeout(() => {
             setSelectedItem(null);
         }, 200);
@@ -77,11 +86,14 @@ export default function InventoriesTab() {
         {
             accessor: "warehouse_id",
             title: "Warehouse ID",
-            sortable: true,
-            width: 135,
+            sortable: false,
+            width: 185,
             render: ({ warehouse_id }: Inventories) => {
                 return (
                     <Button
+                        style={{
+                            width: "100%",
+                        }}
                         leftSection={<IconInfoCircle />}
                         onClick={() => {
                             InformationService.getInstance().showItemDetailsById(
@@ -90,20 +102,8 @@ export default function InventoriesTab() {
                                 warehouse_id!,
                             );
                         }}>
-                        Details
+                        Details ({warehouse_id})
                     </Button>
-                );
-            },
-        },
-        {
-            accessor: "date",
-            title: "Date",
-            sortable: true,
-            render: ({ date }: Inventories) => {
-                return (
-                    <Group>
-                        <Text>{date}</Text>
-                    </Group>
                 );
             },
         },
@@ -112,33 +112,70 @@ export default function InventoriesTab() {
             title: "Created At",
             sortable: true,
             render: ({ created_at }: Inventories) => {
-                return <Group>{created_at}</Group>;
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "updated_at",
+            title: "Updated At",
+            sortable: true,
+            render: ({ updated_at }: Inventories) => {
+                return (
+                    <Group>
+                        {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "id",
+            title: "Items",
+            sortable: false,
+            width: 150,
+            render: ({ id }: Inventories) => {
+                return (
+                    <Button
+                        leftSection={<IconInfoCircle />}
+                        onClick={() => handleInventoryTickets(id)}
+                        size={"sm"}>
+                        Items List
+                    </Button>
+                );
             },
         },
         {
             accessor: "id",
             title: "Actions",
-            sortable: true,
-            width: 260,
+            sortable: false,
+            width: 80,
             render: ({ id }: Inventories) => {
                 return (
                     <Group>
                         <ActionIcon
+                            style={{
+                                width: "100%",
+                            }}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
                             <IconTrash />
                         </ActionIcon>
-                        <Button
-                            leftSection={<IconInfoCircle />}
-                            onClick={() => handleDelete(id)}
-                            size={"sm"}>
-                            View Items Details
-                        </Button>
                     </Group>
                 );
             },
         },
     ];
+
+    function handleInventoryTickets(id: number) {
+        const matching = items.find((i) => i.id === id);
+        if (matching) {
+            setSelectedItem(matching);
+            setOpenInventoryTicketsModal(true);
+        }
+    }
 
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
@@ -189,7 +226,9 @@ export default function InventoriesTab() {
                                 leftSection={<IconPlus />}>
                                 Add
                             </Button>
-                            <Button leftSection={<IconRefresh />}>
+                            <Button
+                                onClick={() => fetchInventories()}
+                                leftSection={<IconRefresh />}>
                                 Refresh
                             </Button>
                         </Group>
@@ -204,6 +243,12 @@ export default function InventoriesTab() {
                 open={openItemModal}
                 refresh={fetchInventories}
                 close={handleCloseItemModal}
+            />
+
+            <InventoryTicketsModal
+                inventory={selectedItem}
+                open={openInventoryTicketsModal}
+                close={handleCloseInventoryTicketsModal}
             />
         </>
     );
