@@ -6,6 +6,7 @@ import { NotificationsService } from "../../../../services/notifications/notific
 import { useEffect } from "react";
 import { DatabaseTables } from "../../../../enums/tables.ts";
 import UtilsService from "../../../../services/utils.ts";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 
 interface CategoriesModalProps {
     category: Categories | null;
@@ -31,21 +32,9 @@ export default function CategoriesModal({
             name: "",
         },
         validate: {
-            name: (value) => validateName(value),
+            name: FormValidationService.validateName,
         },
     });
-
-    function validateName(name: string) {
-        if (name.length < 1) {
-            return "Category name must have at least 1 character!";
-        }
-
-        if (name.length > 50) {
-            return "Category name must not have more than 50 characters!";
-        }
-
-        return null;
-    }
 
     useEffect(() => {
         if (category) {

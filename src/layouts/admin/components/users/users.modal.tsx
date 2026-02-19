@@ -22,6 +22,7 @@ import { DatabaseTables } from "../../../../enums/tables.ts";
 import type { Warehouses } from "../../../../models/warehouses.ts";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import UtilsService from "../../../../services/utils.ts";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 
 interface UserDetailsModalProps {
     user: UserDetails | null;
@@ -66,7 +67,14 @@ export default function UserDetailsModal({
             status: true,
             warehouse_id: -1,
         },
-        validate: {},
+        validate: {
+            first_name: FormValidationService.validateName,
+            last_name: FormValidationService.validateName,
+            address: FormValidationService.validateAddress,
+            email: FormValidationService.validateEmail,
+            role: FormValidationService.validateRole,
+            password: FormValidationService.validatePassword,
+        },
     });
 
     useEffect(() => {
@@ -135,154 +143,178 @@ export default function UserDetailsModal({
             opened={open}
             onClose={handleClose}
             centered
+            size={"60%"}
             title={isEdit ? "Edit User" : "Add User"}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack gap="xs">
-                    <Text
-                        style={{
-                            fontWeight: 700,
-                        }}>
-                        Authentication Information
-                    </Text>
-                    <TextInput
-                        required
-                        label={"Email"}
-                        value={form.values.email}
-                        onChange={(e) =>
-                            form.setValues({
-                                email: UtilsService.sanitize(e.target.value),
-                            })
-                        }
-                    />
-                    <PasswordInput
-                        visible={showPassword}
-                        onVisibilityChange={(e) => setShowPassword(e)}
-                        required
-                        label={"Password"}
-                        value={form.values.password}
-                        onChange={(e) =>
-                            form.setValues({
-                                password: UtilsService.sanitize(e.target.value),
-                            })
-                        }
-                    />
-                    <Select
-                        value={String(form.values.role)}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setValues({
-                                    role: Number(value),
-                                });
-                            }
-                        }}
-                        required
-                        searchable
-                        label={"Role"}
-                        data={Object.entries(USER_ROLES)
-                            .filter(([_, v]) => v > 0)
-                            .map(([k, v]) => {
-                                return { label: k, value: String(v) };
-                            })}
-                    />
-                    <Select
-                        value={String(form.values.warehouse_id)}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setValues({
-                                    warehouse_id: Number(value),
-                                });
-                            }
-                        }}
-                        required
-                        searchable
-                        label={"Warehouse"}
-                        data={warehouses.map((s) => {
-                            return { label: s.name!, value: String(s.id) };
-                        })}
-                    />
-                    <Divider mt={"md"} mb="sm" />
-                    <Text
-                        style={{
-                            fontWeight: 700,
-                        }}>
-                        Personal Information
-                    </Text>
-                    <Grid>
-                        <Grid.Col span={6}>
+                <Grid>
+                    <Grid.Col span={{ base: 12, md: 6 }}>
+                        <Stack gap={10}>
+                            <Text
+                                style={{
+                                    fontWeight: 700,
+                                }}>
+                                Authentication Information
+                            </Text>
                             <TextInput
                                 required
-                                label={"First Name"}
-                                value={form.values.first_name}
+                                label={"Email"}
+                                value={form.values.email}
                                 onChange={(e) =>
                                     form.setValues({
-                                        first_name: UtilsService.sanitize(
+                                        email: UtilsService.sanitize(
                                             e.target.value,
                                         ),
                                     })
                                 }
                             />
-                        </Grid.Col>
-                        <Grid.Col span={6}>
-                            <TextInput
+                            <PasswordInput
+                                visible={showPassword}
+                                onVisibilityChange={(e) => setShowPassword(e)}
                                 required
-                                label={"Last Name"}
-                                value={form.values.last_name}
+                                label={"Password"}
+                                description={
+                                    "Length from 8-32 characters, must include uppercase, lowercase, and number characters!"
+                                }
+                                value={form.values.password}
                                 onChange={(e) =>
                                     form.setValues({
-                                        last_name: UtilsService.sanitize(
+                                        password: UtilsService.sanitize(
                                             e.target.value,
                                         ),
                                     })
                                 }
                             />
-                        </Grid.Col>
-                    </Grid>
-                    <DatePickerInput
-                        label={"Date of Birth"}
-                        required={true}
-                        value={
-                            form.values.dob
-                                ? new Date(form.values.dob)
-                                : new Date()
-                        }
-                        onChange={(e) => {
-                            if (e) {
-                                form.setValues({
-                                    dob: dayjs(e).format("YYYY-MM-DD"),
-                                });
-                            }
-                        }}
-                    />
-                    <TextInput
-                        required
-                        label={"Address"}
-                        value={form.values.address}
-                        onChange={(e) =>
-                            form.setValues({
-                                address: UtilsService.sanitize(e.target.value),
-                            })
-                        }
-                    />
-                    <Divider mt={"md"} mb="sm" />
-                    <Text
-                        style={{
-                            fontWeight: 700,
-                        }}>
-                        Account Status
-                    </Text>
-                    <Switch
-                        mt={"xs"}
-                        label={"Activate Status"}
-                        checked={form.values.status}
-                        onChange={(e) =>
-                            form.setValues({ status: e.currentTarget.checked })
-                        }
-                    />
+                            <Select
+                                value={String(form.values.role)}
+                                onChange={(value) => {
+                                    if (value) {
+                                        form.setValues({
+                                            role: Number(value),
+                                        });
+                                    }
+                                }}
+                                required
+                                searchable
+                                label={"Role"}
+                                data={Object.entries(USER_ROLES)
+                                    .filter(([_, v]) => v > 0)
+                                    .map(([k, v]) => {
+                                        return { label: k, value: String(v) };
+                                    })}
+                            />
+                            <Select
+                                value={String(form.values.warehouse_id)}
+                                onChange={(value) => {
+                                    if (value) {
+                                        form.setValues({
+                                            warehouse_id: Number(value),
+                                        });
+                                    }
+                                }}
+                                searchable
+                                label={"Warehouse"}
+                                data={warehouses.map((s) => {
+                                    return {
+                                        label: s.name!,
+                                        value: String(s.id),
+                                    };
+                                })}
+                            />
+                        </Stack>
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 12, md: 6 }}>
+                        <Stack gap={10}>
+                            <Text
+                                style={{
+                                    fontWeight: 700,
+                                }}>
+                                Personal Information
+                            </Text>
+                            <Grid>
+                                <Grid.Col span={6}>
+                                    <TextInput
+                                        required
+                                        label={"First Name"}
+                                        value={form.values.first_name}
+                                        onChange={(e) =>
+                                            form.setValues({
+                                                first_name:
+                                                    UtilsService.sanitize(
+                                                        e.target.value,
+                                                    ),
+                                            })
+                                        }
+                                    />
+                                </Grid.Col>
+                                <Grid.Col span={6}>
+                                    <TextInput
+                                        required
+                                        label={"Last Name"}
+                                        value={form.values.last_name}
+                                        onChange={(e) =>
+                                            form.setValues({
+                                                last_name:
+                                                    UtilsService.sanitize(
+                                                        e.target.value,
+                                                    ),
+                                            })
+                                        }
+                                    />
+                                </Grid.Col>
+                            </Grid>
+                            <DatePickerInput
+                                label={"Date of Birth"}
+                                required={true}
+                                value={
+                                    form.values.dob
+                                        ? new Date(form.values.dob)
+                                        : new Date()
+                                }
+                                onChange={(e) => {
+                                    if (e) {
+                                        form.setValues({
+                                            dob: dayjs(e).format("YYYY-MM-DD"),
+                                        });
+                                    }
+                                }}
+                            />
+                            <TextInput
+                                required
+                                label={"Address"}
+                                value={form.values.address}
+                                onChange={(e) =>
+                                    form.setValues({
+                                        address: UtilsService.sanitize(
+                                            e.target.value,
+                                        ),
+                                    })
+                                }
+                            />
+                            <Divider mt="xs" mb="0" />
+                            <Text
+                                style={{
+                                    fontWeight: 700,
+                                }}>
+                                Account Status
+                            </Text>
+                            <Switch
+                                label={"Activate Status"}
+                                checked={form.values.status}
+                                onChange={(e) =>
+                                    form.setValues({
+                                        status: e.currentTarget.checked,
+                                    })
+                                }
+                            />
+                        </Stack>
+                    </Grid.Col>
+                </Grid>
 
-                    <Button type="submit" fullWidth mt="md">
-                        Submit
-                    </Button>
-                </Stack>
+                <Divider mt={"md"} mb="sm" />
+
+                <Button type="submit" fullWidth mt="md">
+                    Submit
+                </Button>
             </form>
         </Modal>
     );

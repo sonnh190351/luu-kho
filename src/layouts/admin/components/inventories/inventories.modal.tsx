@@ -7,6 +7,7 @@ import { DatabaseTables } from "../../../../enums/tables.ts";
 import dayjs from "dayjs";
 import { DatePickerInput } from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -29,7 +30,9 @@ export default function InventoriesModal({
             warehouse_id: -1,
             date: dayjs().format("YYYY-MM-DD"),
         },
-        validate: {},
+        validate: {
+            warehouse_id: FormValidationService.validateWarehouseId,
+        },
     });
 
     const [warehouses, setWarehouses] = useState<Warehouses[]>([]);

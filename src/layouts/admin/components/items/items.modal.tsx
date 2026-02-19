@@ -18,6 +18,7 @@ import { QUANTITY_TYPES } from "../../../../enums/data.ts";
 import type { Tags } from "../../../../models/tags.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../../services/utils.ts";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 
 interface ItemsModalProps {
     item: Items | null;
@@ -56,12 +57,16 @@ export default function ItemsModal({
             tags: [],
             warning_limit: 0,
         },
-        validate: {},
+        validate: {
+            name: FormValidationService.validateName,
+            quantity_type: FormValidationService.validateQuantityType,
+            category_id: FormValidationService.validateCategoryId,
+            supplier_id: FormValidationService.validateSupplierId,
+        },
     });
 
     useEffect(() => {
         if (item) {
-            console.log(item);
             form.setValues({
                 category_id: item.category_id!,
                 name: item.name!,
@@ -80,21 +85,33 @@ export default function ItemsModal({
     }, []);
 
     async function fetchSuppliers() {
-        const service = InventoryService.getInstance();
-        const data = await service.getAllRows(DatabaseTables.Suppliers);
-        setSuppliers(data);
+        try {
+            const service = InventoryService.getInstance();
+            const data = await service.getAllRows(DatabaseTables.Suppliers);
+            setSuppliers(data);
+        } catch (e: any) {
+            NotificationsService.error("Fetch Suppliers", e.toString());
+        }
     }
 
     async function fetchCategories() {
-        const service = InventoryService.getInstance();
-        const data = await service.getAllRows(DatabaseTables.Categories);
-        setCategories(data);
+        try {
+            const service = InventoryService.getInstance();
+            const data = await service.getAllRows(DatabaseTables.Categories);
+            setCategories(data);
+        } catch (e: any) {
+            NotificationsService.error("Fetch Categories", e.toString());
+        }
     }
 
     async function fetchTags() {
-        const service = InventoryService.getInstance();
-        const data = await service.getAllRows(DatabaseTables.Tags);
-        setTags(data);
+        try {
+            const service = InventoryService.getInstance();
+            const data = await service.getAllRows(DatabaseTables.Tags);
+            setTags(data);
+        } catch (e: any) {
+            NotificationsService.error("Fetch Tags", e.toString());
+        }
     }
 
     async function handleSubmit() {
@@ -180,7 +197,7 @@ export default function ItemsModal({
                         }}
                         required
                         searchable
-                        label={"Item"}
+                        label={"Category"}
                         data={categories.map((s) => {
                             return { label: s.name!, value: String(s.id) };
                         })}

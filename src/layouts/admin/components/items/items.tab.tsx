@@ -249,7 +249,7 @@ export default function ItemsTab() {
 
                 <Title>Items Management</Title>
 
-                <Group justify={"end"}>
+                <Group justify={"space-between"}>
                     <Stack gap={5}>
                         <Text>Filter</Text>
                         <Group>
@@ -263,7 +263,6 @@ export default function ItemsTab() {
                             </ActionIcon>
                         </Group>
                     </Stack>
-                    <Divider orientation={"vertical"} />
                     <Stack gap={5}>
                         <Text>Controls</Text>
                         <Group>

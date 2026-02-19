@@ -6,6 +6,7 @@ import { NotificationsService } from "../../../../services/notifications/notific
 import { useEffect } from "react";
 import { DatabaseTables } from "../../../../enums/tables.ts";
 import UtilsService from "../../../../services/utils.ts";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 
 interface TagsModalProps {
     tag: Tags | null;
@@ -30,7 +31,9 @@ export default function TagsModal({
         initialValues: {
             name: "",
         },
-        validate: {},
+        validate: {
+            name: FormValidationService.validateName,
+        },
     });
 
     useEffect(() => {

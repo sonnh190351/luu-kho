@@ -5,11 +5,22 @@ import {
     Text,
     Group,
     ActionIcon,
+    Button,
+    Divider,
+    TextInput,
+    Grid,
+    Select,
+    useMantineColorScheme,
+    NumberInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import type { InventoryTicket } from "../../../../models/inventory_ticket";
 import type { Inventories } from "../../../../models/inventories";
-import { ZIndexLevel } from "../../../../enums/styling";
+import {
+    BORDER_COLOR_DARK,
+    BORDER_COLOR_LIGHT,
+    ZIndexLevel,
+} from "../../../../enums/styling";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
@@ -18,14 +29,28 @@ import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
 } from "../../../../enums/tables.ts";
-import { IconTrash, IconEdit } from "@tabler/icons-react";
+import {
+    IconTrash,
+    IconEdit,
+    IconPlus,
+    IconRefresh,
+    IconSearch,
+} from "@tabler/icons-react";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
-import InventoryTicketItemModal from "./inventories.items.form.modal.tsx";
+import { useForm } from "@mantine/form";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
+import { DatePickerInput, DateTimePicker } from "@mantine/dates";
 
 interface InventoryTicketsModalProps {
     inventory: Inventories | null;
     open: boolean;
     close: any;
+}
+
+interface ItemFormValues {
+    quantity: number;
+    expired_at: string;
+    item_id: number;
 }
 
 export default function InventoryTicketsModal({
@@ -35,12 +60,44 @@ export default function InventoryTicketsModal({
 }: InventoryTicketsModalProps) {
     if (!inventory) return;
 
+    const { colorScheme, setColorScheme } = useMantineColorScheme();
+
+    const isDarkMode = colorScheme === "dark";
+
     const [isLoading, setLoading] = useState(true);
+
+    const [keyword, setKeyword] = useState<string>("");
+
+    const [inventoryTickets, setInventoryTickets] = useState<any[]>([]);
+
     const [items, setItems] = useState<any[]>([]);
 
     const [selectedItem, setSelectedItem] = useState<any | null>();
 
     const [openItemModal, setOpenItemModal] = useState<boolean>(false);
+
+    const form = useForm<ItemFormValues>({
+        initialValues: {
+            quantity: 0,
+            expired_at: dayjs().format(DISPLAY_TIME_FORMAT),
+            item_id: -1,
+        },
+        validate: {},
+    });
+
+    useEffect(() => {
+        (async () => await fetchItems())();
+    }, []);
+
+    async function fetchItems() {
+        try {
+            const service = InventoryService.getInstance();
+            const data = await service.getAllRows(DatabaseTables.Items);
+            setItems(data);
+        } catch (e: any) {
+            NotificationsService.error("Fetch Items", e.toString());
+        }
+    }
 
     const columns: any[] = [
         {
@@ -150,7 +207,7 @@ export default function InventoryTicketsModal({
             const data = await service.getAllMatchingInventoryItem(
                 inventory.id,
             );
-            setItems(data);
+            setInventoryTickets(data);
         } catch (e: any) {
             NotificationsService.error("Fetch inventory tickets", e.toString());
         }
@@ -192,32 +249,131 @@ export default function InventoryTicketsModal({
 
     return (
         <Modal
-            title={`Inventory (${inventory.id}) Items List`}
+            title={`Inventory (${inventory.id}) Items Management`}
             pos="relative"
             centered={true}
             opened={open}
             onClose={handleClose}
-            size={"auto"}
+            size={"50dvw"}
             style={{
-                zIndex: ZIndexLevel.HIGHEST,
+                zIndex: ZIndexLevel.MEDIUM,
             }}>
             <Stack
+                gap={0}
                 style={{
                     minHeight: "400px",
+                    borderRight: `1px solid ${isDarkMode ? BORDER_COLOR_DARK : BORDER_COLOR_LIGHT}`,
+                    paddingRight: "15px",
                 }}>
                 <LoadingOverlay
                     visible={isLoading}
                     overlayProps={{ radius: "sm", blur: 2 }}
                 />
-                <CommonTable data={items} columns={columns} />
-            </Stack>
 
-            <InventoryTicketItemModal
-                item={selectedItem}
-                open={openItemModal}
-                refresh={fetchInventoryTickets}
-                close={handleClose}
-            />
+                <Stack gap={0}>
+                    <Text>Controls</Text>
+                    <Group justify={"space-between"}>
+                        <Group>
+                            <Select
+                                value={String(form.values.item_id)}
+                                onChange={(value) => {
+                                    if (value) {
+                                        form.setValues({
+                                            item_id: Number(value),
+                                        });
+                                    }
+                                }}
+                                required
+                                searchable
+                                label={"Item"}
+                                data={items.map((s) => {
+                                    return {
+                                        label: s.name!,
+                                        value: String(s.id),
+                                    };
+                                })}
+                            />
+                            <NumberInput
+                                required
+                                label={`Quantity`}
+                                value={form.values.quantity}
+                                onChange={(e) => {
+                                    if (e) {
+                                        form.setValues({
+                                            quantity: Number(e),
+                                        });
+                                    }
+                                }}
+                            />
+
+                            <DateTimePicker
+                                label={"Expiration Date"}
+                                required={true}
+                                valueFormat="YYYY-MM-DD hh:mm A"
+                                value={
+                                    form.values.expired_at
+                                        ? new Date(form.values.expired_at)
+                                        : new Date()
+                                }
+                                onChange={(e) => {
+                                    if (e) {
+                                        form.setValues({
+                                            expired_at:
+                                                dayjs(e).format(
+                                                    "YYYY-MM-DD hh:mm A",
+                                                ),
+                                        });
+                                    }
+                                }}
+                            />
+                        </Group>
+
+                        <Button type="submit" mt="23">
+                            {Boolean(selectedItem)
+                                ? "Add New Item"
+                                : "Edit Item"}
+                        </Button>
+                    </Group>
+                </Stack>
+                <Divider mt={"md"} mb={"sm"} />
+                <Group justify={"space-between"} mb={"md"}>
+                    <Stack gap={5}>
+                        <Text>Filter</Text>
+                        <Group>
+                            <TextInput
+                                placeholder={"Search by Name"}
+                                value={keyword}
+                                onChange={(e) => setKeyword(e.target.value)}
+                            />
+                            <ActionIcon size={"lg"}>
+                                <IconSearch />
+                            </ActionIcon>
+                        </Group>
+                    </Stack>
+
+                    <Stack gap={5}>
+                        <Text
+                            style={{
+                                opacity: 0,
+                            }}>
+                            Controls
+                        </Text>
+                        <Group>
+                            <Button
+                                onClick={() => fetchInventoryTickets()}
+                                leftSection={<IconRefresh />}>
+                                Refresh
+                            </Button>
+                        </Group>
+                    </Stack>
+                </Group>
+
+                <CommonTable
+                    height="60vh"
+                    data={inventoryTickets}
+                    columns={columns}
+                />
+            </Stack>
         </Modal>
     );
 }

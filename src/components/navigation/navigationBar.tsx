@@ -47,7 +47,7 @@ export default function NavigationBar() {
                 height: NAV_BAR_HEIGHT,
                 backgroundColor: isDarkMode ? BG_COLOR_DARK : BG_COLOR_LIGHT,
                 borderBottom: `1px solid ${isDarkMode ? BORDER_COLOR_DARK : BORDER_COLOR_LIGHT}`,
-                zIndex: ZIndexLevel.HIGHEST,
+                zIndex: ZIndexLevel.MEDIUM - 1,
             }}>
             <Group pt={5} justify={"space-between"}>
                 <img src={"/logo.png"} height={25} />

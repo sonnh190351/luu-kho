@@ -163,7 +163,7 @@ export default function SuppliersTab() {
 
                 <Title>Suppliers Management</Title>
 
-                <Group justify={"end"}>
+                <Group justify={"space-between"}>
                     <Stack gap={5}>
                         <Text>Filter</Text>
                         <Group>
@@ -177,7 +177,6 @@ export default function SuppliersTab() {
                             </ActionIcon>
                         </Group>
                     </Stack>
-                    <Divider orientation={"vertical"} />
                     <Stack gap={5}>
                         <Text>Controls</Text>
                         <Group>

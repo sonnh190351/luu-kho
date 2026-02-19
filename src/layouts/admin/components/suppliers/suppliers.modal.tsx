@@ -6,6 +6,7 @@ import InventoryService from "../../../../services/operations/inventory.service.
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { DatabaseTables } from "../../../../enums/tables.ts";
 import UtilsService from "../../../../services/utils.ts";
+import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 
 interface SuppliersModalProps {
     supplier: Suppliers | null;
@@ -32,7 +33,10 @@ export default function SuppliersModal({
             name: "",
             address: "",
         },
-        validate: {},
+        validate: {
+            name: FormValidationService.validateName,
+            address: FormValidationService.validateAddress,
+        },
     });
 
     useEffect(() => {
