@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { DatabaseTables } from "../../../../enums/tables.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 interface SuppliersModalProps {
     supplier: Suppliers | null;
@@ -93,7 +94,7 @@ export default function SuppliersModal({
                         value={form.values.name}
                         onChange={(e) =>
                             form.setValues({
-                                name: e.target.value,
+                                name: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />
@@ -103,7 +104,7 @@ export default function SuppliersModal({
                         value={form.values.address}
                         onChange={(e) =>
                             form.setValues({
-                                address: e.target.value,
+                                address: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />

@@ -5,6 +5,7 @@ import InventoryService from "../../../../services/operations/inventory.service.
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { useEffect } from "react";
 import { DatabaseTables } from "../../../../enums/tables.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 interface TagsModalProps {
     tag: Tags | null;
@@ -85,7 +86,7 @@ export default function TagsModal({
                         value={form.values.name}
                         onChange={(e) =>
                             form.setValues({
-                                name: e.target.value,
+                                name: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />

@@ -17,6 +17,7 @@ import { DatabaseTables } from "../../../../enums/tables.ts";
 import { QUANTITY_TYPES } from "../../../../enums/data.ts";
 import type { Tags } from "../../../../models/tags.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 interface ItemsModalProps {
     item: Items | null;
@@ -146,7 +147,7 @@ export default function ItemsModal({
                         value={form.values.name}
                         onChange={(e) =>
                             form.setValues({
-                                name: e.target.value,
+                                name: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />
@@ -188,6 +189,11 @@ export default function ItemsModal({
                     <MultiSelect
                         value={form.values.tags}
                         onChange={(value) => {
+                            // Sanitize html
+                            for (let i = 0; i < value.length; i++) {
+                                value[i] = UtilsService.sanitize(value[i]);
+                            }
+
                             form.setValues({
                                 tags: value,
                             });
@@ -205,7 +211,7 @@ export default function ItemsModal({
                         onChange={(value) => {
                             if (value) {
                                 form.setValues({
-                                    quantity_type: value,
+                                    quantity_type: UtilsService.sanitize(value),
                                 });
                             }
                         }}

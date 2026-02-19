@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import {
     IconEdit,
+    IconInfoCircle,
     IconPlus,
     IconRefresh,
     IconSearch,
@@ -136,6 +137,36 @@ export default function UserDetailsTab() {
                 return (
                     <Group>
                         <Text>{UtilsService.getRoleLevel(role)}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "warehouse_id",
+            title: "Warehouse",
+            sortable: true,
+            width: 175,
+            render: ({ warehouse_id }: UserDetails) => {
+                return (
+                    <Group>
+                        {warehouse_id ? (
+                            <Button
+                                style={{
+                                    width: "100%",
+                                }}
+                                leftSection={<IconInfoCircle />}
+                                onClick={() => {
+                                    InformationService.getInstance().showItemDetailsById(
+                                        DatabaseTables.Warehouses,
+                                        "Warehouse Details",
+                                        warehouse_id!,
+                                    );
+                                }}>
+                                Details ({warehouse_id})
+                            </Button>
+                        ) : (
+                            <Text>N/A</Text>
+                        )}
                     </Group>
                 );
             },

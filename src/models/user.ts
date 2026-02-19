@@ -1,6 +1,5 @@
 export interface UserDetails {
     address: string | null;
-    auth_id: string | null;
     avatar: string | null;
     created_at: string;
     dob: string | null;
@@ -12,4 +11,5 @@ export interface UserDetails {
     email: string;
     password: string;
     status: boolean;
+    warehouse_id: number;
 }

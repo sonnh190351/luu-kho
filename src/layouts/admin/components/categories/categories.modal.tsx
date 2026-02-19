@@ -5,6 +5,7 @@ import InventoryService from "../../../../services/operations/inventory.service.
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { useEffect } from "react";
 import { DatabaseTables } from "../../../../enums/tables.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 interface CategoriesModalProps {
     category: Categories | null;
@@ -29,8 +30,22 @@ export default function CategoriesModal({
         initialValues: {
             name: "",
         },
-        validate: {},
+        validate: {
+            name: (value) => validateName(value),
+        },
     });
+
+    function validateName(name: string) {
+        if (name.length < 1) {
+            return "Category name must have at least 1 character!";
+        }
+
+        if (name.length > 50) {
+            return "Category name must not have more than 50 characters!";
+        }
+
+        return null;
+    }
 
     useEffect(() => {
         if (category) {
@@ -88,7 +103,7 @@ export default function CategoriesModal({
                         value={form.values.name}
                         onChange={(e) =>
                             form.setValues({
-                                name: e.target.value,
+                                name: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />

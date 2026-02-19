@@ -18,6 +18,10 @@ import { useEffect, useState } from "react";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import UserService from "../../../../services/operations/user.service.ts";
 import dayjs from "dayjs";
+import { DatabaseTables } from "../../../../enums/tables.ts";
+import type { Warehouses } from "../../../../models/warehouses.ts";
+import InventoryService from "../../../../services/operations/inventory.service.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 interface UserDetailsModalProps {
     user: UserDetails | null;
@@ -35,6 +39,7 @@ interface UserDetailsFormValues {
     dob: string | null;
     role: number;
     status: boolean;
+    warehouse_id: number;
 }
 
 export default function UserDetailsModal({
@@ -47,6 +52,8 @@ export default function UserDetailsModal({
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
+    const [warehouses, setWarehouses] = useState<Warehouses[]>([]);
+
     const form = useForm<UserDetailsFormValues>({
         initialValues: {
             email: "",
@@ -56,7 +63,8 @@ export default function UserDetailsModal({
             address: "",
             dob: dayjs().format("YYYY-MM-DD"),
             role: -1,
-            status: false,
+            status: true,
+            warehouse_id: -1,
         },
         validate: {},
     });
@@ -72,9 +80,24 @@ export default function UserDetailsModal({
                 dob: user.dob,
                 role: user.role!,
                 status: user.status,
+                warehouse_id: user.warehouse_id,
             });
         }
     }, [isEdit]);
+
+    useEffect(() => {
+        (async () => await fetchWarehouses())();
+    }, []);
+
+    async function fetchWarehouses() {
+        try {
+            const service = InventoryService.getInstance();
+            const data = await service.getAllRows(DatabaseTables.Warehouses);
+            setWarehouses(data);
+        } catch (e: any) {
+            NotificationsService.error("Fetch Warehouses", e.toString());
+        }
+    }
 
     async function handleSubmit() {
         try {
@@ -127,7 +150,7 @@ export default function UserDetailsModal({
                         value={form.values.email}
                         onChange={(e) =>
                             form.setValues({
-                                email: e.target.value,
+                                email: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />
@@ -139,7 +162,7 @@ export default function UserDetailsModal({
                         value={form.values.password}
                         onChange={(e) =>
                             form.setValues({
-                                password: e.target.value,
+                                password: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />
@@ -161,6 +184,22 @@ export default function UserDetailsModal({
                                 return { label: k, value: String(v) };
                             })}
                     />
+                    <Select
+                        value={String(form.values.warehouse_id)}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setValues({
+                                    warehouse_id: Number(value),
+                                });
+                            }
+                        }}
+                        required
+                        searchable
+                        label={"Warehouse"}
+                        data={warehouses.map((s) => {
+                            return { label: s.name!, value: String(s.id) };
+                        })}
+                    />
                     <Divider mt={"md"} mb="sm" />
                     <Text
                         style={{
@@ -176,7 +215,9 @@ export default function UserDetailsModal({
                                 value={form.values.first_name}
                                 onChange={(e) =>
                                     form.setValues({
-                                        first_name: e.target.value,
+                                        first_name: UtilsService.sanitize(
+                                            e.target.value,
+                                        ),
                                     })
                                 }
                             />
@@ -188,7 +229,9 @@ export default function UserDetailsModal({
                                 value={form.values.last_name}
                                 onChange={(e) =>
                                     form.setValues({
-                                        last_name: e.target.value,
+                                        last_name: UtilsService.sanitize(
+                                            e.target.value,
+                                        ),
                                     })
                                 }
                             />
@@ -216,7 +259,7 @@ export default function UserDetailsModal({
                         value={form.values.address}
                         onChange={(e) =>
                             form.setValues({
-                                address: e.target.value,
+                                address: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />

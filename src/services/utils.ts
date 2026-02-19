@@ -1,4 +1,5 @@
 import { USER_ROLES } from "../enums/roles";
+import DOMPurify from "dompurify";
 
 export default class UtilsService {
     static getRoleLevel(role: number) {
@@ -31,5 +32,14 @@ export default class UtilsService {
             b.toString(16).padStart(2, "0"),
         ).join("");
         return hex.slice(0, length);
+    }
+
+    /**
+     * Sanitize string from html tags
+     * @param str - String to sanitize
+     * @returns A sanitized string
+     */
+    static sanitize(str: string) {
+        return DOMPurify.sanitize(str);
     }
 }
