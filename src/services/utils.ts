@@ -42,4 +42,11 @@ export default class UtilsService {
     static sanitize(str: string) {
         return DOMPurify.sanitize(str);
     }
+
+    /**
+     * Get avatar URL
+     */
+    static getAvatarUrl(avatar: string) {
+        return `https://pyhfaxqieivmwcayxetg.supabase.co/storage/v1/object/public/user_avatar/${avatar}`
+    }
 }

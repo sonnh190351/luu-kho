@@ -12,4 +12,4 @@ export enum DatabaseTables {
     Requests = "requests",
 }
 
-export const DISPLAY_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss A";
+export const DISPLAY_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss a";

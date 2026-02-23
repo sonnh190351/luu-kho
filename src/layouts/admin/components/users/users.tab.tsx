@@ -2,8 +2,6 @@ import {
     ActionIcon,
     Badge,
     Button,
-    Chip,
-    Divider,
     Group,
     Stack,
     Text,
@@ -17,9 +15,9 @@ import {
     IconPlus,
     IconRefresh,
     IconSearch,
-    IconTrash,
+    IconTrash, IconX,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import {type ChangeEvent, useEffect, useState} from "react";
 
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
@@ -118,6 +116,21 @@ export default function UserDetailsTab() {
             },
         },
         {
+            accessor: "avatar",
+            title: "Avatar",
+            render: ({ avatar }: UserDetails) => {
+                return (
+                    <Group justify={'center'} style={{
+                        textAlign: "center"
+                    }}>
+                        {
+                            Boolean(avatar) ? <img width={100} src={UtilsService.getAvatarUrl(avatar!)} /> :  <Text>No Avatar Available</Text>
+                        }
+                    </Group>
+                );
+            },
+        },
+        {
             accessor: "dob",
             title: "Date Of Birth",
             sortable: true,
@@ -198,10 +211,10 @@ export default function UserDetailsTab() {
         {
             accessor: "status",
             title: "Status",
-            sortable: true,
+            width: 130,
             render: ({ status }: UserDetails) => {
                 return (
-                    <Group>
+                    <Group justify={'center'}>
                         {status ? (
                             <Badge color="green">Activated</Badge>
                         ) : (
@@ -214,7 +227,6 @@ export default function UserDetailsTab() {
         {
             accessor: "id",
             title: "Actions",
-            sortable: true,
             width: 120,
             render: ({ id }: UserDetails) => {
                 return (
@@ -257,6 +269,32 @@ export default function UserDetailsTab() {
         }
     }
 
+    async function clearSearch(){
+        setKeyword("")
+        const temp = localStorage.getItem(DatabaseTables.UserDetails);
+        if(!temp) {
+            setUserDetails([])
+        } else {
+            setUserDetails(JSON.parse(temp));
+        }
+    }
+
+    async function handleSearchByEmail(e: ChangeEvent<HTMLInputElement>) {
+        setKeyword(e.target.value)
+
+        const temp = localStorage.getItem(DatabaseTables.UserDetails);
+        let cache = []
+        if(!temp) {
+            localStorage.setItem(DatabaseTables.UserDetails, JSON.stringify(items));
+            cache = JSON.parse(JSON.stringify(items));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        const matchingItems = cache.filter((i: any) => i.email.startsWith(e.target.value));
+        setUserDetails(matchingItems)
+    }
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
@@ -272,10 +310,15 @@ export default function UserDetailsTab() {
                         <Text>Filter</Text>
                         <Group>
                             <TextInput
-                                placeholder={"Search by Name"}
+                                placeholder={"Search by Email"}
                                 value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
+                                onChange={handleSearchByEmail}
                             />
+                            {
+                                keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             <ActionIcon size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>

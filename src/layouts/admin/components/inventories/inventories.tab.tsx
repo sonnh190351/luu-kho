@@ -1,7 +1,6 @@
 import {
     ActionIcon,
     Button,
-    Divider,
     Group,
     LoadingOverlay,
     Stack,
@@ -14,10 +13,10 @@ import {
     IconPlus,
     IconRefresh,
     IconSearch,
-    IconTrash,
+    IconTrash, IconX,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import type { Inventories } from "../../../../models/inventories.ts";
+import {type ChangeEvent, useEffect, useState} from "react";
+import type {Inventories} from "../../../../models/inventories.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import InventoriesModal from "./inventories.modal.tsx";
@@ -25,8 +24,8 @@ import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
 } from "../../../../enums/tables.ts";
-import { InformationService } from "../../../../services/notifications/information.service.ts";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import {InformationService} from "../../../../services/notifications/information.service.ts";
+import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import InventoryTicketsModal from "./inventories.items.modal.tsx";
 import dayjs from "dayjs";
 
@@ -75,7 +74,7 @@ export default function InventoriesTab() {
             accessor: "id",
             title: "ID",
             sortable: true,
-            render: ({ id }: Inventories) => {
+            render: ({id}: Inventories) => {
                 return (
                     <Group>
                         <Text>{id}</Text>
@@ -88,15 +87,15 @@ export default function InventoriesTab() {
             title: "Warehouse ID",
             sortable: false,
             width: 185,
-            render: ({ warehouse_id }: Inventories) => {
+            render: ({warehouse_id}: Inventories) => {
                 return (
                     <Button
                         style={{
                             width: "100%",
                         }}
-                        leftSection={<IconInfoCircle />}
-                        onClick={() => {
-                            InformationService.getInstance().showItemDetailsById(
+                        leftSection={<IconInfoCircle/>}
+                        onClick={async () => {
+                            await InformationService.getInstance().showItemDetailsById(
                                 DatabaseTables.Warehouses,
                                 "Warehouse Details",
                                 warehouse_id!,
@@ -111,7 +110,7 @@ export default function InventoriesTab() {
             accessor: "created_at",
             title: "Created At",
             sortable: true,
-            render: ({ created_at }: Inventories) => {
+            render: ({created_at}: Inventories) => {
                 return (
                     <Group>
                         {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
@@ -123,7 +122,7 @@ export default function InventoriesTab() {
             accessor: "updated_at",
             title: "Updated At",
             sortable: true,
-            render: ({ updated_at }: Inventories) => {
+            render: ({updated_at}: Inventories) => {
                 return (
                     <Group>
                         {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
@@ -136,10 +135,10 @@ export default function InventoriesTab() {
             title: "Items",
             sortable: false,
             width: 150,
-            render: ({ id }: Inventories) => {
+            render: ({id}: Inventories) => {
                 return (
                     <Button
-                        leftSection={<IconInfoCircle />}
+                        leftSection={<IconInfoCircle/>}
                         onClick={() => handleInventoryTickets(id)}
                         size={"sm"}>
                         Items List
@@ -152,7 +151,7 @@ export default function InventoriesTab() {
             title: "Actions",
             sortable: false,
             width: 80,
-            render: ({ id }: Inventories) => {
+            render: ({id}: Inventories) => {
                 return (
                     <Group>
                         <ActionIcon
@@ -161,7 +160,7 @@ export default function InventoriesTab() {
                             }}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
-                            <IconTrash />
+                            <IconTrash/>
                         </ActionIcon>
                     </Group>
                 );
@@ -193,12 +192,38 @@ export default function InventoriesTab() {
         });
     }
 
+    async function clearSearch(){
+        setKeyword("")
+        const temp = localStorage.getItem(DatabaseTables.Inventories);
+        if(!temp) {
+            setInventories([])
+        } else {
+            setInventories(JSON.parse(temp));
+        }
+    }
+
+    async function handleSearchByWarehouseId(e: ChangeEvent<HTMLInputElement>) {
+        setKeyword(e.target.value)
+
+        const temp = localStorage.getItem(DatabaseTables.Inventories);
+        let cache = []
+        if(!temp) {
+            localStorage.setItem(DatabaseTables.Inventories, JSON.stringify(items));
+            cache = JSON.parse(JSON.stringify(items));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        const matchingItems = cache.filter((i: any) => String(i.warehouse_id).startsWith(e.target.value));
+        setInventories(matchingItems)
+    }
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
                 <LoadingOverlay
                     visible={isLoading}
-                    overlayProps={{ radius: "sm", blur: 2 }}
+                    overlayProps={{radius: "sm", blur: 2}}
                 />
 
                 <Title>Inventories Management</Title>
@@ -208,10 +233,15 @@ export default function InventoriesTab() {
                         <Text>Filter</Text>
                         <Group>
                             <TextInput
-                                placeholder={"Search by Name"}
+                                placeholder={"Search by Warehouse ID"}
                                 value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
+                                onChange={handleSearchByWarehouseId}
                             />
+                            {
+                                keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             <ActionIcon size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>
@@ -222,19 +252,19 @@ export default function InventoriesTab() {
                         <Group>
                             <Button
                                 onClick={() => setOpenItemModal(true)}
-                                leftSection={<IconPlus />}>
+                                leftSection={<IconPlus/>}>
                                 Add
                             </Button>
                             <Button
                                 onClick={() => fetchInventories()}
-                                leftSection={<IconRefresh />}>
+                                leftSection={<IconRefresh/>}>
                                 Refresh
                             </Button>
                         </Group>
                     </Stack>
                 </Group>
 
-                <CommonTable data={items} columns={columns} />
+                <CommonTable data={items} columns={columns}/>
             </Stack>
 
             {/*Item modal*/}

@@ -94,6 +94,7 @@ export default function SuppliersModal({
                 <Stack gap="xs">
                     <TextInput
                         required
+                        {...form.getInputProps('name')}
                         label={"Name"}
                         value={form.values.name}
                         onChange={(e) =>
@@ -104,6 +105,7 @@ export default function SuppliersModal({
                     />
                     <TextInput
                         required
+                        {...form.getInputProps('address')}
                         label={"Address"}
                         value={form.values.address}
                         onChange={(e) =>

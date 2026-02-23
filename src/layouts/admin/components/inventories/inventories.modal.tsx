@@ -80,6 +80,7 @@ export default function InventoriesModal({
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <Select
+                        {...form.getInputProps('warehouse_id')}
                         value={String(form.values.warehouse_id)}
                         onChange={(value) => {
                             if (value) {
@@ -96,6 +97,7 @@ export default function InventoriesModal({
                         })}
                     />
                     <DatePickerInput
+                        {...form.getInputProps('date')}
                         label={"Date"}
                         required={true}
                         value={

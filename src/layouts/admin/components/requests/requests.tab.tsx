@@ -1,7 +1,6 @@
 import {
     ActionIcon,
     Button,
-    Divider,
     Group,
     Stack,
     Text,
@@ -11,7 +10,6 @@ import {
 } from "@mantine/core";
 import {
     IconEdit,
-    IconPlus,
     IconRefresh,
     IconSearch,
     IconTrash,
@@ -111,7 +109,6 @@ export default function RequestsTab() {
         {
             accessor: "id",
             title: "Actions",
-            sortable: true,
             width: 120,
             render: ({ id }: Requests) => {
                 return (
@@ -181,11 +178,6 @@ export default function RequestsTab() {
                     <Stack gap={5}>
                         <Text>Controls</Text>
                         <Group>
-                            <Button
-                                onClick={() => setOpenItemModal(true)}
-                                leftSection={<IconPlus />}>
-                                Add
-                            </Button>
                             <Button
                                 onClick={fetchRequests}
                                 leftSection={<IconRefresh />}>

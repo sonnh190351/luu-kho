@@ -157,6 +157,7 @@ export default function UserDetailsModal({
                             </Text>
                             <TextInput
                                 required
+                                {...form.getInputProps("email")}
                                 label={"Email"}
                                 value={form.values.email}
                                 onChange={(e) =>
@@ -168,13 +169,11 @@ export default function UserDetailsModal({
                                 }
                             />
                             <PasswordInput
+                                {...form.getInputProps('password')}
                                 visible={showPassword}
                                 onVisibilityChange={(e) => setShowPassword(e)}
                                 required
                                 label={"Password"}
-                                description={
-                                    "Length from 8-32 characters, must include uppercase, lowercase, and number characters!"
-                                }
                                 value={form.values.password}
                                 onChange={(e) =>
                                     form.setValues({
@@ -185,6 +184,7 @@ export default function UserDetailsModal({
                                 }
                             />
                             <Select
+                                {...form.getInputProps('role')}
                                 value={String(form.values.role)}
                                 onChange={(value) => {
                                     if (value) {
@@ -203,6 +203,7 @@ export default function UserDetailsModal({
                                     })}
                             />
                             <Select
+                                {...form.getInputProps('warehouse_id')}
                                 value={String(form.values.warehouse_id)}
                                 onChange={(value) => {
                                     if (value) {
@@ -234,6 +235,7 @@ export default function UserDetailsModal({
                                 <Grid.Col span={6}>
                                     <TextInput
                                         required
+                                        {...form.getInputProps('first_name')}
                                         label={"First Name"}
                                         value={form.values.first_name}
                                         onChange={(e) =>
@@ -249,6 +251,7 @@ export default function UserDetailsModal({
                                 <Grid.Col span={6}>
                                     <TextInput
                                         required
+                                        {...form.getInputProps('last_name')}
                                         label={"Last Name"}
                                         value={form.values.last_name}
                                         onChange={(e) =>
@@ -263,6 +266,7 @@ export default function UserDetailsModal({
                                 </Grid.Col>
                             </Grid>
                             <DatePickerInput
+                                {...form.getInputProps('dob')}
                                 label={"Date of Birth"}
                                 required={true}
                                 value={
@@ -280,6 +284,7 @@ export default function UserDetailsModal({
                             />
                             <TextInput
                                 required
+                                {...form.getInputProps('address')}
                                 label={"Address"}
                                 value={form.values.address}
                                 onChange={(e) =>

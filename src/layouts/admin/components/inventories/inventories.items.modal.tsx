@@ -8,7 +8,6 @@ import {
     Button,
     Divider,
     TextInput,
-    Grid,
     Select,
     useMantineColorScheme,
     NumberInput,
@@ -32,14 +31,12 @@ import {
 import {
     IconTrash,
     IconEdit,
-    IconPlus,
     IconRefresh,
-    IconSearch,
+    IconSearch, IconDeviceFloppy, IconX,
 } from "@tabler/icons-react";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { useForm } from "@mantine/form";
-import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
-import { DatePickerInput, DateTimePicker } from "@mantine/dates";
+import { DateTimePicker } from "@mantine/dates";
 
 interface InventoryTicketsModalProps {
     inventory: Inventories | null;
@@ -60,7 +57,7 @@ export default function InventoryTicketsModal({
 }: InventoryTicketsModalProps) {
     if (!inventory) return;
 
-    const { colorScheme, setColorScheme } = useMantineColorScheme();
+    const { colorScheme } = useMantineColorScheme();
 
     const isDarkMode = colorScheme === "dark";
 
@@ -74,13 +71,11 @@ export default function InventoryTicketsModal({
 
     const [selectedItem, setSelectedItem] = useState<any | null>();
 
-    const [openItemModal, setOpenItemModal] = useState<boolean>(false);
-
     const form = useForm<ItemFormValues>({
         initialValues: {
             quantity: 0,
-            expired_at: dayjs().format(DISPLAY_TIME_FORMAT),
             item_id: -1,
+            expired_at: "",
         },
         validate: {},
     });
@@ -232,11 +227,18 @@ export default function InventoryTicketsModal({
     }
 
     function handleEdit(id: number) {
-        const matching = items.find((i) => i.id === id);
-        if (matching) {
-            setSelectedItem(matching);
-            setOpenItemModal(true);
-        }
+        const matching = inventoryTickets.find((i) => i.id === id);
+        setSelectedItem(matching)
+        console.log(matching)
+
+        const matchingItem = items.find((i) => i.name === matching.items.name);
+
+        form.setValues({
+            item_id: matchingItem.id,
+            quantity: matching.quantity,
+            expired_at: matching.expired_at,
+        })
+
     }
 
     function handleClose() {
@@ -245,6 +247,18 @@ export default function InventoryTicketsModal({
         setTimeout(() => {
             setSelectedItem(null);
         }, 200);
+    }
+
+    function handleSubmit() {
+
+    }
+
+    function clearSelectedItem(){
+        setSelectedItem(null);
+        form.reset()
+        form.setValues({
+            item_id: -1
+        })
     }
 
     return (
@@ -275,6 +289,7 @@ export default function InventoryTicketsModal({
                     <Group justify={"space-between"}>
                         <Group>
                             <Select
+                                clearable
                                 value={String(form.values.item_id)}
                                 onChange={(value) => {
                                     if (value) {
@@ -327,12 +342,16 @@ export default function InventoryTicketsModal({
                                 }}
                             />
                         </Group>
-
-                        <Button type="submit" mt="23">
-                            {Boolean(selectedItem)
-                                ? "Add New Item"
-                                : "Edit Item"}
-                        </Button>
+                        <Group>
+                            {
+                                Boolean(selectedItem) && <Button onClick={clearSelectedItem} type="submit" mt="23" leftSection={<IconX />} color={"red"}>
+                                    Clear
+                                </Button>
+                            }
+                            <Button onClick={handleSubmit} type="submit" mt="23" leftSection={<IconDeviceFloppy />}>
+                                Save
+                            </Button>
+                        </Group>
                     </Group>
                 </Stack>
                 <Divider mt={"md"} mb={"sm"} />

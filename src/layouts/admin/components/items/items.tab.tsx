@@ -2,7 +2,6 @@ import {
     ActionIcon,
     Badge,
     Button,
-    Divider,
     Group,
     Stack,
     Text,
@@ -16,9 +15,9 @@ import {
     IconPlus,
     IconRefresh,
     IconSearch,
-    IconTrash,
+    IconTrash, IconX,
 } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import {type ChangeEvent, useEffect, useState} from "react";
 import type { Items } from "../../../../models/items.ts";
 import ItemsModal from "./items.modal.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
@@ -196,7 +195,6 @@ export default function ItemsTab() {
         {
             accessor: "id",
             title: "Actions",
-            sortable: true,
             width: 120,
             render: ({ id }: any) => {
                 return (
@@ -239,6 +237,32 @@ export default function ItemsTab() {
         }
     }
 
+    async function clearSearch(){
+        setKeyword("")
+        const temp = localStorage.getItem(DatabaseTables.Items);
+        if(!temp) {
+            setItems([])
+        } else {
+            setItems(JSON.parse(temp));
+        }
+    }
+
+    async function handleSearchByName(e: ChangeEvent<HTMLInputElement>) {
+        setKeyword(e.target.value)
+
+        const temp = localStorage.getItem(DatabaseTables.Items);
+        let cache = []
+        if(!temp) {
+            localStorage.setItem(DatabaseTables.Items, JSON.stringify(items));
+            cache = JSON.parse(JSON.stringify(items));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        const matchingItems = cache.filter((i: any) => i.name.startsWith(e.target.value));
+        setItems(matchingItems)
+    }
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
@@ -256,8 +280,13 @@ export default function ItemsTab() {
                             <TextInput
                                 placeholder={"Search by Name"}
                                 value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
+                                onChange={handleSearchByName}
                             />
+                            {
+                                keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>
+                                    <IconX />
+                                </ActionIcon>
+                            }
                             <ActionIcon size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>

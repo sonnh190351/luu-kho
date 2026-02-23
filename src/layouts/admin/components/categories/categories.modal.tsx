@@ -87,6 +87,7 @@ export default function CategoriesModal({
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <TextInput
+                        {...form.getInputProps('name')}
                         required
                         label={"Name"}
                         value={form.values.name}

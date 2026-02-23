@@ -159,6 +159,7 @@ export default function ItemsModal({
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <TextInput
+                        {...form.getInputProps('name')}
                         required
                         label={"Name"}
                         value={form.values.name}
@@ -170,6 +171,7 @@ export default function ItemsModal({
                     />
 
                     <Select
+                        {...form.getInputProps('supplier_id')}
                         value={String(form.values.supplier_id)}
                         onChange={(value) => {
                             if (value) {
@@ -187,6 +189,7 @@ export default function ItemsModal({
                     />
 
                     <Select
+                        {...form.getInputProps('category_id')}
                         value={String(form.values.category_id)}
                         onChange={(value) => {
                             if (value) {
@@ -224,6 +227,7 @@ export default function ItemsModal({
                     />
 
                     <Select
+                        {...form.getInputProps('quantity_type')}
                         value={form.values.quantity_type}
                         onChange={(value) => {
                             if (value) {
@@ -240,6 +244,7 @@ export default function ItemsModal({
 
                     <NumberInput
                         required
+                        {...form.getInputProps('warning_limit')}
                         label={"Warning Limit"}
                         value={form.values.name}
                         onChange={(e) => {
