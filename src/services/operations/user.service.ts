@@ -1,10 +1,9 @@
-import { Table } from "@mantine/core";
-import { LocalStorage } from "../../enums/localStorage.ts";
-import { DatabaseTables } from "../../enums/tables.ts";
-import type { UserDetails } from "../../models/user.ts";
-import { EncryptionService } from "../auth/encryption.service.ts";
+import {LocalStorage} from "../../enums/localStorage.ts";
+import {DatabaseTables} from "../../enums/tables.ts";
+import type {UserDetails} from "../../models/user.ts";
+import {EncryptionService} from "../auth/encryption.service.ts";
 import DatabaseService from "../database/database.service.ts";
-import { NotificationsService } from "../notifications/notifications.service.ts";
+import {NotificationsService} from "../notifications/notifications.service.ts";
 
 export default class UserService {
     private static instance: UserService;
@@ -70,10 +69,10 @@ export default class UserService {
             throw `Duplicate email detected!`;
         }
 
-        const encrypted = EncryptionService.getInstance().encryptData(
-            user.password!,
-        );
-        user.password = encrypted;
+        // const encrypted = EncryptionService.getInstance().encryptData(
+        //     user.password!,
+        // );
+        // user.password = encrypted;
 
         await this.database.add(DatabaseTables.UserDetails, user);
     }

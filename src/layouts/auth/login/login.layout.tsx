@@ -60,8 +60,9 @@ export default function LoginLayout() {
         setIsLoading(true);
 
         const authService = new AuthService();
-
+        console.log(values)
         const response = await authService.login(values.email, values.password);
+        console.log(response);
 
         if (response.status) {
             NotificationsService.success(

@@ -17,6 +17,7 @@ export class EncryptionService {
 
     // Encryption function
     public encryptData = (password: string) => {
+        console.log(secretKey)
         return CryptoJS.AES.encrypt(password, secretKey).toString();
     };
 

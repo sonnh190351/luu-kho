@@ -35,9 +35,10 @@ export default class AuthService {
                 };
             }
 
-            const encrypted =
-                EncryptionService.getInstance().encryptData(password);
-            if (data[0].password !== encrypted) {
+            const encrypted = EncryptionService.getInstance().encryptData(password);
+            console.log(encrypted);
+
+            if (data[0].password !== password) {
                 return {
                     status: false,
                     message: "Incorrect password!",
@@ -54,6 +55,7 @@ export default class AuthService {
                 data: data[0],
             };
         } catch (e: any) {
+            console.log(e)
             return {
                 status: false,
                 message: e.toString(),

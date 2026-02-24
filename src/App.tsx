@@ -32,7 +32,7 @@ export default function App() {
             ),
         },
         {
-            path: "/details",
+            path: "/user",
             element: (
                 <ProtectedRoute>
                     <NavigationBar />
