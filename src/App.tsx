@@ -17,7 +17,6 @@ import ProtectedRoute from "./routes/protected.route.ts";
 import NavigationBar from "./components/navigation/navigationBar.tsx";
 import AdminLayout from "./layouts/admin/admin.layout.tsx";
 import { ModalsProvider } from "@mantine/modals";
-import UserDetailsLayout from "./layouts/user_details/user.layout.tsx";
 import { InformationModal } from "./components/modals/information.modal.tsx";
 
 export default function App() {
@@ -28,15 +27,6 @@ export default function App() {
                 <ProtectedRoute>
                     <NavigationBar />
                     <AdminLayout />
-                </ProtectedRoute>
-            ),
-        },
-        {
-            path: "/user",
-            element: (
-                <ProtectedRoute>
-                    <NavigationBar />
-                    <UserDetailsLayout />
                 </ProtectedRoute>
             ),
         },
