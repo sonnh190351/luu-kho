@@ -18,6 +18,8 @@ import NavigationBar from "./components/navigation/navigationBar.tsx";
 import AdminLayout from "./layouts/admin/admin.layout.tsx";
 import { ModalsProvider } from "@mantine/modals";
 import { InformationModal } from "./components/modals/information.modal.tsx";
+import CustomerLayout from "./layouts/customer/customer.layout.tsx";
+import ManagerLayout from "./layouts/manager/manager.layout.tsx";
 
 export default function App() {
     const router = createBrowserRouter([
@@ -27,6 +29,24 @@ export default function App() {
                 <ProtectedRoute>
                     <NavigationBar />
                     <AdminLayout />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: "/customer",
+            element: (
+                <ProtectedRoute>
+                    <NavigationBar />
+                    <CustomerLayout />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: "/manager",
+            element: (
+                <ProtectedRoute>
+                    <NavigationBar />
+                    <ManagerLayout />
                 </ProtectedRoute>
             ),
         },

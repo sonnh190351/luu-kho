@@ -7,16 +7,16 @@ import {
     NAV_BAR_HEIGHT
 } from "../../enums/styling.ts";
 import {LocalStorage} from "../../enums/localStorage.ts";
-import CustomerWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
 import {IconBuildingWarehouse, IconChartArea, IconCommand} from "@tabler/icons-react";
-import CustomerRequestsLayout from "./components/requests/requests.main.tsx";
-import CustomerDashboardTab from "./components/dashboard/dashboard.main.tsx";
+import ManagerDashboardTab from "./components/dashboard/dashboard.main.tsx";
+import ManagerWarehousesTab from "./components/warehouses/warehouses.main.tsx";
+import ManagerRequestsTab from "./components/requests/requests.main.tsx";
 
 const openMenuWidth = 200;
 
-export default function CustomerLayout() {
+export default function ManagerLayout() {
 
     const { colorScheme } = useMantineColorScheme();
 
@@ -34,9 +34,9 @@ export default function CustomerLayout() {
     }
 
     const customerItems = [
-        <CustomerDashboardTab />,
-        <CustomerWarehousesLayout />,
-        <CustomerRequestsLayout />
+        <ManagerDashboardTab />,
+        <ManagerWarehousesTab />,
+        <ManagerRequestsTab />
     ]
 
     const customerTabs: TabGroup[] = [

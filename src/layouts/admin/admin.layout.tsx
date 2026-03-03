@@ -18,7 +18,7 @@ import { useRef, useState } from "react";
 
 import {
     IconBuildingWarehouse,
-    IconCategory,
+    IconCategory, IconChartArea,
     IconPackage,
     IconReceipt,
     IconTag,
@@ -34,7 +34,8 @@ import WarehousesTab from "./components/warehouses/warehouses.tab.tsx";
 import SuppliersTab from "./components/suppliers/suppliers.tab.tsx";
 import UsersTab from "./components/users/users.tab.tsx";
 import RequestsTab from "./components/requests/requests.tab.tsx";
-import type { TabGroup } from "./admin.types.ts";
+import type { TabGroup } from "../common.types.ts";
+import AdminDashboardTab from "./components/dashboard/dashboard.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -44,6 +45,7 @@ export default function AdminLayout() {
     const isDarkMode = colorScheme === "dark";
 
     const adminItems = [
+        <AdminDashboardTab />,
         <ItemsTab />,
         <CategoriesTab />,
         <TagsTab />,
@@ -56,22 +58,32 @@ export default function AdminLayout() {
 
     const adminTabs: TabGroup[] = [
         {
+            name: "",
+            items: [
+                {
+                    icon: <IconChartArea />,
+                    title: "Dashboard",
+                    index: 0,
+                },
+            ],
+        },
+        {
             name: "Items",
             items: [
                 {
                     icon: <IconTemplate />,
                     title: "Items",
-                    index: 0,
+                    index: 1,
                 },
                 {
                     icon: <IconCategory />,
                     title: "Categories",
-                    index: 1,
+                    index: 2,
                 },
                 {
                     icon: <IconTag />,
                     title: "Tags",
-                    index: 2,
+                    index: 3,
                 },
             ],
         },
@@ -81,12 +93,12 @@ export default function AdminLayout() {
                 {
                     icon: <IconPackage />,
                     title: "Inventories",
-                    index: 3,
+                    index: 4,
                 },
                 {
                     icon: <IconBuildingWarehouse />,
                     title: "Warehouses",
-                    index: 4,
+                    index: 5,
                 },
             ],
         },
@@ -96,18 +108,18 @@ export default function AdminLayout() {
                 {
                     icon: <IconUser />,
                     title: "Users",
-                    index: 5,
+                    index: 6,
                 },
                 {
                     icon: <IconUserDollar />,
                     title: "Suppliers",
-                    index: 6,
+                    index: 7,
                 },
 
                 {
                     icon: <IconReceipt />,
                     title: "Requests",
-                    index: 7,
+                    index: 8,
                 },
             ],
         },

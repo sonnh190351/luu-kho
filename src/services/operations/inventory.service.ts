@@ -107,9 +107,7 @@ export default class InventoryService {
             }
         }
 
-        return await this.database.edit(table, data.id, {
-            name: data.name,
-        });
+        return await this.database.edit(table, data.id, data);
     }
 
     public async addInventory(data: any) {

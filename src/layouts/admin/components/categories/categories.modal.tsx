@@ -17,6 +17,7 @@ interface CategoriesModalProps {
 
 interface CategoriesFormValues {
     name: string;
+    test: string;
 }
 
 export default function CategoriesModal({
@@ -30,6 +31,7 @@ export default function CategoriesModal({
     const form = useForm<CategoriesFormValues>({
         initialValues: {
             name: "",
+            test: "",
         },
         validate: {
             name: FormValidationService.validateName,
@@ -94,6 +96,17 @@ export default function CategoriesModal({
                         onChange={(e) =>
                             form.setValues({
                                 name: UtilsService.sanitize(e.target.value),
+                            })
+                        }
+                    />
+                    <TextInput
+                        {...form.getInputProps('test')}
+                        required
+                        label={"Test"}
+                        value={form.values.test}
+                        onChange={(e) =>
+                            form.setValues({
+                                test: UtilsService.sanitize(e.target.value),
                             })
                         }
                     />
