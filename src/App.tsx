@@ -18,7 +18,7 @@ import NavigationBar from "./components/navigation/navigationBar.tsx";
 import AdminLayout from "./layouts/admin/admin.layout.tsx";
 import { ModalsProvider } from "@mantine/modals";
 import { InformationModal } from "./components/modals/information.modal.tsx";
-import CustomerLayout from "./layouts/customer/customer.layout.tsx";
+import StaffLayout from "./layouts/staff/staff.layout.tsx";
 import ManagerLayout from "./layouts/manager/manager.layout.tsx";
 
 export default function App() {
@@ -33,11 +33,11 @@ export default function App() {
             ),
         },
         {
-            path: "/customer",
+            path: "/staff",
             element: (
                 <ProtectedRoute>
                     <NavigationBar />
-                    <CustomerLayout />
+                    <StaffLayout />
                 </ProtectedRoute>
             ),
         },

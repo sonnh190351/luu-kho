@@ -1,9 +1,9 @@
 import {Container} from "@mantine/core";
 
-export default function CustomerWarehousesTab() {
+export default function StaffRequestsTab() {
     return (
         <Container>
-            Warehouses
+            Requests
         </Container>
     )
 }

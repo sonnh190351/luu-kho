@@ -7,16 +7,16 @@ import {
     NAV_BAR_HEIGHT
 } from "../../enums/styling.ts";
 import {LocalStorage} from "../../enums/localStorage.ts";
-import CustomerWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
+import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
 import {IconBuildingWarehouse, IconChartArea, IconCommand} from "@tabler/icons-react";
-import CustomerRequestsLayout from "./components/requests/requests.main.tsx";
-import CustomerDashboardTab from "./components/dashboard/dashboard.main.tsx";
+import StaffRequestsLayout from "./components/requests/requests.main.tsx";
+import StaffDashboardTab from "./components/dashboard/dashboard.main.tsx";
 
 const openMenuWidth = 200;
 
-export default function CustomerLayout() {
+export default function StaffLayout() {
 
     const { colorScheme } = useMantineColorScheme();
 
@@ -33,13 +33,13 @@ export default function CustomerLayout() {
         return;
     }
 
-    const customerItems = [
-        <CustomerDashboardTab />,
-        <CustomerWarehousesLayout />,
-        <CustomerRequestsLayout />
+    const staffItems = [
+        <StaffDashboardTab />,
+        <StaffWarehousesLayout />,
+        <StaffRequestsLayout />
     ]
 
-    const customerTabs: TabGroup[] = [
+    const staffTabs: TabGroup[] = [
         {
             name: "",
             items: [
@@ -98,7 +98,7 @@ export default function CustomerLayout() {
                     }}>
                     <Stack p={5} gap={0}>
                         {
-                            customerTabs.map((tab: TabGroup, tab_index) => (
+                            staffTabs.map((tab: TabGroup, tab_index) => (
                                 <Stack gap={0} key={`tab-item-${tab_index}`}>
                                     <Text
                                         mt={"sm"}
@@ -142,7 +142,7 @@ export default function CustomerLayout() {
                                             </Text>
                                         </Group>
                                     ))}
-                                    {tab_index < customerTabs.length - 1 && (
+                                    {tab_index < staffTabs.length - 1 && (
                                         <Divider mb={"xs"} mt={"sm"} />
                                     )}
                                 </Stack>
@@ -157,7 +157,7 @@ export default function CustomerLayout() {
                         zIndex: -1,
                         marginLeft: openMenuWidth,
                     }}>
-                    {customerItems[currentTab]}
+                    {staffItems[currentTab]}
                 </div>
             </Group>
         </Container>

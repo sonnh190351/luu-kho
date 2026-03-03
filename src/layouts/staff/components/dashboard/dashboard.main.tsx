@@ -1,6 +1,6 @@
 import {Container} from "@mantine/core";
 
-export default function CustomerDashboardTab() {
+export default function StaffDashboardTab() {
     return (
         <Container></Container>
     )
