@@ -1,4 +1,4 @@
-import {ActionIcon, Container, Divider, Group, Stack, Text, Title, useMantineColorScheme} from "@mantine/core";
+import {ActionIcon, Container, Divider, Group, Stack, Text, useMantineColorScheme} from "@mantine/core";
 import {
     BG_COLOR_DARK,
     BG_COLOR_LIGHT,

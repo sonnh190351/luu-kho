@@ -86,14 +86,6 @@ export default function CategoriesTab() {
             },
         },
         {
-            accessor: "test",
-            title: "Test",
-            sortable: true,
-            render: ({ test }: Categories) => {
-                return <Group>{test}</Group>;
-            },
-        },
-        {
             accessor: "created_at",
             title: "Created At",
             sortable: true,
