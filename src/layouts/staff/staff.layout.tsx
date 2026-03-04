@@ -10,7 +10,7 @@ import {LocalStorage} from "../../enums/localStorage.ts";
 import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconChartArea, IconCommand} from "@tabler/icons-react";
+import {IconBuildingWarehouse, IconChartArea, IconCommand, IconLogs} from "@tabler/icons-react";
 import StaffRequestsLayout from "./components/requests/requests.main.tsx";
 import StaffDashboardTab from "./components/dashboard/dashboard.main.tsx";
 
@@ -25,8 +25,6 @@ export default function StaffLayout() {
     const cachedData = localStorage.getItem(LocalStorage.userData);
 
     const isLoggedIn = Boolean(cachedData);
-
-    const loginData = JSON.parse(cachedData!);
 
     if(!isLoggedIn) {
         window.location.href = "/login";
@@ -55,8 +53,13 @@ export default function StaffLayout() {
             items: [
                 {
                     icon: <IconBuildingWarehouse />,
-                    title: "User Warehouses",
+                    title: "Items",
                     index: 1
+                },
+                {
+                    icon: <IconLogs />,
+                    title: "Logs",
+                    index: 2
                 }
             ]
         },
@@ -66,7 +69,7 @@ export default function StaffLayout() {
                 {
                     icon: <IconCommand />,
                     title: "Requests",
-                    index: 2
+                    index: 3
                 }
             ]
         }

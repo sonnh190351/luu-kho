@@ -48,7 +48,6 @@ export default class InventoryService {
             );
             return [];
         }
-        console.log(response);
         return response.data;
     }
 
@@ -173,4 +172,6 @@ export default class InventoryService {
 
         await this.database.delete(table, id);
     }
+
+
 }
