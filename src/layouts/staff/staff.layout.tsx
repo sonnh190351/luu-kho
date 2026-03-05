@@ -10,9 +10,11 @@ import {LocalStorage} from "../../enums/localStorage.ts";
 import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconChartArea, IconCommand, IconLogs} from "@tabler/icons-react";
+import {IconBuildingWarehouse, IconChartArea, IconCommand, IconLogs, IconTemplate} from "@tabler/icons-react";
 import StaffRequestsLayout from "./components/requests/requests.main.tsx";
 import StaffDashboardTab from "./components/dashboard/dashboard.main.tsx";
+import StaffItemsTab from "./components/items/items.tab.tsx";
+import StaffLogsLayout from "./components/logs/logs.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -33,7 +35,9 @@ export default function StaffLayout() {
 
     const staffItems = [
         <StaffDashboardTab />,
+        <StaffItemsTab />,
         <StaffWarehousesLayout />,
+        <StaffLogsLayout />,
         <StaffRequestsLayout />
     ]
 
@@ -52,14 +56,19 @@ export default function StaffLayout() {
             name: "Warehouses",
             items: [
                 {
-                    icon: <IconBuildingWarehouse />,
+                    icon: <IconTemplate />,
                     title: "Items",
                     index: 1
                 },
                 {
+                    icon: <IconBuildingWarehouse />,
+                    title: "Inventory",
+                    index: 2
+                },
+                {
                     icon: <IconLogs />,
                     title: "Logs",
-                    index: 2
+                    index: 3
                 }
             ]
         },
@@ -69,7 +78,7 @@ export default function StaffLayout() {
                 {
                     icon: <IconCommand />,
                     title: "Requests",
-                    index: 3
+                    index: 4
                 }
             ]
         }

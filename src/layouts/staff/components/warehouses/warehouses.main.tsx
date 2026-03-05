@@ -1,10 +1,9 @@
 import {
     ActionIcon,
     Card,
-    Container,
     Divider, Grid,
     Group,
-    LoadingOverlay,
+    LoadingOverlay, Modal, MultiSelect,
     NumberInput,
     Select,
     Stack,
@@ -16,6 +15,7 @@ import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import ManagementService from "../../../../services/operations/management.service.ts";
 import {IconPlus, IconSearch} from "@tabler/icons-react";
+import WarehouseItemModal from "./warehouseItem.modal.tsx";
 
 export default function StaffWarehousesTab() {
 
@@ -28,6 +28,10 @@ export default function StaffWarehousesTab() {
     const [items, setItems] = useState<any[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
+
+    const [openModal, setOpenModal] = useState(false);
+
+    const [selectedItem, setSelectedItem] = useState<any>(null);
 
     useEffect(() => {
         (async () => await fetchItems())();
@@ -48,6 +52,18 @@ export default function StaffWarehousesTab() {
         setIsLoading(false)
     }
 
+    function handleCloseModal() {
+        setOpenModal(false);
+        setTimeout(() => {
+            setSelectedItem(null);
+        }, 200)
+    }
+
+    function handleSelectItem(item: any) {
+        setSelectedItem(item);
+        setOpenModal(true);
+    }
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
@@ -56,13 +72,15 @@ export default function StaffWarehousesTab() {
                     overlayProps={{radius: "sm", blur: 2}}
                 />
 
-                <Title>Items</Title>
+                <Title>Warehouse Inventory</Title>
                 <Group>
                     <TextInput label={"Name"} leftSection={<IconSearch />} />
-                    <Select label={"Warehouse Id"}></Select>
-                    <Divider orientation={"vertical"} />
-                    <NumberInput label={"Quantity"} />
-                    <Select label={"Quantity Type"}></Select>
+                    <Select label={"Warehouse"}></Select>
+                    <Select label={"Category"}></Select>
+                    <MultiSelect label={"Tag"} style={{
+                        width: "200px",
+                    }}></MultiSelect>
+                    <NumberInput label={"Leftover Quantity"} />
                 </Group>
                 <Divider />
                 <Stack>
@@ -100,7 +118,7 @@ export default function StaffWarehousesTab() {
                                         </Grid>
                                     </Group>
                                     <Group>
-                                        <ActionIcon>
+                                        <ActionIcon onClick={() => handleSelectItem(item)}>
                                             <IconPlus />
                                         </ActionIcon>
                                     </Group>
@@ -110,6 +128,8 @@ export default function StaffWarehousesTab() {
                     }
                 </Stack>
             </Stack>
+
+            <WarehouseItemModal open={openModal} close={handleCloseModal} item={selectedItem} refresh={fetchItems} />
         </>
     )
 }

@@ -10,6 +10,7 @@ export enum DatabaseTables {
     UserDetails = "users",
     Users = "users",
     Requests = "requests",
+    Logs = "logs",
 }
 
 export const DISPLAY_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss a";
