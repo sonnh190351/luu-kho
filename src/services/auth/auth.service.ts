@@ -6,13 +6,11 @@ import { EncryptionService } from "./encryption.service.ts";
 export default class AuthService {
     public async login(email: string, password: string) {
         try {
-            const database = DatabaseService.getInstance();
+            const database = DatabaseService.getInstance().getDatabase();
 
-            const { data, error } = await database.getByField(
-                DatabaseTables.UserDetails,
-                "email",
-                email,
-            );
+            const { data, error } = await database.from(DatabaseTables.UserDetails).select(
+                `id,address,avatar,created_at,dob,email,first_name,last_name,password,role,status,updated_at,warehouses(id, name)`
+            ).eq("email", email)
 
             if (error) {
                 return {

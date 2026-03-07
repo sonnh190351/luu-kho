@@ -47,7 +47,7 @@ export default function UserDetails() {
     async function fetchWarehouseDetails() {
         try {
             const service = InventoryService.getInstance();
-            const data = await service.getAllMatching(DatabaseTables.Warehouses, 'id', loginData.warehouse_id);
+            const data = await service.getAllMatching(DatabaseTables.Warehouses, 'id', loginData.warehouses.id);
             if (data.length > 0) {
                 setWarehouseData(data[0]);
             }
@@ -71,10 +71,11 @@ export default function UserDetails() {
     });
 
     useEffect(() => {
-        if (loginData.warehouse_id) {
+        console.log('fetch')
+        if (loginData.warehouses.id) {
             (async () => await fetchWarehouseDetails())();
         }
-    }, [loginData]);
+    }, []);
 
     function handleClickAvatar() {
         avatarInputRef.current?.click();
@@ -202,14 +203,14 @@ export default function UserDetails() {
                             <Stack gap={3}>
                                 <Title order={6}>Date of Birth
                                 </Title>
-                                <Text>{loginData.dob}</Text>
+                                <Text>{warehouseData.name}</Text>
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={6}>
                             <Stack gap={3}>
                                 <Title order={6}>Address
                                 </Title>
-                                <Text>{loginData.email}</Text>
+                                <Text>{warehouseData.address}</Text>
                             </Stack>
                         </Grid.Col>
                     </Grid> : <Text>This user is not yet assigned to a warehouse!</Text>

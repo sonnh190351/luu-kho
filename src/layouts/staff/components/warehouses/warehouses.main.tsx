@@ -3,7 +3,7 @@ import {
     Card,
     Divider, Grid,
     Group,
-    LoadingOverlay, Modal, MultiSelect,
+    LoadingOverlay, MultiSelect,
     NumberInput,
     Select,
     Stack,
@@ -23,7 +23,7 @@ export default function StaffWarehousesTab() {
 
     const loginData = JSON.parse(cachedData!);
 
-    const warehouse_id = loginData.warehouse_id;
+    const warehouse_id = loginData.warehouses.id;
 
     const [items, setItems] = useState<any[]>([]);
 
