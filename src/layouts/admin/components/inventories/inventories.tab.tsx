@@ -9,7 +9,6 @@ import {
     Title,
 } from "@mantine/core";
 import {
-    IconInfoCircle,
     IconPlus,
     IconRefresh,
     IconSearch,
@@ -26,7 +25,6 @@ import {
 } from "../../../../enums/tables.ts";
 import {InformationService} from "../../../../services/notifications/information.service.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import InventoryTicketsModal from "./inventories.items.modal.tsx";
 import dayjs from "dayjs";
 
 export default function InventoriesTab() {
@@ -36,10 +34,7 @@ export default function InventoriesTab() {
 
     const [keyword, setKeyword] = useState<string>("");
 
-    const [selectedItem, setSelectedItem] = useState<Inventories | null>(null);
     const [openItemModal, setOpenItemModal] = useState<boolean>(false);
-    const [openInventoryTicketsModal, setOpenInventoryTicketsModal] =
-        useState<boolean>(false);
 
     useEffect(() => {
         (async () => await fetchInventories())();
@@ -49,7 +44,8 @@ export default function InventoriesTab() {
         const service = InventoryService.getInstance();
 
         try {
-            const data = await service.getAllRows(DatabaseTables.Inventories);
+            const data = await service.getAllInventoryItems()
+            console.log(data)
             setInventories(data);
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
@@ -60,13 +56,6 @@ export default function InventoriesTab() {
 
     function handleCloseItemModal() {
         setOpenItemModal(false);
-    }
-
-    function handleCloseInventoryTicketsModal() {
-        setOpenInventoryTicketsModal(false);
-        setTimeout(() => {
-            setSelectedItem(null);
-        }, 200);
     }
 
     const columns: any[] = [
@@ -83,26 +72,68 @@ export default function InventoriesTab() {
             },
         },
         {
-            accessor: "warehouse_id",
-            title: "Warehouse ID",
+            accessor: "items",
+            title: "Items",
+            sortable: false,
+            width: 150,
+            render: ({items}: Inventories) => {
+                return (
+                    <Group>
+                        <Text>{items.name}</Text>
+                    </Group>
+                );
+            },
+        },
+
+        {
+            accessor: "quantity",
+            title: "Quantity",
+            sortable: true,
+            width: true,
+            render: ({quantity, items}: Inventories) => {
+                return (
+                    <Group gap={5}>
+                        <Text>{quantity}</Text>
+                        <Text>({items.quantity_type})</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "warehouses",
+            title: "Warehouse",
+            sortable: true,
+            width: 185,
+            render: ({warehouses}: Inventories) => {
+                return (
+                    <Group>
+                        <Text>{warehouses.name}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "warehouses",
+            title: "Warehouse Address",
             sortable: false,
             width: 185,
-            render: ({warehouse_id}: Inventories) => {
+            render: ({warehouses}: Inventories) => {
                 return (
-                    <Button
-                        style={{
-                            width: "100%",
-                        }}
-                        leftSection={<IconInfoCircle/>}
-                        onClick={async () => {
-                            await InformationService.getInstance().showItemDetailsById(
-                                DatabaseTables.Warehouses,
-                                "Warehouse Details",
-                                warehouse_id!,
-                            );
-                        }}>
-                        Details ({warehouse_id})
-                    </Button>
+                    <Group>
+                        <Text>{warehouses.address}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "expired_at",
+            title: "Expired At",
+            sortable: true,
+            render: ({expired_at}: Inventories) => {
+                return (
+                    <Group>
+                        {dayjs(expired_at).format(DISPLAY_TIME_FORMAT)}
+                    </Group>
                 );
             },
         },
@@ -115,34 +146,6 @@ export default function InventoriesTab() {
                     <Group>
                         {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
                     </Group>
-                );
-            },
-        },
-        {
-            accessor: "updated_at",
-            title: "Updated At",
-            sortable: true,
-            render: ({updated_at}: Inventories) => {
-                return (
-                    <Group>
-                        {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
-                    </Group>
-                );
-            },
-        },
-        {
-            accessor: "id",
-            title: "Items",
-            sortable: false,
-            width: 150,
-            render: ({id}: Inventories) => {
-                return (
-                    <Button
-                        leftSection={<IconInfoCircle/>}
-                        onClick={() => handleInventoryTickets(id)}
-                        size={"sm"}>
-                        Items List
-                    </Button>
                 );
             },
         },
@@ -168,13 +171,6 @@ export default function InventoriesTab() {
         },
     ];
 
-    function handleInventoryTickets(id: number) {
-        const matching = items.find((i) => i.id === id);
-        if (matching) {
-            setSelectedItem(matching);
-            setOpenInventoryTicketsModal(true);
-        }
-    }
 
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
@@ -272,12 +268,6 @@ export default function InventoriesTab() {
                 open={openItemModal}
                 refresh={fetchInventories}
                 close={handleCloseItemModal}
-            />
-
-            <InventoryTicketsModal
-                inventory={selectedItem}
-                open={openInventoryTicketsModal}
-                close={handleCloseInventoryTicketsModal}
             />
         </>
     );

@@ -48,7 +48,7 @@ export default class UserService {
     }
 
     public async editUser(id: any, user: any) {
-        await this.database.edit(DatabaseTables.Users, id, user);
+        await this.database.edit(DatabaseTables.UserDetails, id, user);
     }
 
     public async registerUser(user: any) {

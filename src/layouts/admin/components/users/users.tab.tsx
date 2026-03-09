@@ -249,7 +249,7 @@ export default function UserDetailsTab() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = InventoryService.getInstance();
-                await service.deleteById(DatabaseTables.Users, id);
+                await service.deleteById(DatabaseTables.UserDetails, id);
                 NotificationsService.success(
                     "Deactivate User",
                     "User has been deactivated!",

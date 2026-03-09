@@ -17,20 +17,9 @@ export default class ManagementService {
     }
 
     public async getWarehouseInventoryItems(warehouse_id: number) {
-        const inventories = await DatabaseService.getInstance().getByField(DatabaseTables.Inventories, 'warehouse_id', warehouse_id)
-        if(inventories.error) {
-            NotificationsService.error(
-                "Management Service",
-                `Failed to get items: ${inventories.error}`,
-            );
-            return []
-        }
-
-        // Mapping ID
-        const ids = inventories.data.map((d) => d.id)
 
         // get matching data
-        const data = await DatabaseService.getInstance().getDatabase().from(DatabaseTables.InventoryTickets).select(`
+        const data = await DatabaseService.getInstance().getDatabase().from(DatabaseTables.Inventories).select(`
                 id,
                 created_at,
                 updated_at,
@@ -42,7 +31,7 @@ export default class ManagementService {
                     quantity_type
                 )
             `).in(
-            'inventory_id', ids
+            'warehouse_id', [warehouse_id]
         )
 
         if(data.error) {

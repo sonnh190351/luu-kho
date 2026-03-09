@@ -69,6 +69,39 @@ export default class InventoryService {
         return response.data;
     }
 
+    public async getAllInventoryItems() {
+        const db = this.database.getDatabase();
+
+        const response = await db
+            .from(DatabaseTables.Inventories)
+            .select(
+                `
+                id,
+                created_at,
+                updated_at,
+                expired_at,
+                quantity,
+                items(
+                    name,
+                    quantity_type
+                ),
+                warehouses(
+                    name,
+                    address
+                )
+            `,
+            )
+
+        if (response.error) {
+            NotificationsService.error(
+                "Inventory Service",
+                `Failed to get items: ${response.error}`,
+            );
+            return [];
+        }
+        return response.data;
+    }
+
     public async getAllRows(table: DatabaseTables) {
         const response = await this.database.getAll(table);
 
