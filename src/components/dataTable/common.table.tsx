@@ -32,7 +32,6 @@ export default function CommonTable({ data, columns, height }: DataTableProps) {
             style={{
                 width: "100%",
             }}
-            idAccessor={"id"}
             sortStatus={sortStatus}
             onSortStatusChange={setSortStatus}
             withTableBorder
@@ -41,8 +40,6 @@ export default function CommonTable({ data, columns, height }: DataTableProps) {
             recordsPerPage={PAGE_SIZE}
             page={page}
             onPageChange={(p) => setPage(p)}
-            withColumnBorders
-            striped
             highlightOnHover
             columns={columns}
             records={records}

@@ -19,7 +19,6 @@ import {
 } from "@tabler/icons-react";
 import {type ChangeEvent, useEffect, useState} from "react";
 import type { Items } from "../../../../models/items.ts";
-import ItemsModal from "./items.modal.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import {
@@ -30,6 +29,7 @@ import type { DataTableColumn } from "mantine-datatable";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import dayjs from "dayjs";
+import StaffItemsModal from "./items.modal.tsx";
 
 export default function StaffItemsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -152,6 +152,7 @@ export default function StaffItemsTab() {
             render: ({ category_id }: any) => {
                 return (
                     <Button
+                        variant={'outline'}
                         style={{
                             width: "100%",
                         }}
@@ -176,6 +177,7 @@ export default function StaffItemsTab() {
             render: ({ supplier_id }: any) => {
                 return (
                     <Button
+                        variant={'outline'}
                         style={{
                             width: "100%",
                         }}
@@ -312,7 +314,7 @@ export default function StaffItemsTab() {
             </Stack>
 
             {/*Item modal*/}
-            <ItemsModal
+            <StaffItemsModal
                 item={selectedItem}
                 open={openItemModal}
                 refresh={fetchItems}

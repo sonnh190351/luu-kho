@@ -1,12 +1,12 @@
 import {
-    ActionIcon,
+    ActionIcon, Button,
     Card,
     Divider, Grid,
     Group,
     LoadingOverlay, MultiSelect,
     NumberInput,
     Select,
-    Stack,
+    Stack, Text,
     TextInput,
     Title
 } from "@mantine/core";
@@ -14,7 +14,7 @@ import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import ManagementService from "../../../../services/operations/management.service.ts";
-import {IconPlus, IconSearch} from "@tabler/icons-react";
+import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 
 export default function StaffWarehousesTab() {
@@ -73,14 +73,33 @@ export default function StaffWarehousesTab() {
                 />
 
                 <Title>Warehouse Inventory</Title>
-                <Group>
-                    <TextInput label={"Name"} leftSection={<IconSearch />} />
-                    <Select label={"Warehouse"}></Select>
-                    <Select label={"Category"}></Select>
-                    <MultiSelect label={"Tag"} style={{
-                        width: "200px",
-                    }}></MultiSelect>
-                    <NumberInput label={"Leftover Quantity"} />
+                <Group justify={'space-between'}>
+                    <Group>
+                        <TextInput label={"Name"} leftSection={<IconSearch />} />
+                        <Select label={"Warehouse"}></Select>
+                        <Select label={"Category"}></Select>
+                        <MultiSelect label={"Tag"} style={{
+                            width: "200px",
+                        }}></MultiSelect>
+                        <NumberInput label={"Leftover Quantity"} />
+                    </Group>
+                    <Stack gap={2}>
+                        <Text style={{
+                            fontSize: 14
+                        }}>Controls</Text>
+                        <Group>
+                            <Button
+                                onClick={() => setOpenModal(true)}
+                                leftSection={<IconPlus/>}>
+                                Add
+                            </Button>
+                            <Button
+                                onClick={() => fetchItems()}
+                                leftSection={<IconRefresh/>}>
+                                Refresh
+                            </Button>
+                        </Group>
+                    </Stack>
                 </Group>
                 <Divider />
                 <Stack>
