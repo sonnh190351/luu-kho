@@ -1,14 +1,17 @@
 import {LoadingOverlay, Stack, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
+import StaffRequestModal from "./request.modal.tsx";
 
 export default function StaffRequestsLayout() {
     const [isLoading, setIsLoading] = useState(false);
 
+    const [isOpenModal, setIsOpenModal] = useState(false);
+
     useEffect(() => {
-        (async() => await fetchLogs())();
+        (async() => await fetchRequests())();
     }, [])
 
-    async function fetchLogs() {
+    async function fetchRequests() {
         setIsLoading(true);
         try {
 
@@ -16,6 +19,10 @@ export default function StaffRequestsLayout() {
 
         }
         setIsLoading(false);
+    }
+
+    function handleCloseModal() {
+        setIsOpenModal(false)
     }
 
     return (
@@ -26,6 +33,8 @@ export default function StaffRequestsLayout() {
             />
 
             <Title>Requests</Title>
+
+            <StaffRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
         </Stack>
     )
 }

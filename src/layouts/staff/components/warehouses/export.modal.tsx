@@ -1,7 +1,14 @@
-import {Container} from "@mantine/core";
+import {Modal} from "@mantine/core";
 
-export default class ExportInventoryModal() {
+interface StaffExportInventoryModalProps {
+    open: boolean;
+    refresh: any;
+    close: any;
+}
+
+
+export default function StaffExportInventoryModal({open, close, refresh}: StaffExportInventoryModalProps) {
     return (
-        <Container></Container>
+        <Modal opened={open} onClose={close} centered={true}></Modal>
     )
 }

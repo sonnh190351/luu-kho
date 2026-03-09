@@ -16,6 +16,7 @@ import {NotificationsService} from "../../../../services/notifications/notificat
 import ManagementService from "../../../../services/operations/management.service.ts";
 import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
+import StaffExportInventoryModal from "./export.modal.tsx";
 
 export default function StaffWarehousesTab() {
 
@@ -30,6 +31,8 @@ export default function StaffWarehousesTab() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [openModal, setOpenModal] = useState(false);
+
+    const [openExportModal, setOpenExportModal] = useState(false);
 
     const [selectedItem, setSelectedItem] = useState<any>(null);
 
@@ -59,9 +62,16 @@ export default function StaffWarehousesTab() {
         }, 200)
     }
 
+    function handleCloseExportModal() {
+        setOpenExportModal(false);
+        setTimeout(() => {
+            setSelectedItem(null);
+        }, 200)
+    }
+
     function handleSelectItem(item: any) {
         setSelectedItem(item);
-        setOpenModal(true);
+        setOpenExportModal(true);
     }
 
     return (
@@ -149,6 +159,8 @@ export default function StaffWarehousesTab() {
             </Stack>
 
             <WarehouseItemModal open={openModal} close={handleCloseModal} item={selectedItem} refresh={fetchItems} />
+
+            <StaffExportInventoryModal open={openExportModal} refresh={fetchItems} close={handleCloseExportModal} />
         </>
     )
 }
