@@ -40,7 +40,7 @@ export default function StaffInventoriesModal({
             expired_at: "",
         },
         validate: {
-            warehouse_id: FormValidationService.validateWarehouseId,
+
         },
     });
 
@@ -91,7 +91,7 @@ export default function StaffInventoriesModal({
             opened={open}
             onClose={handleClose}
             centered
-            title={"Add Inventory"}>
+            title={"Add Inventory Item"}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <DatePickerInput

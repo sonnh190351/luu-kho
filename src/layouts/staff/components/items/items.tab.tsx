@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     LoadingOverlay,
-    Title,
+    Title, Grid, Card, type MantineStyleProp,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -30,6 +30,11 @@ import { InformationService } from "../../../../services/notifications/informati
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import dayjs from "dayjs";
 import StaffItemsModal from "./items.modal.tsx";
+
+const cardStyle: MantineStyleProp = {
+    height: '150px',
+    position: 'relative',
+}
 
 export default function StaffItemsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -274,7 +279,38 @@ export default function StaffItemsTab() {
                 />
 
                 <Title>Items Management</Title>
-
+                <Grid>
+                    <Grid.Col span={4}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack gap={5} justify={'flex-end'} align={'start'}>
+                                <Text>Total Items</Text>
+                                <Title>{items.length}</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack gap={5} justify={'flex-end'} align={'start'}>
+                                <Text>Ongoing requests</Text>
+                                <Title>1</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack gap={5}  justify={'flex-end'} align={'start'}>
+                                <Text>Finished requests</Text>
+                                <Title>1</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                </Grid>
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
                         <Text>Filter</Text>
@@ -310,7 +346,7 @@ export default function StaffItemsTab() {
                         </Group>
                     </Stack>
                 </Group>
-                <CommonTable data={items} columns={columns} />
+                <CommonTable height={'55dvh'} data={items} columns={columns} />
             </Stack>
 
             {/*Item modal*/}

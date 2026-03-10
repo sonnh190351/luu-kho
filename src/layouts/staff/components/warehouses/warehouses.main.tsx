@@ -3,8 +3,7 @@ import {
     Card,
     Divider, Grid,
     Group,
-    LoadingOverlay, MultiSelect,
-    NumberInput,
+    LoadingOverlay, type MantineStyleProp,
     Select,
     Stack, Text,
     TextInput,
@@ -17,6 +16,13 @@ import ManagementService from "../../../../services/operations/management.servic
 import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import StaffExportInventoryModal from "./export.modal.tsx";
+import dayjs from "dayjs";
+import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
+
+const cardStyle: MantineStyleProp = {
+    height: '150px',
+    position: 'relative',
+}
 
 export default function StaffWarehousesTab() {
 
@@ -48,6 +54,7 @@ export default function StaffWarehousesTab() {
                 const service = ManagementService.getInstance();
                 const data = await service.getWarehouseInventoryItems(warehouse_id)
                 setItems(data);
+                console.log(data)
             }
         } catch (e: any) {
             NotificationsService.error("Fetch Items", e.toString());
@@ -81,17 +88,45 @@ export default function StaffWarehousesTab() {
                     visible={isLoading}
                     overlayProps={{radius: "sm", blur: 2}}
                 />
-
                 <Title>Warehouse Inventory</Title>
+                <Grid>
+                    <Grid.Col span={4}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack justify={'flex-end'} align={'start'}>
+                                <Text>Total Items</Text>
+                                <Title>1</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack justify={'flex-end'} align={'start'}>
+                                <Text>Expiring Soon</Text>
+                                <Title>1</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack justify={'flex-end'} align={'start'}>
+                                <Text>Out of stock</Text>
+                                <Title>1</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                </Grid>
                 <Group justify={'space-between'}>
                     <Group>
                         <TextInput label={"Name"} leftSection={<IconSearch />} />
                         <Select label={"Warehouse"}></Select>
                         <Select label={"Category"}></Select>
-                        <MultiSelect label={"Tag"} style={{
-                            width: "200px",
-                        }}></MultiSelect>
-                        <NumberInput label={"Leftover Quantity"} />
+                        <Select label={"Status"}></Select>
                     </Group>
                     <Stack gap={2}>
                         <Text style={{
@@ -113,21 +148,29 @@ export default function StaffWarehousesTab() {
                 </Group>
                 <Divider />
                 <Stack>
-                    <Group style={{
-                        width: "90%",
-                    }}>
-                        <Grid style={{
-                            width: "100%",
+                    <Group justify={"space-between"}>
+                        <Group style={{
+                            width: "90%",
                         }}>
-                            <Grid.Col span={4}>
-                                <Title ml={'sm'} order={4}>Name</Title>
-                            </Grid.Col>
-                            <Grid.Col span={4}>
-                                <Title ml={5} order={4}>Quantity</Title>
-                            </Grid.Col>
-                        </Grid>
+                            <Grid style={{
+                                width: "100%",
+                            }}>
+                                <Grid.Col span={3}>
+                                    <Title ml={'sm'} order={4}>Name</Title>
+                                </Grid.Col>
+                                <Grid.Col span={3}>
+                                    <Title ml={5} order={4}>Remaining Quantity</Title>
+                                </Grid.Col>
+                                <Grid.Col span={3}>
+                                    <Title ml={0} order={4}>Import Date</Title>
+                                </Grid.Col>
+                                <Grid.Col span={3}>
+                                    <Title ml={-5} order={4}>Expired Date</Title>
+                                </Grid.Col>
+                            </Grid>
+                        </Group>
+                        <Title mr={16} order={4}>Action</Title>
                     </Group>
-
                     {
                         items.map((item: any, index: number) => (
                             <Card key={`warehouse-item-${index}`}>
@@ -138,11 +181,17 @@ export default function StaffWarehousesTab() {
                                         <Grid style={{
                                             width: "100%",
                                         }}>
-                                            <Grid.Col span={4}>
+                                            <Grid.Col span={3}>
                                                 {item.items.name}
                                             </Grid.Col>
-                                            <Grid.Col span={4}>
-                                                {item.quantity}
+                                            <Grid.Col span={3}>
+                                                {item.quantity} ({item.items.quantity_type})
+                                            </Grid.Col>
+                                            <Grid.Col span={3}>
+                                                {dayjs(item.created_at).format(DISPLAY_DATE_FORMAT)}
+                                            </Grid.Col>
+                                            <Grid.Col span={3}>
+                                                {dayjs(item.expired_at).format(DISPLAY_DATE_FORMAT)}
                                             </Grid.Col>
                                         </Grid>
                                     </Group>

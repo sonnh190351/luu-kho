@@ -1,6 +1,6 @@
 import type { Items } from "../../../../models/items.ts";
 import {
-    Button,
+    Button, FileInput,
     Modal,
     MultiSelect,
     NumberInput,
@@ -13,12 +13,14 @@ import type { Suppliers } from "../../../../models/suppliers.ts";
 import type { Categories } from "../../../../models/categories.ts";
 import { useForm } from "@mantine/form";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {DatabaseTables, StorageBuckets} from "../../../../enums/tables.ts";
 import { QUANTITY_TYPES } from "../../../../enums/data.ts";
 import type { Tags } from "../../../../models/tags.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../../services/utils.ts";
 import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
+import {IconFile} from "@tabler/icons-react";
+import DatabaseService from "../../../../services/database/database.service.ts";
 
 interface ItemsModalProps {
     item: Items | null;
@@ -48,6 +50,8 @@ export default function ItemsModal({
     const [categories, setCategories] = useState<Categories[]>([]);
     const [tags, setTags] = useState<Tags[]>([]);
 
+    const [image, setImage] = useState<File | null>(null);
+
     const form = useForm<ItemFormValues>({
         initialValues: {
             category_id: -1,
@@ -73,7 +77,7 @@ export default function ItemsModal({
                 quantity_type: item.quantity_type!,
                 supplier_id: item.supplier_id!,
                 tags: item.tags! ?? [],
-                warning_limit: Number(item.warning_limit) ?? 0,
+                warning_limit: Number(item.warning_limit ?? 0),
             });
         }
     }, [isEdit]);
@@ -127,6 +131,12 @@ export default function ItemsModal({
                     DatabaseTables.Items,
                     form.getValues(),
                 );
+            }
+
+            if(image) {
+                await DatabaseService.getInstance().uploadImage(
+                    StorageBuckets.Items, `${form.getValues().name}.jpg`, image
+                )
             }
 
             refresh();
@@ -246,7 +256,7 @@ export default function ItemsModal({
                         required
                         {...form.getInputProps('warning_limit')}
                         label={"Warning Limit"}
-                        value={form.values.name}
+                        value={form.values.warning_limit}
                         onChange={(e) => {
                             if (e) {
                                 form.setValues({
@@ -255,6 +265,12 @@ export default function ItemsModal({
                             }
                         }}
                     />
+
+                    <FileInput leftSection={<IconFile />} accept={"image/*"} label={"Item Image"} value={image} onChange={(e) => {
+                        if(e){
+                            setImage(e)
+                        }
+                    }} />
 
                     <Button type="submit" fullWidth mt="md">
                         Submit

@@ -8,4 +8,5 @@ export interface Items {
     tags: string[] | null
     updated_at: string | null
     warning_limit: number | null
+    image: string | null
 }

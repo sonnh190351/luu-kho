@@ -1,5 +1,5 @@
 import DatabaseService from "../database/database.service.ts";
-import { DatabaseTables } from "../../enums/tables.ts";
+import {DatabaseTables} from "../../enums/tables.ts";
 import { NotificationsService } from "../notifications/notifications.service.ts";
 
 export default class InventoryService {
@@ -133,6 +133,8 @@ export default class InventoryService {
 
         return await this.database.add(DatabaseTables.Inventories, data);
     }
+
+
 
     public async addItemWithUniqueName(table: DatabaseTables, data: any) {
         const matching = await this.database.getByField(

@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "./database.types.ts";
-import type { DatabaseTables } from "../../enums/tables.ts";
+import {type DatabaseTables, StorageBuckets} from "../../enums/tables.ts";
 
 const supabaseUrl = import.meta.env.VITE_APP_SUPABASE_URL!;
 const supabaseKey = import.meta.env.VITE_APP_SUPABASE_PUBLISHABLE_DEFAULT_KEY!;
@@ -56,5 +56,15 @@ export default class DatabaseService {
 
     public async edit(table: DatabaseTables, id: any, data: any) {
         await this.database.from(table).update(data).eq("id", id);
+    }
+
+    public async uploadImage(bucket: StorageBuckets, path: string, file: File){
+        const { error } = await this.database.storage.from(bucket).upload(
+            path, file
+        )
+        console.log(error)
+        if(error) {
+            throw error.message;
+        }
     }
 }

@@ -8,7 +8,7 @@ import {
     Switch,
     TextInput,
     Divider,
-    PasswordInput,
+    PasswordInput, FileInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { UserDetails } from "../../../../models/user.ts";
@@ -23,6 +23,7 @@ import type { Warehouses } from "../../../../models/warehouses.ts";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import UtilsService from "../../../../services/utils.ts";
 import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
+import {IconFile} from "@tabler/icons-react";
 
 interface UserDetailsModalProps {
     user: UserDetails | null;
@@ -54,6 +55,8 @@ export default function UserDetailsModal({
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const [warehouses, setWarehouses] = useState<Warehouses[]>([]);
+
+    const [image, setImage] = useState<File | null>(null);
 
     const form = useForm<UserDetailsFormValues>({
         initialValues: {
@@ -115,6 +118,12 @@ export default function UserDetailsModal({
                 await service.editUser(user!.id, form.getValues());
             } else {
                 await service.registerUser(form.getValues());
+            }
+
+            if(image) {
+                await DatabaseService.getInstance().uploadImage(
+                    StorageBuckets.Items, `${form.getValues().name}.jpg`, image
+                )
             }
 
             refresh();
@@ -311,6 +320,12 @@ export default function UserDetailsModal({
                                     })
                                 }
                             />
+
+                            <FileInput leftSection={<IconFile />} accept={"image/*"} label={"Avatar"} value={image} onChange={(e) => {
+                                if(e){
+                                    setImage(e)
+                                }
+                            }} />
                         </Stack>
                     </Grid.Col>
                 </Grid>

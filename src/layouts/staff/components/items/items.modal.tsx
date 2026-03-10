@@ -1,24 +1,18 @@
-import type { Items } from "../../../../models/items.ts";
-import {
-    Button,
-    Modal,
-    MultiSelect,
-    NumberInput,
-    Select,
-    Stack,
-    TextInput,
-} from "@mantine/core";
-import { useEffect, useState } from "react";
-import type { Suppliers } from "../../../../models/suppliers.ts";
-import type { Categories } from "../../../../models/categories.ts";
-import { useForm } from "@mantine/form";
+import type {Items} from "../../../../models/items.ts";
+import {Button, FileInput, Modal, MultiSelect, NumberInput, Select, Stack, TextInput,} from "@mantine/core";
+import {useEffect, useState} from "react";
+import type {Suppliers} from "../../../../models/suppliers.ts";
+import type {Categories} from "../../../../models/categories.ts";
+import {useForm} from "@mantine/form";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
-import { DatabaseTables } from "../../../../enums/tables.ts";
-import { QUANTITY_TYPES } from "../../../../enums/data.ts";
-import type { Tags } from "../../../../models/tags.ts";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import {DatabaseTables, StorageBuckets} from "../../../../enums/tables.ts";
+import {QUANTITY_TYPES} from "../../../../enums/data.ts";
+import type {Tags} from "../../../../models/tags.ts";
+import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../../services/utils.ts";
-import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
+import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
+import DatabaseService from "../../../../services/database/database.service.ts";
+import {IconFile} from "@tabler/icons-react";
 
 interface ItemsModalProps {
     item: Items | null;
@@ -48,6 +42,8 @@ export default function StaffItemsModal({
     const [categories, setCategories] = useState<Categories[]>([]);
     const [tags, setTags] = useState<Tags[]>([]);
 
+    const [image, setImage] = useState<File | null>(null);
+
     const form = useForm<ItemFormValues>({
         initialValues: {
             category_id: -1,
@@ -73,12 +69,13 @@ export default function StaffItemsModal({
                 quantity_type: item.quantity_type!,
                 supplier_id: item.supplier_id!,
                 tags: item.tags! ?? [],
-                warning_limit: Number(item.warning_limit) ?? 0,
+                warning_limit: Number(item.warning_limit ?? 0),
             });
         }
     }, [isEdit]);
 
     useEffect(() => {
+        // Fetch items
         (async () => await fetchSuppliers())();
         (async () => await fetchCategories())();
         (async () => await fetchTags())();
@@ -121,19 +118,29 @@ export default function StaffItemsModal({
                 await service.editItemName(DatabaseTables.Items, {
                     id: item?.id,
                     ...form.getValues(),
+                    image: `${item?.name}.jpg`
                 });
             } else {
                 await service.addItemWithUniqueName(
                     DatabaseTables.Items,
-                    form.getValues(),
+                    {
+                        ...form.getValues(),
+                        image: `${form.getValues().name}.jpg`
+                    },
                 );
+            }
+
+            if(image) {
+                await DatabaseService.getInstance().uploadImage(
+                    StorageBuckets.Items, `${form.getValues().name}.jpg`, image
+                )
             }
 
             refresh();
             handleClose();
             NotificationsService.success(
                 `${isEdit ? "Edit" : "Add"} Item`,
-                `New category has been ${isEdit ? "edit" : "added"} successfully!`,
+                `New item has been ${isEdit ? "edit" : "added"} successfully!`,
             );
         } catch (e: any) {
             NotificationsService.error(
@@ -246,7 +253,7 @@ export default function StaffItemsModal({
                         required
                         {...form.getInputProps('warning_limit')}
                         label={"Warning Limit"}
-                        value={form.values.name}
+                        value={form.values.warning_limit}
                         onChange={(e) => {
                             if (e) {
                                 form.setValues({
@@ -255,6 +262,12 @@ export default function StaffItemsModal({
                             }
                         }}
                     />
+
+                    <FileInput leftSection={<IconFile />} accept={"image/*"} label={"Item Image"} value={image} onChange={(e) => {
+                        if(e){
+                            setImage(e)
+                        }
+                    }} />
 
                     <Button type="submit" fullWidth mt="md">
                         Submit

@@ -10,9 +10,8 @@ import {LocalStorage} from "../../enums/localStorage.ts";
 import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconChartArea, IconCommand, IconLogs, IconTemplate} from "@tabler/icons-react";
+import {IconBuildingWarehouse, IconCommand, IconLogs, IconTemplate} from "@tabler/icons-react";
 import StaffRequestsLayout from "./components/requests/requests.main.tsx";
-import StaffDashboardTab from "./components/dashboard/dashboard.main.tsx";
 import StaffItemsTab from "./components/items/items.tab.tsx";
 import StaffLogsLayout from "./components/logs/logs.tab.tsx";
 
@@ -34,7 +33,6 @@ export default function StaffLayout() {
     }
 
     const staffItems = [
-        <StaffDashboardTab />,
         <StaffItemsTab />,
         <StaffWarehousesLayout />,
         <StaffLogsLayout />,
@@ -43,32 +41,22 @@ export default function StaffLayout() {
 
     const staffTabs: TabGroup[] = [
         {
-            name: "",
-            items: [
-                {
-                    icon: <IconChartArea />,
-                    title: "Dashboard",
-                    index: 0,
-                },
-            ],
-        },
-        {
             name: "Warehouses",
             items: [
                 {
                     icon: <IconTemplate />,
                     title: "Items",
-                    index: 1
+                    index: 0
                 },
                 {
                     icon: <IconBuildingWarehouse />,
                     title: "Inventory",
-                    index: 2
+                    index: 1
                 },
                 {
                     icon: <IconLogs />,
                     title: "Logs",
-                    index: 3
+                    index: 2
                 }
             ]
         },
@@ -78,7 +66,7 @@ export default function StaffLayout() {
                 {
                     icon: <IconCommand />,
                     title: "Requests",
-                    index: 4
+                    index: 3
                 }
             ]
         }
