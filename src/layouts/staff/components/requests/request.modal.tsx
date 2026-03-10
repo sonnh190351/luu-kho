@@ -7,7 +7,7 @@ interface RequestModalProps {
 }
 
 
-export default function StaffRequestModal({open, close, refresh}: RequestModalProps) {
+export default function StaffRequestModal({open, close}: RequestModalProps) {
     return (
         <Modal opened={open} onClose={close}></Modal>
     )

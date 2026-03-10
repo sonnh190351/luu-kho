@@ -1,7 +1,6 @@
 import {LocalStorage} from "../../enums/localStorage.ts";
 import {DatabaseTables} from "../../enums/tables.ts";
 import type {UserDetails} from "../../models/user.ts";
-import {EncryptionService} from "../auth/encryption.service.ts";
 import DatabaseService from "../database/database.service.ts";
 import {NotificationsService} from "../notifications/notifications.service.ts";
 

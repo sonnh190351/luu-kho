@@ -43,6 +43,7 @@ export default function StaffWarehousesTab() {
     const [selectedItem, setSelectedItem] = useState<any>(null);
 
     useEffect(() => {
+        console.log(selectedItem);
         (async () => await fetchItems())();
     }, []);
 
@@ -207,7 +208,7 @@ export default function StaffWarehousesTab() {
                 </Stack>
             </Stack>
 
-            <WarehouseItemModal open={openModal} close={handleCloseModal} item={selectedItem} refresh={fetchItems} />
+            <WarehouseItemModal open={openModal} close={handleCloseModal} refresh={fetchItems} />
 
             <StaffExportInventoryModal open={openExportModal} refresh={fetchItems} close={handleCloseExportModal} />
         </>

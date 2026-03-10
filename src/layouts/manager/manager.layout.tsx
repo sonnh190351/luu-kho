@@ -26,8 +26,6 @@ export default function ManagerLayout() {
 
     const isLoggedIn = Boolean(cachedData);
 
-    const loginData = JSON.parse(cachedData!);
-
     if(!isLoggedIn) {
         window.location.href = "/login";
         return;
