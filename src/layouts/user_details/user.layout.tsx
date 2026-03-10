@@ -16,13 +16,14 @@ import UtilsService from "../../services/utils.ts";
 import {useEffect, useRef, useState} from "react";
 import type {Warehouses} from "../../models/warehouses.ts";
 import InventoryService from "../../services/operations/inventory.service.ts";
-import {DatabaseTables} from "../../enums/tables.ts";
+import {DatabaseTables, StorageBuckets} from "../../enums/tables.ts";
 import {NotificationsService} from "../../services/notifications/notifications.service.ts";
 import {useForm} from "@mantine/form";
 import dayjs from "dayjs";
 import {FormValidationService} from "../../services/validatior/form-validation.service.ts";
 import {IconLock} from "@tabler/icons-react";
 import {DatePickerInput} from "@mantine/dates";
+import DatabaseService from "../../services/database/database.service.ts";
 
 interface UserDetailsFormValues {
     old_password: string;
@@ -41,7 +42,7 @@ export default function UserDetails() {
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
-    const [avatar, setAvatar] = useState(null);
+    const [avatar, setAvatar] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     async function fetchWarehouseDetails() {
@@ -71,7 +72,6 @@ export default function UserDetails() {
     });
 
     useEffect(() => {
-        console.log('fetch')
         if (loginData.warehouses.id) {
             (async () => await fetchWarehouseDetails())();
         }
@@ -93,8 +93,12 @@ export default function UserDetails() {
         }
     }
 
-    function handleSubmitAvatar() {
-
+   async function handleSubmitAvatar() {
+        if(avatar) {
+            await DatabaseService.getInstance().uploadImage(
+                StorageBuckets.Avatar, `${loginData.email}.jpg`, avatar
+            )
+        }
     }
 
     return (

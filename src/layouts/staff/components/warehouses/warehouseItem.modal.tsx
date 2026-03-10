@@ -6,7 +6,6 @@ import { DatabaseTables } from "../../../../enums/tables.ts";
 import dayjs from "dayjs";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
-import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 
 interface InventoriesModalProps {

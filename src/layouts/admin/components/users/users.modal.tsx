@@ -18,12 +18,13 @@ import { useEffect, useState } from "react";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import UserService from "../../../../services/operations/user.service.ts";
 import dayjs from "dayjs";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {DatabaseTables, StorageBuckets} from "../../../../enums/tables.ts";
 import type { Warehouses } from "../../../../models/warehouses.ts";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import UtilsService from "../../../../services/utils.ts";
 import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 import {IconFile} from "@tabler/icons-react";
+import DatabaseService from "../../../../services/database/database.service.ts";
 
 interface UserDetailsModalProps {
     user: UserDetails | null;
@@ -122,7 +123,7 @@ export default function UserDetailsModal({
 
             if(image) {
                 await DatabaseService.getInstance().uploadImage(
-                    StorageBuckets.Items, `${form.getValues().name}.jpg`, image
+                    StorageBuckets.Avatar, `${form.getValues().email}.jpg`, image
                 )
             }
 

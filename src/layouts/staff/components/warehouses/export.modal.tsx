@@ -9,6 +9,7 @@ interface StaffExportInventoryModalProps {
 
 export default function StaffExportInventoryModal({open, close, refresh}: StaffExportInventoryModalProps) {
     return (
-        <Modal opened={open} onClose={close} centered={true}></Modal>
+        <Modal opened={open} onClose={close} centered={true}>
+        </Modal>
     )
 }
