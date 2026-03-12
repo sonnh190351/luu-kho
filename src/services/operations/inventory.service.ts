@@ -131,7 +131,7 @@ export default class InventoryService {
             throw `Duplicate inventory of date and warehouse in table: "${data.name}"!`;
         }
 
-        return await this.database.add(DatabaseTables.Inventories, data);
+        return this.database.add(DatabaseTables.Inventories, data);
     }
 
 

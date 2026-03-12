@@ -37,6 +37,18 @@ export class FormValidationService {
         return null;
     }
 
+    public static validateDescription(name: string) {
+        if (name.length < 1) {
+            return "Description must have at least 1 character!";
+        }
+
+        if (name.length > 255) {
+            return "Description must not have more than 255 characters!";
+        }
+
+        return null;
+    }
+
     public static validateRole(role: number) {
         const ROLES = Object.values(USER_ROLES);
         if (!ROLES.includes(role)) {

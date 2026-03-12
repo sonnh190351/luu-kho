@@ -1,11 +1,13 @@
 import {
     ActionIcon,
+    Badge,
     Button,
     Card,
+    Divider,
     Grid,
     Group,
     LoadingOverlay,
-    type MantineStyleProp,
+    type MantineStyleProp, Select,
     Stack,
     Text,
     TextInput,
@@ -14,16 +16,21 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 import StaffRequestModal from "./request.modal.tsx";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import {IconPlus, IconRefresh, IconSearch, IconX} from "@tabler/icons-react";
-import {DatabaseTables} from "../../../../enums/tables.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import {IconInfoCircle, IconPlus, IconRefresh} from "@tabler/icons-react";
+import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
+import DatabaseService from "../../../../services/database/database.service.ts";
+import {LocalStorage} from "../../../../enums/localStorage.ts";
+import dayjs from "dayjs";
+import {RequestStatus, RequestType} from "../../../../enums/request.ts";
 
 const cardStyle: MantineStyleProp = {
-    height: '200px',
+    height: '150px',
     position: 'relative',
 }
 
 export default function StaffRequestsLayout() {
+    const cachedData = JSON.parse(localStorage.getItem(LocalStorage.userData)!);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
@@ -39,11 +46,19 @@ export default function StaffRequestsLayout() {
     async function fetchRequests() {
         setIsLoading(true);
 
-        const service = InventoryService.getInstance();
+        const service = DatabaseService.getInstance()
 
         try {
-            const data = await service.getAllRows(DatabaseTables.Requests);
-            setItems(data);
+            const response = await service.getByField(
+                DatabaseTables.Requests, 'user_id', cachedData.id
+            )
+
+            if(response.error) {
+                NotificationsService.error("Fetch Requests", response.error.message)
+            } else {
+                setItems(response.data);
+            }
+
         } catch (e: any) {
             NotificationsService.error("Fetch requests", e.toString());
         }
@@ -81,6 +96,20 @@ export default function StaffRequestsLayout() {
         setItems(matchingItems)
     }
 
+    function getBadgeColor(status: RequestStatus) {
+        switch (status) {
+            case RequestStatus.SUBMITTED:
+                return "blue"
+            case RequestStatus.PROCESSING:
+                return "yellow"
+            case RequestStatus.ACCEPTED:
+                return "green"
+            case RequestStatus.REJECTED:
+                return "red"
+            default:
+                return "gray"
+        }
+    }
 
     return (
         <Stack pt={"lg"} pl={"sm"}>
@@ -90,58 +119,60 @@ export default function StaffRequestsLayout() {
             />
             <Title>Requests</Title>
             <Grid>
-                <Grid.Col span={4}>
+                <Grid.Col span={3}>
                     <Card style={{
                         ...cardStyle
                     }}>
                         <Stack justify={'flex-end'} align={'start'}>
-                            <Text>Pending requests</Text>
+                            <Text>Submitted requests</Text>
                             <Title>1</Title>
                         </Stack>
                     </Card>
                 </Grid.Col>
-                <Grid.Col span={4}>
+                <Grid.Col span={3}>
                     <Card style={{
                         ...cardStyle
                     }}>
                         <Stack justify={'flex-end'} align={'start'}>
-                            <Text>Ongoing requests</Text>
+                            <Text>Processing requests</Text>
                             <Title>1</Title>
                         </Stack>
                     </Card>
                 </Grid.Col>
-                <Grid.Col span={4}>
+                <Grid.Col span={3}>
                     <Card style={{
                         ...cardStyle
                     }}>
                         <Stack justify={'flex-end'} align={'start'}>
-                            <Text>Finished requests</Text>
+                            <Text>Accepted requests</Text>
+                            <Title>1</Title>
+                        </Stack>
+                    </Card>
+                </Grid.Col>
+                <Grid.Col span={3}>
+                    <Card style={{
+                        ...cardStyle
+                    }}>
+                        <Stack justify={'flex-end'} align={'start'}>
+                            <Text>Rejected requests</Text>
                             <Title>1</Title>
                         </Stack>
                     </Card>
                 </Grid.Col>
             </Grid>
+            <Divider mt={'sm'} />
             <Group justify={"space-between"}>
                 <Stack gap={5}>
-                    <Text>Filter</Text>
                     <Group>
                         <TextInput
-                            placeholder={"Search by Name"}
+                            label={"Search by Date"}
                             value={keyword}
                             onChange={handleSearchByName}
                         />
-                        {
-                            keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>
-                                <IconX />
-                            </ActionIcon>
-                        }
-                        <ActionIcon size={"lg"}>
-                            <IconSearch />
-                        </ActionIcon>
+                        <Select label={"Search By Status"}></Select>
                     </Group>
                 </Stack>
-                <Stack gap={5}>
-                    <Text>Controls</Text>
+                <Stack gap={5} mt={20}>
                     <Group>
                         <Button
                             onClick={() => setIsOpenModal(true)}
@@ -156,8 +187,68 @@ export default function StaffRequestsLayout() {
                     </Group>
                 </Stack>
             </Group>
-
-
+            <Stack>
+                {
+                    items.map((item: any, index: number) => {
+                        return (
+                            <Card key={`request-item-${index}`}>
+                                <Group justify={"space-between"}>
+                                    <Group>
+                                        <Title style={{
+                                            width: 30
+                                        }}>{index + 1}</Title>
+                                        <Divider mr={'md'} orientation={'vertical'} />
+                                        <Stack gap={5} style={{
+                                            width: 250
+                                        }}>
+                                            <Text style={{
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Type
+                                            </Text>
+                                            <Group>
+                                                {
+                                                    RequestType[item.type]
+                                                }
+                                            </Group>
+                                        </Stack>
+                                        <Stack gap={5}>
+                                            <Text style={{
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Created Date
+                                            </Text>
+                                            <Group>
+                                                {
+                                                    dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)
+                                                }
+                                            </Group>
+                                        </Stack>
+                                    </Group>
+                                    <Group>
+                                        <Stack gap={5} style={{
+                                            width: 100
+                                        }}>
+                                            <Text style={{
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Status
+                                            </Text>
+                                            <Group>
+                                                <Badge color={getBadgeColor(item.status)}>{item.status}</Badge>
+                                            </Group>
+                                        </Stack>
+                                        <Divider mr={'lg'} orientation={'vertical'} />
+                                        <Button leftSection={<IconInfoCircle />}>
+                                            View Details
+                                        </Button>
+                                    </Group>
+                                </Group>
+                            </Card>
+                        )
+                    })
+                }
+            </Stack>
 
             <StaffRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
         </Stack>
