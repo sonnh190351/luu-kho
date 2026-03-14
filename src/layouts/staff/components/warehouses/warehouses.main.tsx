@@ -15,9 +15,9 @@ import {NotificationsService} from "../../../../services/notifications/notificat
 import ManagementService from "../../../../services/operations/management.service.ts";
 import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
-import StaffExportInventoryModal from "./export.modal.tsx";
 import dayjs from "dayjs";
 import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
+import ExportInventoryModal from "../../../../components/modals/export.modal.tsx";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -210,7 +210,7 @@ export default function StaffWarehousesTab() {
 
             <WarehouseItemModal open={openModal} close={handleCloseModal} refresh={fetchItems} />
 
-            <StaffExportInventoryModal open={openExportModal} refresh={fetchItems} close={handleCloseExportModal} />
+            <ExportInventoryModal open={openExportModal} refresh={fetchItems} close={handleCloseExportModal} />
         </>
     )
 }

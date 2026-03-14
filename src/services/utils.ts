@@ -28,7 +28,7 @@ export default class UtilsService {
         const bytes = new Uint8Array(Math.ceil(length / 2));
         crypto.getRandomValues(bytes);
 
-        let hex = Array.from(bytes, (b) =>
+        const hex = Array.from(bytes, (b) =>
             b.toString(16).padStart(2, "0"),
         ).join("");
         return hex.slice(0, length);
@@ -47,6 +47,7 @@ export default class UtilsService {
      * Get avatar URL
      */
     static getAvatarUrl(avatar: string) {
-        return `https://pyhfaxqieivmwcayxetg.supabase.co/storage/v1/object/public/user_avatar/${avatar}`
+        const date = new Date();
+        return `https://pyhfaxqieivmwcayxetg.supabase.co/storage/v1/object/public/user_avatar/${avatar}?v=${date}`
     }
 }

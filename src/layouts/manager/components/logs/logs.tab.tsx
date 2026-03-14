@@ -4,7 +4,7 @@ import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 
-export default function StaffLogsLayout() {
+export default function ManagerLogsTab() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [logs, setLogs] = useState<any[]>([]);

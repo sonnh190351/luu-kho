@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
+import '@mantine/charts/styles.css';
 import "./app.scss";
 
 import "mantine-datatable/styles.layer.css";

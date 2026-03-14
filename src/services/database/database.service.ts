@@ -60,9 +60,11 @@ export default class DatabaseService {
 
     public async uploadImage(bucket: StorageBuckets, path: string, file: File){
         const { error } = await this.database.storage.from(bucket).upload(
-            path, file
+            path, file, {
+                upsert: true
+            }
         )
-        console.log(error)
+
         if(error) {
             throw error.message;
         }

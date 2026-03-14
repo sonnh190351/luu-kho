@@ -95,9 +95,15 @@ export default function UserDetails() {
 
    async function handleSubmitAvatar() {
         if(avatar) {
-            await DatabaseService.getInstance().uploadImage(
-                StorageBuckets.Avatar, `${loginData.email}.jpg`, avatar
-            )
+            try {
+                await DatabaseService.getInstance().uploadImage(
+                    StorageBuckets.Avatar, `${loginData.email}.jpg`, avatar
+                )
+                NotificationsService.success("Upload Success", "User avatar has been updated!")
+            } catch (e) {
+                NotificationsService.error("Upload Error", e.toString());
+            }
+
         }
     }
 
