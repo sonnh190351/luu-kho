@@ -19,7 +19,7 @@ import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import DatabaseService from "../../../../services/database/database.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {RequestStatus, RequestType} from "../../../../enums/request.ts";
+import {RequestStatus, CommonRequestType} from "../../../../enums/request.ts";
 import ManagerRequestModal from "./request.modal.tsx";
 
 const cardStyle: MantineStyleProp = {
@@ -207,7 +207,7 @@ export default function ManagerRequestsLayout() {
                                             </Text>
                                             <Group>
                                                 {
-                                                    RequestType[item.type]
+                                                    CommonRequestType[item.type]
                                                 }
                                             </Group>
                                         </Stack>

@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import InventoryService from "../../../../services/operations/inventory.service.ts";
 import { DatabaseTables } from "../../../../enums/tables.ts";
 import dayjs from "dayjs";
-import {DatePickerInput, DateTimePicker} from "@mantine/dates";
+import {DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
-import {LocalStorage} from "../../../../enums/localStorage.ts";
+import ManagementService from "../../../../services/operations/management.service.ts";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -15,7 +15,6 @@ interface InventoriesModalProps {
 }
 
 interface InventoriesFormValues {
-    date: string | null;
     quantity: number;
     expired_at: string;
     item_id: number;
@@ -27,16 +26,13 @@ export default function StaffInventoriesModal({
                                              refresh,
                                          }: InventoriesModalProps) {
 
-    const cachedData = localStorage.getItem(LocalStorage.userData);
-
-    const userData = JSON.parse(cachedData!)
-
     const form = useForm<InventoriesFormValues>({
         initialValues: {
-            date: dayjs().format("YYYY-MM-DD"),
             quantity: 0,
             item_id: -1,
-            expired_at: "",
+            expired_at: dayjs(new Date()).format(
+                "YYYY-MM-DD hh:mm A",
+            ),
         },
         validate: {
 
@@ -61,10 +57,9 @@ export default function StaffInventoriesModal({
 
     async function handleSubmit() {
         try {
-            const service = InventoryService.getInstance();
-            await service.addInventory({
+            const service = ManagementService.getInstance();
+            await service.addInventoryEntry({
                 ...form.getValues(),
-                warehouse_id: userData.warehouse_id,
             });
 
             refresh();
@@ -93,23 +88,6 @@ export default function StaffInventoriesModal({
             title={"Add Inventory Item"}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
-                    <DatePickerInput
-                        {...form.getInputProps('date')}
-                        label={"Date"}
-                        required={true}
-                        value={
-                            form.values.date
-                                ? new Date(form.values.date)
-                                : new Date()
-                        }
-                        onChange={(e) => {
-                            if (e) {
-                                form.setValues({
-                                    date: dayjs(e).format("YYYY-MM-DD"),
-                                });
-                            }
-                        }}
-                    />
                     <Select
                         clearable
                         value={String(form.values.item_id)}

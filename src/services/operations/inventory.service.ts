@@ -110,32 +110,6 @@ export default class InventoryService {
         return await this.database.edit(table, data.id, data);
     }
 
-    public async addInventory(data: any) {
-        const db = this.database.getDatabase();
-
-        const matching = await db
-            .from(DatabaseTables.Inventories)
-            .select()
-            .eq("date", data.date)
-            .eq("warehouse_id", data.warehouse_id);
-
-        if (matching.error) {
-            throw matching.error;
-        }
-
-        if (!matching.data) {
-            throw `Invalid response data!`;
-        }
-
-        if (matching.data.length > 0) {
-            throw `Duplicate inventory of date and warehouse in table: "${data.name}"!`;
-        }
-
-        return this.database.add(DatabaseTables.Inventories, data);
-    }
-
-
-
     public async addItemWithUniqueName(table: DatabaseTables, data: any) {
         const matching = await this.database.getByField(
             table,

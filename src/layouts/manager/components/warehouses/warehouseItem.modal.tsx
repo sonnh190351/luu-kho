@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
+import ManagementService from "../../../../services/operations/management.service.ts";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -61,8 +62,8 @@ export default function StaffInventoriesModal({
 
     async function handleSubmit() {
         try {
-            const service = InventoryService.getInstance();
-            await service.addInventory({
+            const service = ManagementService.getInstance();
+            await service.addInventoryEntry({
                 ...form.getValues(),
                 warehouse_id: userData.warehouse_id,
             });

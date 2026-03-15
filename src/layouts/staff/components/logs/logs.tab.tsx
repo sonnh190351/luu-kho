@@ -1,4 +1,4 @@
-import {LoadingOverlay, Stack, Title, Text} from "@mantine/core";
+import {LoadingOverlay, Stack, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
@@ -7,7 +7,7 @@ import InventoryService from "../../../../services/operations/inventory.service.
 export default function StaffLogsTab() {
     const [isLoading, setIsLoading] = useState(false);
 
-    const [logs, setLogs] = useState<any[]>([]);
+    const [logs, setLogs] = useState<string>("");
 
     useEffect(() => {
         (async() => await fetchLogs())();
@@ -17,7 +17,11 @@ export default function StaffLogsTab() {
         setIsLoading(true);
         try {
             const data = await InventoryService.getInstance().getAllRows(DatabaseTables.Logs);
-            setLogs(data);
+            let entry = ""
+            for (let i = 0; i < data.length; i++) {
+                entry += `${i+1}\t${data[i].details}\n`;
+            }
+            setLogs(entry);
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
         }
@@ -31,15 +35,15 @@ export default function StaffLogsTab() {
                 overlayProps={{ radius: "sm", blur: 2 }}
             />
             <Title>Logs</Title>
-            <div style={{
+            <Stack p={'xs'} style={{
                 height: '82dvh',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '5px'
+                borderRadius: '5px',
+                whiteSpace: 'pre-wrap',
+                overflowY: 'scroll'
             }}>
-                {logs.map((log: any, index: number) => (
-                    <Text key={`log-row-${index}`}>[{log.created_at}] {log.details}</Text>
-                ))}
-            </div>
+                {logs}
+            </Stack>
         </Stack>
     )
 }

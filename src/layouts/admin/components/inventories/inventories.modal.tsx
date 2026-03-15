@@ -70,7 +70,7 @@ export default function InventoriesModal({
         try {
             const service = InventoryService.getInstance();
 
-            await service.addInventory(form.getValues());
+            await service.addInventoryEntry(form.getValues());
 
             refresh();
             handleClose();

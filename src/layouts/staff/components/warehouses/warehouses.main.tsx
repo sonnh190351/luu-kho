@@ -50,7 +50,6 @@ export default function StaffWarehousesTab() {
     async function fetchItems() {
         setIsLoading(true)
         try {
-            console.log("Fetch Items");
             if(warehouse_id !== null) {
                 const service = ManagementService.getInstance();
                 const data = await service.getWarehouseInventoryItems(warehouse_id)

@@ -2,7 +2,7 @@ import {Button, Modal, Select, Stack, TextInput} from "@mantine/core";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {useForm} from "@mantine/form";
 import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
-import {RequestStatus, RequestType} from "../../../../enums/request.ts";
+import {RequestStatus, CommonRequestType, ManagerRequestType} from "../../../../enums/request.ts";
 import {useEffect, useState} from "react";
 import UtilsService from "../../../../services/utils.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
@@ -34,7 +34,7 @@ export default function ManagerRequestModal({open, close, request}: RequestModal
         initialValues: {
             description: "",
             warehouse_id: -1,
-            type: RequestType.OTHERS,
+            type: CommonRequestType.OTHERS,
         },
         validate: {
             description: FormValidationService.validateDescription,
@@ -103,7 +103,10 @@ export default function ManagerRequestModal({open, close, request}: RequestModal
                         required
                         label={"Request Type"}
                         data={
-                            Object.entries(RequestType).map(([name, type]) => ({label: type, value: name}))
+                            Object.entries({
+                                ...CommonRequestType,
+                                ...ManagerRequestType
+                            }).map(([name, type]) => ({label: type, value: name}))
                         }
                     />
                     <Select
@@ -140,7 +143,6 @@ export default function ManagerRequestModal({open, close, request}: RequestModal
                     </Button>
                 </Stack>
             </form>
-
         </Modal>
     )
 }
