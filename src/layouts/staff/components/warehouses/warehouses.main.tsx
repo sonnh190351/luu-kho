@@ -1,11 +1,15 @@
 import {
-    ActionIcon, Button,
+    Badge,
+    Button,
     Card,
-    Divider, Grid,
+    Divider,
+    Grid,
     Group,
-    LoadingOverlay, type MantineStyleProp,
+    LoadingOverlay,
+    type MantineStyleProp,
     Select,
-    Stack, Text,
+    Stack,
+    Text,
     TextInput,
     Title
 } from "@mantine/core";
@@ -18,13 +22,25 @@ import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import dayjs from "dayjs";
 import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
 import ExportInventoryModal from "../../../../components/modals/export.modal.tsx";
+import CommonTable from "../../../../components/dataTable/common.table.tsx";
+import type {Inventories} from "../../../../models/inventories.ts";
+import {ExpiringStatus} from "../../../../enums/data.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
     position: 'relative',
 }
 
+interface InventoryStatistics {
+    total: number;
+    expired: number;
+    expiring: number;
+    outOfStock: number;
+}
+
 export default function StaffWarehousesTab() {
+    const ONE_DAY_MS = 86400000
 
     const cachedData = localStorage.getItem(LocalStorage.userData);
 
@@ -42,8 +58,14 @@ export default function StaffWarehousesTab() {
 
     const [selectedItem, setSelectedItem] = useState<any>(null);
 
+    const [statistics, setStatistics] = useState<InventoryStatistics>({
+        total: 0,
+        expired: 0,
+        expiring: 0,
+        outOfStock: 0,
+    });
+
     useEffect(() => {
-        console.log(selectedItem);
         (async () => await fetchItems())();
     }, []);
 
@@ -54,12 +76,29 @@ export default function StaffWarehousesTab() {
                 const service = ManagementService.getInstance();
                 const data = await service.getWarehouseInventoryItems(warehouse_id)
                 setItems(data);
-                console.log(data)
+                updateStatistics(data)
             }
         } catch (e: any) {
             NotificationsService.error("Fetch Items", e.toString());
         }
         setIsLoading(false)
+    }
+
+    function updateStatistics(data: any[]) {
+        const total = data.length;
+        const expired = data.filter((item) => (new Date(item.expired_at).getTime() - new Date().getTime()) <= 0);
+        const expiring = data.filter((item) => {
+            const time = new Date(item.expired_at).getTime() - new Date().getTime()
+                return time <= ONE_DAY_MS && time > 0
+        })
+        const outOfStock = data.filter((item) => item.quantity <= 0)
+
+        setStatistics({
+            total: total,
+            expired: expired.length,
+            expiring: expiring.length,
+            outOfStock: outOfStock.length,
+        })
     }
 
     function handleCloseModal() {
@@ -81,6 +120,102 @@ export default function StaffWarehousesTab() {
         setOpenExportModal(true);
     }
 
+    const columns: any[] = [
+        {
+            accessor: "id",
+            title: "ID",
+            width: 70,
+            sortable: true,
+            render: ({id}: Inventories) => {
+                return (
+                    <Group>
+                        <Text>{id}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "items",
+            title: "Items",
+            sortable: false,
+            width: 350,
+            render: ({items}: Inventories) => {
+                return (
+                    <Group>
+                        <Text>{items.name}</Text>
+                    </Group>
+                );
+            },
+        },
+
+        {
+            accessor: "quantity",
+            title: "Quantity",
+            sortable: true,
+            width: true,
+            render: ({quantity, items}: Inventories) => {
+                return (
+                    <Group gap={5}>
+                        <Text>{quantity}</Text>
+                        <Text>({items.quantity_type})</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "created_at",
+            title: "Added Date",
+            sortable: true,
+            render: ({created_at}: Inventories) => {
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_DATE_FORMAT)}
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "expired_at",
+            title: "Expired At",
+            sortable: true,
+            render: ({expired_at}: Inventories) => {
+                return (
+                    <Group>
+                        {dayjs(expired_at).format(DISPLAY_DATE_FORMAT)}
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "expired_at",
+            title: "Status",
+            sortable: true,
+            render: ({ expired_at }: Inventories) => {
+                const time = new Date(expired_at!).getTime() - new Date().getTime()
+                const status = time < 0 ? ExpiringStatus.EXPIRED : time <= ONE_DAY_MS ? ExpiringStatus.EXPIRING_SOON : ExpiringStatus.FRESH
+                return (
+                    <Group>
+                        <Badge color={UtilsService.getExpireBadgeColor(status)}>
+                            {status}
+                        </Badge>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "id",
+            title: "Actions",
+            sortable: false,
+            width: 80,
+            render: ({id}: Inventories) => {
+                return (
+                    <Group>
+                    </Group>
+                );
+            },
+        },
+    ];
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
@@ -90,33 +225,43 @@ export default function StaffWarehousesTab() {
                 />
                 <Title>Warehouse Inventory</Title>
                 <Grid>
-                    <Grid.Col span={4}>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
                             <Stack justify={'flex-end'} align={'start'}>
                                 <Text>Total Items</Text>
-                                <Title>1</Title>
+                                <Title>{statistics.total}</Title>
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={4}>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
                             <Stack justify={'flex-end'} align={'start'}>
-                                <Text>Expiring Soon</Text>
-                                <Title>1</Title>
+                                <Text>Expired</Text>
+                                <Title>{statistics.expired}</Title>
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={4}>
+                    <Grid.Col span={3}>
+                        <Card style={{
+                            ...cardStyle
+                        }}>
+                            <Stack justify={'flex-end'} align={'start'}>
+                                <Text>Expires in 1 day</Text>
+                                <Title>{statistics.expiring}</Title>
+                            </Stack>
+                        </Card>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
                             <Stack justify={'flex-end'} align={'start'}>
                                 <Text>Out of stock</Text>
-                                <Title>1</Title>
+                                <Title>{statistics.outOfStock}</Title>
                             </Stack>
                         </Card>
                     </Grid.Col>
@@ -147,64 +292,7 @@ export default function StaffWarehousesTab() {
                     </Stack>
                 </Group>
                 <Divider />
-                <Stack>
-                    <Group justify={"space-between"}>
-                        <Group style={{
-                            width: "90%",
-                        }}>
-                            <Grid style={{
-                                width: "100%",
-                            }}>
-                                <Grid.Col span={3}>
-                                    <Title ml={'sm'} order={4}>Name</Title>
-                                </Grid.Col>
-                                <Grid.Col span={3}>
-                                    <Title ml={5} order={4}>Remaining Quantity</Title>
-                                </Grid.Col>
-                                <Grid.Col span={3}>
-                                    <Title ml={0} order={4}>Import Date</Title>
-                                </Grid.Col>
-                                <Grid.Col span={3}>
-                                    <Title ml={-5} order={4}>Expired Date</Title>
-                                </Grid.Col>
-                            </Grid>
-                        </Group>
-                        <Title mr={16} order={4}>Action</Title>
-                    </Group>
-                    {
-                        items.map((item: any, index: number) => (
-                            <Card key={`warehouse-item-${index}`}>
-                                <Group justify={"space-between"}>
-                                    <Group style={{
-                                        width: "90%",
-                                    }}>
-                                        <Grid style={{
-                                            width: "100%",
-                                        }}>
-                                            <Grid.Col span={3}>
-                                                {item.items.name}
-                                            </Grid.Col>
-                                            <Grid.Col span={3}>
-                                                {item.quantity} ({item.items.quantity_type})
-                                            </Grid.Col>
-                                            <Grid.Col span={3}>
-                                                {dayjs(item.created_at).format(DISPLAY_DATE_FORMAT)}
-                                            </Grid.Col>
-                                            <Grid.Col span={3}>
-                                                {dayjs(item.expired_at).format(DISPLAY_DATE_FORMAT)}
-                                            </Grid.Col>
-                                        </Grid>
-                                    </Group>
-                                    <Group>
-                                        <ActionIcon onClick={() => handleSelectItem(item)}>
-                                            <IconPlus />
-                                        </ActionIcon>
-                                    </Group>
-                                </Group>
-                            </Card>
-                        ))
-                    }
-                </Stack>
+                <CommonTable height={'54dvh'} data={items} columns={columns} />
             </Stack>
 
             <WarehouseItemModal open={openModal} close={handleCloseModal} refresh={fetchItems} />

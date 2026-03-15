@@ -21,13 +21,21 @@ import { ModalsProvider } from "@mantine/modals";
 import { InformationModal } from "./components/modals/information.modal.tsx";
 import StaffLayout from "./layouts/staff/staff.layout.tsx";
 import ManagerLayout from "./layouts/manager/manager.layout.tsx";
+import {USER_ROLES} from "./enums/roles.ts";
+import ErrorLayout from "./layouts/404/404.tsx";
 
 export default function App() {
     const router = createBrowserRouter([
         {
             path: "*",
             element: (
-                <ProtectedRoute>
+                <ErrorLayout />
+            )
+        },
+        {
+            path: "/admin",
+            element: (
+                <ProtectedRoute role={USER_ROLES.super_admin}>
                     <NavigationBar />
                     <AdminLayout />
                 </ProtectedRoute>
@@ -36,7 +44,7 @@ export default function App() {
         {
             path: "/staff",
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute role={USER_ROLES.staff}>
                     <NavigationBar />
                     <StaffLayout />
                 </ProtectedRoute>
@@ -45,7 +53,7 @@ export default function App() {
         {
             path: "/manager",
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute role={USER_ROLES.manager}>
                     <NavigationBar />
                     <ManagerLayout />
                 </ProtectedRoute>

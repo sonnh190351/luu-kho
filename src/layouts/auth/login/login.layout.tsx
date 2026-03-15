@@ -7,8 +7,6 @@ import {
     Title,
     Text,
     Container,
-    Checkbox,
-    Group,
     Stack,
     LoadingOverlay,
 } from "@mantine/core";
@@ -17,6 +15,7 @@ import { IconMail, IconLock } from "@tabler/icons-react";
 import AuthService from "../../../services/auth/auth.service.ts";
 import { NotificationsService } from "../../../services/notifications/notifications.service.ts";
 import { LocalStorage } from "../../../enums/localStorage.ts";
+import {USER_ROLES} from "../../../enums/roles.ts";
 
 interface LoginFormValues {
     email: string;
@@ -25,9 +24,30 @@ interface LoginFormValues {
 }
 
 export default function LoginLayout() {
+    const message = localStorage.getItem(LocalStorage.pendingMessage)
+    if(message) {
+        NotificationsService.error("Error", message)
+        localStorage.removeItem(LocalStorage.pendingMessage)
+    }
+
     const cachedData = localStorage.getItem(LocalStorage.userData);
     if (cachedData) {
-        window.location.href = "/";
+        const cached = JSON.parse(cachedData);
+        switch (cached.role) {
+            case USER_ROLES.staff:
+                window.location.href = "/staff";
+                break
+            case USER_ROLES.manager:
+                window.location.href = "/manager";
+                break
+            case USER_ROLES.super_admin:
+                window.location.href = "/admin";
+                break
+            default:
+                NotificationsService.error("Invalid role", "Invalid user role!")
+                localStorage.removeItem(LocalStorage.userData);
+                break
+        }
     }
 
     const [isLoading, setIsLoading] = useState(false);
@@ -67,8 +87,13 @@ export default function LoginLayout() {
                 "Login success",
                 "User will be re-directed after 2 seconds!",
             );
+
             setTimeout(() => {
-                window.location.href = "/";
+                localStorage.setItem(
+                    LocalStorage.userData,
+                    JSON.stringify(response.data),
+                );
+                window.location.reload();
             }, 2000);
         } else {
             NotificationsService.error("Login Failed", response.message!);
@@ -82,7 +107,7 @@ export default function LoginLayout() {
             size={420}
             my={40}
             style={{
-                minHeight: "100vh",
+                minHeight: "90vh",
                 display: "flex",
                 alignItems: "center",
             }}>
@@ -120,16 +145,6 @@ export default function LoginLayout() {
                                 {...form.getInputProps("password")}
                                 required
                             />
-
-                            <Group justify="space-between" mt="xs">
-                                <Checkbox
-                                    label="Remember me"
-                                    {...form.getInputProps("rememberMe", {
-                                        type: "checkbox",
-                                    })}
-                                />
-                            </Group>
-
                             <Button
                                 type="submit"
                                 fullWidth

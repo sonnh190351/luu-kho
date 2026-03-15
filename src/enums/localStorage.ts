@@ -1,4 +1,4 @@
 export enum LocalStorage {
-    access_token = "access_token",
+    pendingMessage = "message",
     userData = "userData",
 }

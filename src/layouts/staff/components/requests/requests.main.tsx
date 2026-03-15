@@ -20,7 +20,8 @@ import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import DatabaseService from "../../../../services/database/database.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {RequestStatus, CommonRequestType} from "../../../../enums/request.ts";
+import {CommonRequestType} from "../../../../enums/request.ts";
+import UtilsService from "../../../../services/utils.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -93,21 +94,6 @@ export default function StaffRequestsLayout() {
 
         const matchingItems = cache.filter((i: any) => i.name.startsWith(e.target.value));
         setItems(matchingItems)
-    }
-
-    function getBadgeColor(status: RequestStatus) {
-        switch (status) {
-            case RequestStatus.SUBMITTED:
-                return "blue"
-            case RequestStatus.PROCESSING:
-                return "yellow"
-            case RequestStatus.ACCEPTED:
-                return "green"
-            case RequestStatus.REJECTED:
-                return "red"
-            default:
-                return "gray"
-        }
     }
 
     return (
@@ -234,7 +220,7 @@ export default function StaffRequestsLayout() {
                                                 Status
                                             </Text>
                                             <Group>
-                                                <Badge color={getBadgeColor(item.status)}>{item.status}</Badge>
+                                                <Badge color={UtilsService.getRequestBadgeColor(item.status)}>{item.status}</Badge>
                                             </Group>
                                         </Stack>
                                         <Divider mr={'lg'} orientation={'vertical'} />

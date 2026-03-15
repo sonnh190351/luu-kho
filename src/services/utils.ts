@@ -1,16 +1,18 @@
-import { USER_ROLES } from "../enums/roles";
+import {USER_ROLES} from "../enums/roles";
 import DOMPurify from "dompurify";
+import {RequestStatus} from "../enums/request.ts";
+import {ExpiringStatus} from "../enums/data.ts";
 
 export default class UtilsService {
     static getRoleLevel(role: number) {
         switch (role) {
-            case USER_ROLES.admin:
+            case USER_ROLES.manager:
                 return "Admin";
             case USER_ROLES.guest:
                 return "Guest";
             case USER_ROLES.super_admin:
                 return "Super Admin";
-            case USER_ROLES.user:
+            case USER_ROLES.staff:
                 return "User";
         }
     }
@@ -50,4 +52,33 @@ export default class UtilsService {
         const date = new Date();
         return `https://pyhfaxqieivmwcayxetg.supabase.co/storage/v1/object/public/user_avatar/${avatar}?v=${date}`
     }
+
+    static getRequestBadgeColor(status: RequestStatus) {
+        switch (status) {
+            case RequestStatus.SUBMITTED:
+                return "blue"
+            case RequestStatus.PROCESSING:
+                return "yellow"
+            case RequestStatus.ACCEPTED:
+                return "green"
+            case RequestStatus.REJECTED:
+                return "red"
+            default:
+                return "gray"
+        }
+    }
+
+    static getExpireBadgeColor(status: ExpiringStatus){
+        switch (status) {
+            case ExpiringStatus.EXPIRING_SOON:
+                return "yellow"
+            case ExpiringStatus.EXPIRED:
+                return "red"
+            case ExpiringStatus.FRESH:
+                return "green"
+            default:
+                return "gray"
+        }
+    }
+
 }

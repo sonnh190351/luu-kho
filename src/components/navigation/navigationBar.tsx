@@ -42,7 +42,7 @@ export default function NavigationBar() {
 
     function handleLogout(): void {
         localStorage.removeItem(LocalStorage.userData);
-        window.location.href = "/"
+        window.location.href = "/login"
     }
 
     return (

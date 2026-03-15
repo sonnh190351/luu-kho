@@ -1,7 +1,5 @@
 import DatabaseService from "../database/database.service.ts";
-import { LocalStorage } from "../../enums/localStorage.ts";
 import { DatabaseTables } from "../../enums/tables.ts";
-import { EncryptionService } from "./encryption.service.ts";
 
 export default class AuthService {
     public async login(email: string, password: string) {
@@ -33,20 +31,12 @@ export default class AuthService {
                 };
             }
 
-            const encrypted = EncryptionService.getInstance().encryptData(password);
-            console.log(encrypted);
-
             if (data[0].password !== password) {
                 return {
                     status: false,
                     message: "Incorrect password!",
                 };
             }
-
-            localStorage.setItem(
-                LocalStorage.userData,
-                JSON.stringify(data[0]),
-            );
 
             return {
                 status: true,
