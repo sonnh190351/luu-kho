@@ -11,11 +11,11 @@ const ProtectedRoute = ({ children, role } : { children: any, role: number}) => 
 
     const cached = JSON.parse(cachedData)
 
-    if (cached.role !== role) {
-        localStorage.setItem(LocalStorage.pendingMessage, "Unauthorized access to this page!")
-        localStorage.removeItem(LocalStorage.userData)
-        window.location.href = "/login"
-    }
+    // if (cached.role !== role) {
+    //     localStorage.setItem(LocalStorage.pendingMessage, "Unauthorized access to this page!")
+    //     localStorage.removeItem(LocalStorage.userData)
+    //     window.location.href = "/login"
+    // }
 
     return children;
 };
