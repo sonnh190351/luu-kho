@@ -2,6 +2,7 @@ import {USER_ROLES} from "../enums/roles";
 import DOMPurify from "dompurify";
 import {RequestStatus} from "../enums/request.ts";
 import {ExpiringStatus} from "../enums/data.ts";
+import {OrderStatus} from "../enums/orders.ts";
 
 export default class UtilsService {
     static getRoleLevel(role: number) {
@@ -76,6 +77,21 @@ export default class UtilsService {
                 return "red"
             case ExpiringStatus.FRESH:
                 return "green"
+            default:
+                return "gray"
+        }
+    }
+
+    static getOrderBadgeColor(status: OrderStatus){
+        switch (status) {
+            case OrderStatus.RECEIVED:
+                return "blue"
+            case OrderStatus.PROCESSING:
+                return "yellow"
+            case OrderStatus.FINISHED:
+                return "green"
+            case OrderStatus.CANCELLED:
+                return "red"
             default:
                 return "gray"
         }

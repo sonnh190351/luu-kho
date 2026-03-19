@@ -9,6 +9,9 @@ export enum DatabaseTables {
     UserDetails = "users",
     Requests = "requests",
     Logs = "logs",
+    Products = "products",
+    ProductItems = "product_items",
+    Orders = "orders",
 }
 
 export enum StorageBuckets {

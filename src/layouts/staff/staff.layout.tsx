@@ -10,10 +10,11 @@ import {LocalStorage} from "../../enums/localStorage.ts";
 import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconCommand, IconLogs, IconTemplate} from "@tabler/icons-react";
+import {IconBuildingWarehouse, IconCommand, IconLogs, IconMenuOrder, IconTemplate} from "@tabler/icons-react";
 import StaffRequestsLayout from "./components/requests/requests.main.tsx";
-import StaffItemsTab from "./components/items/items.tab.tsx";
+import StaffItemsLayout from "./components/items/items.tab.tsx";
 import StaffLogsLayout from "./components/logs/logs.tab.tsx";
+import StaffOrdersLayout from "./components/orders/orders.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -33,10 +34,11 @@ export default function StaffLayout() {
     }
 
     const staffItems = [
-        <StaffItemsTab />,
+        <StaffItemsLayout />,
         <StaffWarehousesLayout />,
         <StaffLogsLayout />,
-        <StaffRequestsLayout />
+        <StaffRequestsLayout />,
+        <StaffOrdersLayout />
     ]
 
     const staffTabs: TabGroup[] = [
@@ -67,6 +69,16 @@ export default function StaffLayout() {
                     icon: <IconCommand />,
                     title: "Requests",
                     index: 3
+                }
+            ]
+        },
+        {
+            name: "Orders",
+            items: [
+                {
+                    icon: <IconMenuOrder />,
+                    title: "Orders",
+                    index: 4
                 }
             ]
         }

@@ -27,6 +27,64 @@ export default class ManagementService {
         return ManagementService.instance;
     }
 
+    private async checkOrderAvailability(data: any): boolean {
+
+        // Check remaining items in inventory. If not available, return false
+
+        // Update remaining items in inventory. If failed to update, return false
+
+        return true
+    }
+
+    public async editOrderEntry(data: any) {
+        // TO-DO: Check availability of order
+
+        const response = await this.database.edit(DatabaseTables.Orders,
+            data.id,{
+            ...data,
+        })
+
+        if(response.error) {
+            await LogService.getInstance().writeLog(
+                "Edit Order Entry",
+                {
+                    ...response.error
+                }
+            )
+        } else {
+            await LogService.getInstance().writeLog(
+                "Edit Order Entry",
+                data
+            )
+        }
+    }
+
+    public async addOrderEntry(data: any) {
+        // Check the possibility of the order
+        await this.checkOrderAvailability(data)
+
+        // Proceed create order
+        const response = await this.database.add(DatabaseTables.Orders, {
+            ...data,
+            warehouse_id: this.userData.warehouses.id,
+            user_id: this.userData.id
+        })
+
+        if(response.error) {
+            await LogService.getInstance().writeLog(
+                "Add Order Entry",
+                {
+                    ...response.error
+                }
+            )
+        } else {
+            await LogService.getInstance().writeLog(
+                "Add Order Entry",
+                data
+            )
+        }
+    }
+
     public async addInventoryEntry(data: any) {
 
 
