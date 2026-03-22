@@ -1,8 +1,7 @@
-import DatabaseService from "../database/database.service.ts";
-import {DatabaseTables} from "../../enums/tables.ts";
-import {NotificationsService} from "../notifications/notifications.service.ts";
-import {LogService} from "./log.service.ts";
-import {LocalStorage} from "../../enums/localStorage.ts";
+import DatabaseService from "../../database/database.service.ts";
+import {DatabaseTables} from "../../../enums/tables.ts";
+import {LogService} from "../log.service.ts";
+import {LocalStorage} from "../../../enums/localStorage.ts";
 
 export default class InventoryService {
 
@@ -27,8 +26,24 @@ export default class InventoryService {
         return InventoryService.instance;
     }
 
-    private async checkOrderAvailability(data: any): boolean {
+    private async responseLog(response: any, data: any, fn_name: string) {
+        if(response.error) {
+            await LogService.getInstance().writeLog(
+                fn_name,
+                {
+                    ...response.error
+                }
+            )
+        } else {
+            await LogService.getInstance().writeLog(
+                fn_name,
+                data
+            )
+        }
+    }
 
+    private async checkOrderAvailability(data: any): Promise<boolean> {
+        console.log(data)
         // Check remaining items in inventory. If not available, return false
 
         // Update remaining items in inventory. If failed to update, return false
@@ -44,19 +59,7 @@ export default class InventoryService {
             ...data,
         })
 
-        if(response.error) {
-            await LogService.getInstance().writeLog(
-                "Edit Order Entry",
-                {
-                    ...response.error
-                }
-            )
-        } else {
-            await LogService.getInstance().writeLog(
-                "Edit Order Entry",
-                data
-            )
-        }
+        await this.responseLog(response, "Edit Order Entry", data)
     }
 
     public async addOrderEntry(data: any) {
@@ -70,43 +73,16 @@ export default class InventoryService {
             user_id: this.userData.id
         })
 
-        if(response.error) {
-            await LogService.getInstance().writeLog(
-                "Add Order Entry",
-                {
-                    ...response.error
-                }
-            )
-        } else {
-            await LogService.getInstance().writeLog(
-                "Add Order Entry",
-                data
-            )
-        }
+        await this.responseLog(response, "Add Order Entry", data)
     }
 
     public async addInventoryEntry(data: any) {
-
-
         const response = await this.database.add(DatabaseTables.Inventories, {
             ...data,
             warehouse_id: this.userData.warehouses.id
         });
 
-        if(response.error) {
-            await LogService.getInstance().writeLog(
-                "Add Inventory Entry",
-                {
-                    ...response.error
-                }
-            )
-        } else {
-            await LogService.getInstance().writeLog(
-                "Add Inventory Entry",
-                data
-            )
-        }
-
-        return
+        await this.responseLog(response, "Add Inventory Entry", data)
     }
+
 }

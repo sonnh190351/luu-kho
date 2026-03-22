@@ -113,7 +113,7 @@ export default function InventoriesTab() {
             },
         },
         {
-            accessor: "warehouses",
+            accessor: "warehouses address",
             title: "Warehouse Address",
             sortable: false,
             width: 185,
@@ -150,7 +150,7 @@ export default function InventoriesTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             sortable: false,
             width: 80,

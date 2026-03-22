@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import OperationService from "../../../../services/operations/operationService.ts";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import InventoryService from "../../../../services/operations/inventoryService.ts";
+import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
 
 interface OrderModalProps {
     order: any;

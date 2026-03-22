@@ -124,7 +124,7 @@ export default function UserDetailsTab() {
                         textAlign: "center"
                     }}>
                         {
-                            Boolean(avatar) ? <img width={100} src={UtilsService.getAvatarUrl(avatar!)} /> :  <Text>No Avatar Available</Text>
+                            Boolean(avatar) ? <img alt={"avatar"} width={100} src={UtilsService.getAvatarUrl(avatar!)} /> :  <Text>No Avatar Available</Text>
                         }
                     </Group>
                 );
@@ -225,7 +225,7 @@ export default function UserDetailsTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             width: 120,
             render: ({ id }: UserDetails) => {

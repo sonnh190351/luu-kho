@@ -107,7 +107,7 @@ export default function RequestsTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             width: 120,
             render: ({ id }: Requests) => {

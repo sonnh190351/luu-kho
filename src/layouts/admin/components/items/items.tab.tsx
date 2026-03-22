@@ -193,7 +193,7 @@ export default function ItemsTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             width: 120,
             render: ({ id }: any) => {

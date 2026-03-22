@@ -68,6 +68,7 @@ export default function CategoriesTab() {
         {
             accessor: "id",
             title: "ID",
+            width: 120,
             sortable: true,
             render: ({ id }: Categories) => {
                 return (
@@ -110,7 +111,7 @@ export default function CategoriesTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             width: 120,
             render: ({ id }: Categories) => {
@@ -147,7 +148,7 @@ export default function CategoriesTab() {
     }
 
     function handleEdit(id: number) {
-        const matching = categories.find((c) => c.id === id);
+        const matching = categories.find((c: Categories) => c.id === id);
         if (matching) {
             setSelectedCategory(matching);
             setOpenCategoryModal(true);

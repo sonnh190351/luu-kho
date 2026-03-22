@@ -108,7 +108,7 @@ export default function TagsTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             width: 120,
             render: ({ id }: Tags) => {

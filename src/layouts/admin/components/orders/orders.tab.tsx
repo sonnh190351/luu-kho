@@ -2,6 +2,7 @@ import {LoadingOverlay, Stack, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
+import {DatabaseTables} from "../../../../enums/tables.ts";
 
 export default function OrdersTab() {
     const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +15,7 @@ export default function OrdersTab() {
         setIsLoading(true)
         try {
             const service = OperationService.getInstance()
+            const orders = await service.getAllWarehousesOrders()
         } catch (e: any) {
             NotificationsService.error("Fetch orders", e.toString());
         }

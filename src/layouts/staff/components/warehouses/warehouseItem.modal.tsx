@@ -6,7 +6,7 @@ import { DatabaseTables } from "../../../../enums/tables.ts";
 import dayjs from "dayjs";
 import {DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
-import InventoryService from "../../../../services/operations/inventoryService.ts";
+import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
 
 interface InventoriesModalProps {
     open: boolean;

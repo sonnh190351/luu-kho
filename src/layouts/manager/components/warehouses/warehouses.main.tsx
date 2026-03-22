@@ -55,7 +55,6 @@ export default function ManagerWarehousesTab() {
                 const service = OperationService.getInstance();
                 const data = await service.getWarehouseInventoryItems(warehouse_id)
                 setItems(data);
-                console.log(data)
             }
         } catch (e: any) {
             NotificationsService.error("Fetch Items", e.toString());

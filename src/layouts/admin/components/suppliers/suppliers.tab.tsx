@@ -107,7 +107,7 @@ export default function SuppliersTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             sortable: true,
             width: 120,
