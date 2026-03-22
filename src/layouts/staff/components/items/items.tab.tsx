@@ -20,7 +20,7 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 import type { Items } from "../../../../models/items.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
@@ -51,7 +51,7 @@ export default function StaffItemsTab() {
     }, []);
 
     async function fetchItems() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.Items);
@@ -223,7 +223,7 @@ export default function StaffItemsTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Items, id);
                 NotificationsService.success(
                     "Delete Item",

@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from "react";
 import type { Requests } from "../../../../models/requests.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import RequestsModal from "./requests.modal.tsx";
 import {
     DatabaseTables,
@@ -42,7 +42,7 @@ export default function RequestsTab() {
     }, []);
 
     async function fetchRequests() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.Requests);
@@ -130,7 +130,7 @@ export default function RequestsTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Requests, id);
                 NotificationsService.success(
                     "Delete Request",

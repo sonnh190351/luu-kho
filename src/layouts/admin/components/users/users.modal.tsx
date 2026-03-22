@@ -20,7 +20,7 @@ import UserService from "../../../../services/operations/user.service.ts";
 import dayjs from "dayjs";
 import {DatabaseTables, StorageBuckets} from "../../../../enums/tables.ts";
 import type { Warehouses } from "../../../../models/warehouses.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import UtilsService from "../../../../services/utils.ts";
 import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
 import {IconFile} from "@tabler/icons-react";
@@ -103,7 +103,7 @@ export default function UserDetailsModal({
 
     async function fetchWarehouses() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Warehouses);
             setWarehouses(data);
         } catch (e: any) {

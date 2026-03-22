@@ -20,7 +20,7 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import UserDetailsModal from "./users.modal.tsx";
 import {
     DatabaseTables,
@@ -47,7 +47,7 @@ export default function UserDetailsTab() {
     }, []);
 
     async function fetchUserDetails() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.UserDetails);
@@ -248,7 +248,7 @@ export default function UserDetailsTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.UserDetails, id);
                 NotificationsService.success(
                     "Deactivate User",

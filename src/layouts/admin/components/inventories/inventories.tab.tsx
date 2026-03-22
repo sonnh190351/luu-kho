@@ -17,7 +17,7 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 import type {Inventories} from "../../../../models/inventories.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import InventoriesModal from "./inventories.modal.tsx";
 import {
     DatabaseTables,
@@ -41,7 +41,7 @@ export default function InventoriesTab() {
     }, []);
 
     async function fetchInventories() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllInventoryItems()
@@ -175,7 +175,7 @@ export default function InventoriesTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Inventories, id);
                 NotificationsService.success(
                     "Delete Inventory",

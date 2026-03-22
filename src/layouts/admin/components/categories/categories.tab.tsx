@@ -18,7 +18,7 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 import type { Categories } from "../../../../models/categories.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import CategoriesModal from "./categories.modal.tsx";
 import {
     DatabaseTables,
@@ -45,7 +45,7 @@ export default function CategoriesTab() {
     }, []);
 
     async function fetchCategories() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.Categories);
@@ -133,7 +133,7 @@ export default function CategoriesTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Categories, id);
                 NotificationsService.success(
                     "Delete Category",

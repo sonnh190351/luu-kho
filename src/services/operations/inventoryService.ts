@@ -4,9 +4,9 @@ import {NotificationsService} from "../notifications/notifications.service.ts";
 import {LogService} from "./log.service.ts";
 import {LocalStorage} from "../../enums/localStorage.ts";
 
-export default class ManagementService {
+export default class InventoryService {
 
-    private static instance: ManagementService;
+    private static instance: InventoryService;
     private readonly database: DatabaseService;
 
     private readonly userData: any;
@@ -19,12 +19,12 @@ export default class ManagementService {
         this.userData = JSON.parse(cacheData!)
     }
 
-    public static getInstance(): ManagementService {
-        if (!ManagementService.instance) {
-            ManagementService.instance = new ManagementService();
+    public static getInstance(): InventoryService {
+        if (!InventoryService.instance) {
+            InventoryService.instance = new InventoryService();
         }
 
-        return ManagementService.instance;
+        return InventoryService.instance;
     }
 
     private async checkOrderAvailability(data: any): boolean {
@@ -108,34 +108,5 @@ export default class ManagementService {
         }
 
         return
-    }
-
-    public async getWarehouseInventoryItems(warehouse_id: number) {
-
-        // get matching data
-        const data = await this.database.getDatabase().from(DatabaseTables.Inventories).select(`
-                id,
-                created_at,
-                updated_at,
-                expired_at,
-                quantity,
-                items(
-                    name,
-                    tags,
-                    quantity_type
-                )
-            `).in(
-            'warehouse_id', [warehouse_id]
-        )
-
-        if(data.error) {
-            NotificationsService.error(
-                "Management Service",
-                `Failed to get items: ${data.error}`,
-            );
-            return []
-        }
-
-        return data.data
     }
 }

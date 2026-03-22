@@ -18,7 +18,7 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 import type { Warehouses } from "../../../../models/warehouses.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import WarehousesModal from "./warehouses.modal.tsx";
 import {
     DatabaseTables,
@@ -43,7 +43,7 @@ export default function WarehousesTab() {
     }, []);
 
     async function fetchWarehouses() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.Warehouses);
@@ -139,7 +139,7 @@ export default function WarehousesTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Warehouses, id);
                 NotificationsService.success(
                     "Delete Warehouse",

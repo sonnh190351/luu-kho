@@ -1,7 +1,7 @@
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { Categories } from "../../../../models/categories.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { useEffect } from "react";
 import { DatabaseTables } from "../../../../enums/tables.ts";
@@ -46,7 +46,7 @@ export default function CategoriesModal({
 
     async function handleSubmit() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             if (isEdit) {
                 await service.editItemName(DatabaseTables.Categories, {
                     id: category?.id,

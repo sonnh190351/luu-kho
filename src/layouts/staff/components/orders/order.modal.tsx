@@ -2,10 +2,10 @@ import {Button, Modal, NumberInput, Select, Stack} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {OrderStatus} from "../../../../enums/orders.ts";
 import {useEffect, useState} from "react";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import ManagementService from "../../../../services/operations/management.service.ts";
+import InventoryService from "../../../../services/operations/inventoryService.ts";
 
 interface OrderModalProps {
     order: any;
@@ -54,7 +54,7 @@ export default function StaffOrderModal({
 
     async function fetchProducts() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Products);
             setProducts(data);
         } catch (e: any) {
@@ -64,7 +64,7 @@ export default function StaffOrderModal({
 
     async function handleSubmit() {
         try {
-            const service = ManagementService.getInstance()
+            const service = InventoryService.getInstance()
 
             if(isEdit) {
                 await service.editOrderEntry({

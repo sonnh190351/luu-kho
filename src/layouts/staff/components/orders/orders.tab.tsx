@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
@@ -153,7 +153,7 @@ export default function StaffOrdersLayout() {
         setIsLoading(true);
 
         try {
-            const service = InventoryService.getInstance()
+            const service = OperationService.getInstance()
             if (cached.warehouses.id) {
                 const data = await service.getWarehouseOrders(cached.warehouses.id)
                 setOrders(data as any[])

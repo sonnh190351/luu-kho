@@ -2,7 +2,7 @@ import {Button, Modal, NumberInput, Select, Stack} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import type { Warehouses } from "../../../../models/warehouses.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import { DatabaseTables } from "../../../../enums/tables.ts";
 import dayjs from "dayjs";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
@@ -51,14 +51,14 @@ export default function InventoriesModal({
     }, []);
 
     async function fetchWarehouses() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
         const data = await service.getAllRows(DatabaseTables.Warehouses);
         setWarehouses(data);
     }
 
     async function fetchItems() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Items);
             setItems(data);
         } catch (e: any) {
@@ -68,7 +68,7 @@ export default function InventoriesModal({
 
     async function handleSubmit() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
 
             await service.addInventoryEntry(form.getValues());
 

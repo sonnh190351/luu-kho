@@ -15,7 +15,7 @@ import {LocalStorage} from "../../enums/localStorage";
 import UtilsService from "../../services/utils.ts";
 import {useEffect, useRef, useState} from "react";
 import type {Warehouses} from "../../models/warehouses.ts";
-import InventoryService from "../../services/operations/inventory.service.ts";
+import OperationService from "../../services/operations/operationService.ts";
 import {DatabaseTables, StorageBuckets} from "../../enums/tables.ts";
 import {NotificationsService} from "../../services/notifications/notifications.service.ts";
 import {useForm} from "@mantine/form";
@@ -47,7 +47,7 @@ export default function UserDetails() {
 
     async function fetchWarehouseDetails() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllMatching(DatabaseTables.Warehouses, 'id', loginData.warehouses.id);
             if (data.length > 0) {
                 setWarehouseData(data[0]);

@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import type {Suppliers} from "../../../../models/suppliers.ts";
 import type {Categories} from "../../../../models/categories.ts";
 import {useForm} from "@mantine/form";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import {DatabaseTables, StorageBuckets} from "../../../../enums/tables.ts";
 import {QUANTITY_TYPES} from "../../../../enums/data.ts";
 import type {Tags} from "../../../../models/tags.ts";
@@ -83,7 +83,7 @@ export default function StaffItemsModal({
 
     async function fetchSuppliers() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Suppliers);
             setSuppliers(data);
         } catch (e: any) {
@@ -93,7 +93,7 @@ export default function StaffItemsModal({
 
     async function fetchCategories() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Categories);
             setCategories(data);
         } catch (e: any) {
@@ -103,7 +103,7 @@ export default function StaffItemsModal({
 
     async function fetchTags() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Tags);
             setTags(data);
         } catch (e: any) {
@@ -113,7 +113,7 @@ export default function StaffItemsModal({
 
     async function handleSubmit() {
         try {
-            const service = InventoryService.getInstance();
+            const service = OperationService.getInstance();
             if (isEdit) {
                 await service.editItemName(DatabaseTables.Items, {
                     id: item?.id,

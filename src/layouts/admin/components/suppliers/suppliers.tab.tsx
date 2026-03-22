@@ -18,7 +18,7 @@ import {
 import {type ChangeEvent, useEffect, useState} from "react";
 import type { Suppliers } from "../../../../models/suppliers.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import SuppliersModal from "./suppliers.modal.tsx";
 import {
     DatabaseTables,
@@ -42,7 +42,7 @@ export default function SuppliersTab() {
     }, []);
 
     async function fetchSuppliers() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.Suppliers);
@@ -131,7 +131,7 @@ export default function SuppliersTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Suppliers, id);
                 NotificationsService.success(
                     "Delete Supplier",

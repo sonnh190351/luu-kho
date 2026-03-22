@@ -2,9 +2,9 @@ import {LoadingOverlay, Stack, Title, Text} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 
-export default function StaffLogsLayout() {
+export default function LogsTab() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [logs, setLogs] = useState<any[]>([]);
@@ -16,7 +16,7 @@ export default function StaffLogsLayout() {
     async function fetchLogs() {
         setIsLoading(true);
         try {
-            const data = await InventoryService.getInstance().getAllRows(DatabaseTables.Logs);
+            const data = await OperationService.getInstance().getAllRows(DatabaseTables.Logs);
             setLogs(data);
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());

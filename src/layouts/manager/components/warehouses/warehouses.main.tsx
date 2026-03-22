@@ -12,12 +12,12 @@ import {
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import ManagementService from "../../../../services/operations/management.service.ts";
 import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import dayjs from "dayjs";
 import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
 import ExportInventoryModal from "../../../../components/modals/export.modal.tsx";
+import OperationService from "../../../../services/operations/operationService.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -52,7 +52,7 @@ export default function ManagerWarehousesTab() {
         try {
             console.log("Fetch Items");
             if(warehouse_id !== null) {
-                const service = ManagementService.getInstance();
+                const service = OperationService.getInstance();
                 const data = await service.getWarehouseInventoryItems(warehouse_id)
                 setItems(data);
                 console.log(data)

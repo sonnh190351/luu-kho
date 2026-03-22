@@ -2,7 +2,7 @@ import {LoadingOverlay, Stack, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 
 export default function StaffLogsTab() {
     const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,7 @@ export default function StaffLogsTab() {
     async function fetchLogs() {
         setIsLoading(true);
         try {
-            const data = await InventoryService.getInstance().getAllRows(DatabaseTables.Logs);
+            const data = await OperationService.getInstance().getAllRows(DatabaseTables.Logs);
             let entry = ""
             for (let i = 0; i < data.length; i++) {
                 entry += `${i+1}\t${data[i].details}\n`;

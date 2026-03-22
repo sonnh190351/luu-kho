@@ -18,8 +18,8 @@ import { useRef, useState } from "react";
 
 import {
     IconBuildingWarehouse,
-    IconCategory, IconChartArea,
-    IconPackage,
+    IconCategory, IconChartArea, IconLogs, IconMenuOrder,
+    IconPackage, IconPizza,
     IconReceipt,
     IconTag,
     IconTemplate,
@@ -36,6 +36,9 @@ import UsersTab from "./components/users/users.tab.tsx";
 import RequestsTab from "./components/requests/requests.tab.tsx";
 import type { TabGroup } from "../common.types.ts";
 import AdminDashboardTab from "./components/dashboard/dashboard.tab.tsx";
+import LogsTab from "./components/logs/logs.tab.tsx";
+import ProductsTabs from "./components/products/products.tab.tsx";
+import OrdersTab from "./components/orders/orders.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -51,9 +54,12 @@ export default function AdminLayout() {
         <TagsTab />,
         <InventoriesTab />,
         <WarehousesTab />,
+        <ProductsTabs />,
+        <OrdersTab />,
         <UsersTab />,
         <SuppliersTab />,
         <RequestsTab />,
+        <LogsTab />
     ];
 
     const adminTabs: TabGroup[] = [
@@ -103,23 +109,48 @@ export default function AdminLayout() {
             ],
         },
         {
+            name: "Orders",
+            items: [
+                {
+                    icon: <IconPizza />,
+                    title: "Products",
+                    index: 6,
+                },
+                {
+                    icon: <IconMenuOrder />,
+                    title: "Orders",
+                    index: 7,
+                },
+            ],
+        },
+        {
             name: "Users",
             items: [
                 {
                     icon: <IconUser />,
                     title: "Users",
-                    index: 6,
+                    index: 8,
                 },
                 {
                     icon: <IconUserDollar />,
                     title: "Suppliers",
-                    index: 7,
+                    index: 9,
                 },
 
                 {
                     icon: <IconReceipt />,
                     title: "Requests",
-                    index: 8,
+                    index: 10,
+                },
+            ],
+        },
+        {
+            name: "Logs",
+            items: [
+                {
+                    icon: <IconLogs />,
+                    title: "Logs",
+                    index: 11,
                 },
             ],
         },
@@ -157,7 +188,7 @@ export default function AdminLayout() {
                         {adminTabs.map((tab: TabGroup, tab_index: number) => (
                             <Stack gap={0} key={`tab-item-${tab_index}`}>
                                 <Text
-                                    mt={"sm"}
+                                    mt={"xs"}
                                     pl={10}
                                     style={{
                                         fontWeight: 700,
@@ -171,7 +202,7 @@ export default function AdminLayout() {
                                             setCurrentTab(item.index)
                                         }
                                         key={`admin-tab-${tab_index}-${item_index}`}
-                                        mt={5}
+                                        mt={2}
                                         style={{
                                             overflow: "hidden",
                                             position: "relative",
@@ -199,7 +230,7 @@ export default function AdminLayout() {
                                     </Group>
                                 ))}
                                 {tab_index < adminTabs.length - 1 && (
-                                    <Divider mb={"xs"} mt={"sm"} />
+                                    <Divider mt={"sm"} />
                                 )}
                             </Stack>
                         ))}

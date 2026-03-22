@@ -2,8 +2,8 @@ import DatabaseService from "../database/database.service.ts";
 import {DatabaseTables} from "../../enums/tables.ts";
 import { NotificationsService } from "../notifications/notifications.service.ts";
 
-export default class InventoryService {
-    private static instance: InventoryService;
+export default class OperationService {
+    private static instance: OperationService;
 
     private database: DatabaseService;
 
@@ -11,12 +11,12 @@ export default class InventoryService {
         this.database = DatabaseService.getInstance();
     }
 
-    public static getInstance(): InventoryService {
-        if (!InventoryService.instance) {
-            InventoryService.instance = new InventoryService();
+    public static getInstance(): OperationService {
+        if (!OperationService.instance) {
+            OperationService.instance = new OperationService();
         }
 
-        return InventoryService.instance;
+        return OperationService.instance;
     }
 
     public async getAllMatching(
@@ -182,5 +182,33 @@ export default class InventoryService {
         await this.database.delete(table, id);
     }
 
+    public async getWarehouseInventoryItems(warehouse_id: number) {
+
+        // get matching data
+        const data = await this.database.getDatabase().from(DatabaseTables.Inventories).select(`
+                id,
+                created_at,
+                updated_at,
+                expired_at,
+                quantity,
+                items(
+                    name,
+                    tags,
+                    quantity_type
+                )
+            `).in(
+            'warehouse_id', [warehouse_id]
+        )
+
+        if(data.error) {
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get items: ${data.error}`,
+            );
+            return []
+        }
+
+        return data.data
+    }
 
 }

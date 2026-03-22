@@ -16,7 +16,6 @@ import {
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import ManagementService from "../../../../services/operations/management.service.ts";
 import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import dayjs from "dayjs";
@@ -26,6 +25,7 @@ import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {Inventories} from "../../../../models/inventories.ts";
 import {ExpiringStatus} from "../../../../enums/data.ts";
 import UtilsService from "../../../../services/utils.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -73,7 +73,7 @@ export default function StaffWarehousesTab() {
         setIsLoading(true)
         try {
             if(warehouse_id !== null) {
-                const service = ManagementService.getInstance();
+                const service = OperationService.getInstance();
                 const data = await service.getWarehouseInventoryItems(warehouse_id)
                 setItems(data);
                 updateStatistics(data)

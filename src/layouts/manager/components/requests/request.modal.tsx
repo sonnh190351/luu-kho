@@ -8,7 +8,7 @@ import UtilsService from "../../../../services/utils.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import DatabaseService from "../../../../services/database/database.service.ts";
 import {DatabaseTables} from "../../../../enums/tables.ts";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import type {Warehouses} from "../../../../models/warehouses.ts";
 
 interface RequestModalProps {
@@ -57,7 +57,7 @@ export default function ManagerRequestModal({open, close, request}: RequestModal
     }, [request]);
 
     async function fetchWarehouses() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
         const data = await service.getAllRows(DatabaseTables.Warehouses);
         setWarehouses(data);
     }

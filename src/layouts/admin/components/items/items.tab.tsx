@@ -21,7 +21,7 @@ import {type ChangeEvent, useEffect, useState} from "react";
 import type { Items } from "../../../../models/items.ts";
 import ItemsModal from "./items.modal.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import InventoryService from "../../../../services/operations/inventory.service.ts";
+import OperationService from "../../../../services/operations/operationService.ts";
 import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
@@ -46,7 +46,7 @@ export default function ItemsTab() {
     }, []);
 
     async function fetchItems() {
-        const service = InventoryService.getInstance();
+        const service = OperationService.getInstance();
 
         try {
             const data = await service.getAllRows(DatabaseTables.Items);
@@ -216,7 +216,7 @@ export default function ItemsTab() {
     function handleDelete(id: number) {
         InformationService.getInstance().confirm(async () => {
             try {
-                const service = InventoryService.getInstance();
+                const service = OperationService.getInstance();
                 await service.deleteById(DatabaseTables.Items, id);
                 NotificationsService.success(
                     "Delete Item",
