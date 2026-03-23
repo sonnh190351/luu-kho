@@ -104,6 +104,7 @@ export default function StaffWarehousesTab() {
     function handleCloseModal() {
         setOpenModal(false);
         setTimeout(() => {
+            console.log(selectedItem)
             setSelectedItem(null);
         }, 200)
     }
@@ -113,11 +114,6 @@ export default function StaffWarehousesTab() {
         setTimeout(() => {
             setSelectedItem(null);
         }, 200)
-    }
-
-    function handleSelectItem(item: any) {
-        setSelectedItem(item);
-        setOpenExportModal(true);
     }
 
     const columns: any[] = [
@@ -203,13 +199,16 @@ export default function StaffWarehousesTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             sortable: false,
             width: 80,
             render: ({id}: Inventories) => {
                 return (
                     <Group>
+                        {
+                            id
+                        }
                     </Group>
                 );
             },

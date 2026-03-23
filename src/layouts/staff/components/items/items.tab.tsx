@@ -200,7 +200,7 @@ export default function StaffItemsTab() {
             },
         },
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             width: 120,
             render: ({ id }: any) => {

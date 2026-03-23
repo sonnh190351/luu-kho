@@ -10,7 +10,10 @@ const ProtectedRoute = ({ children, role } : { children: any, role: number}) => 
     }
 
     const cached = JSON.parse(cachedData)
+    console.log(cached)
+    console.log(role)
 
+    // Temporary disabled for dev purposes
     // if (cached.role !== role) {
     //     localStorage.setItem(LocalStorage.pendingMessage, "Unauthorized access to this page!")
     //     localStorage.removeItem(LocalStorage.userData)

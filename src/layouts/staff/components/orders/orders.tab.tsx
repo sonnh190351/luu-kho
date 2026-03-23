@@ -126,9 +126,8 @@ export default function StaffOrdersLayout() {
                 );
             },
         },
-
         {
-            accessor: "id",
+            accessor: "actions",
             title: "Actions",
             sortable: false,
             width: 160,

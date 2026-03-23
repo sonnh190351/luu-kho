@@ -9,7 +9,7 @@ import {
 import {LocalStorage} from "../../enums/localStorage.ts";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconChartArea, IconCommand, IconLogs} from "@tabler/icons-react";
+import {IconBuildingWarehouse, IconCommand, IconLogs} from "@tabler/icons-react";
 import ManagerWarehousesTab from "./components/warehouses/warehouses.main.tsx";
 import ManagerRequestsTab from "./components/requests/requests.main.tsx";
 import ManagerLogsTab from "./components/logs/logs.tab.tsx";

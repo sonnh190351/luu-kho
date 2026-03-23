@@ -100,7 +100,7 @@ export default function UserDetails() {
                     StorageBuckets.Avatar, `${loginData.email}.jpg`, avatar
                 )
                 NotificationsService.success("Upload Success", "User avatar has been updated!")
-            } catch (e) {
+            } catch (e: any) {
                 NotificationsService.error("Upload Error", e.toString());
             }
 

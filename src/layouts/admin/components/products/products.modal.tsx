@@ -1,5 +1,6 @@
 import {Modal} from "@mantine/core";
 import {useForm} from "@mantine/form";
+import {useEffect} from "react";
 
 interface ProductModalProps {
     product: any,
@@ -18,6 +19,12 @@ export default function ProductModal({product, open, close}: ProductModalProps) 
             name: ""
         }
     })
+
+    useEffect(() => {
+        if(product) {
+            form.setValues({})
+        }
+    }, []);
 
     return (
         <Modal opened={open} onClose={close} centered={true}>

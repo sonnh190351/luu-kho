@@ -70,16 +70,6 @@ export default function StaffRequestsLayout() {
         setIsOpenModal(false)
     }
 
-    async function clearSearch(){
-        setKeyword("")
-        const temp = localStorage.getItem(DatabaseTables.Items);
-        if(!temp) {
-            setItems([])
-        } else {
-            setItems(JSON.parse(temp));
-        }
-    }
-
     async function handleSearchByName(e: ChangeEvent<HTMLInputElement>) {
         setKeyword(e.target.value)
 
@@ -193,7 +183,7 @@ export default function StaffRequestsLayout() {
                                             </Text>
                                             <Group>
                                                 {
-                                                    CommonRequestType[item.type]
+                                                    CommonRequestType[item.type as keyof typeof CommonRequestType]
                                                 }
                                             </Group>
                                         </Stack>
