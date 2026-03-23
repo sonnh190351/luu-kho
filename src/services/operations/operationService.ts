@@ -248,15 +248,7 @@ export default class OperationService {
         const data = await this.database.getDatabase().from(DatabaseTables.Products).select(`
                 id,
                 created_at,
-                name,
-                product_items(
-                    id,
-                    quantity,
-                    items (
-                        name,
-                        quantity_type
-                    )
-                )
+                name
             `)
 
         if(data.error) {
@@ -269,5 +261,40 @@ export default class OperationService {
         }
 
         return data.data
+    }
+
+    public async getProductDetails(product_id: number) {
+        const data = await this.database.getDatabase().from(DatabaseTables.Products).select(`
+                id,
+                created_at,
+                name,
+                product_items(
+                    id,
+                    quantity,
+                    items (
+                        id,
+                        name,
+                        quantity_type
+                    )
+                )
+            `).eq('id', product_id)
+
+        if(data.error) {
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get product item details: ${data.error}`,
+            );
+            return []
+        }
+
+        if(data.data.length === 0) {
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get product item details: Does not exist any product details with id ${product_id}`,
+            );
+            return undefined
+        }
+
+        return data.data[0]
     }
 }

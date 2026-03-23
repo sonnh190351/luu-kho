@@ -22,16 +22,9 @@ import { InformationModal } from "./components/modals/information.modal.tsx";
 import StaffLayout from "./layouts/staff/staff.layout.tsx";
 import ManagerLayout from "./layouts/manager/manager.layout.tsx";
 import {USER_ROLES} from "./enums/roles.ts";
-import ErrorLayout from "./layouts/404/404.tsx";
 
 export default function App() {
     const router = createBrowserRouter([
-        {
-            path: "*",
-            element: (
-                <ErrorLayout />
-            )
-        },
         {
             path: "/admin",
             element: (
@@ -60,7 +53,7 @@ export default function App() {
             ),
         },
         {
-            path: "/login",
+            path: "*",
             element: <LoginLayout />,
         },
     ]);

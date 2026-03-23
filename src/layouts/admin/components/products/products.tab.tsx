@@ -36,16 +36,6 @@ export default function ProductsTabs() {
             "id": 1,
             "created_at": "2026-03-19T14:33:32.35953+00:00",
             "name": "Cơm rang dưa bò",
-            "product_items": [
-                {
-                    "id": 1,
-                    "items": {
-                        "name": "Thịt bò",
-                        "quantity_type": "Kg"
-                    },
-                    "quantity": 200
-                }
-            ]
         }
     ]);
 
@@ -69,19 +59,6 @@ export default function ProductsTabs() {
             sortable: true,
             render: ({ name }: any) => {
                 return <Group>{name}</Group>;
-            },
-        },
-        {
-            accessor: "product_items",
-            title: "Ingredients Count",
-            sortable: true,
-            width: 200,
-            render: ({ product_items }: any) => {
-                return (
-                    <Group>
-                        {product_items.length}
-                    </Group>
-                );
             },
         },
         {
@@ -133,17 +110,17 @@ export default function ProductsTabs() {
                 await service.deleteById(DatabaseTables.Products, id);
                 NotificationsService.success(
                     "Delete Products",
-                    "Product has been deleted!",
+                    `Product ${id} has been deleted!`,
                 );
             } catch (e: any) {
-                NotificationsService.error("Delete Category", e.toString());
+                NotificationsService.error("Delete Product", e.toString());
             }
             await fetchProducts();
         });
     }
 
     function handleEdit(id: number) {
-        const matching = product.find((p: any) => p.id === id);
+        const matching = products.find((p: any) => p.id === id);
         if (matching) {
             setProduct(matching);
             setOpenModal(true);
@@ -151,7 +128,7 @@ export default function ProductsTabs() {
     }
 
     function handleViewInfo(id: number) {
-        const matching = product.find((p: any) => p.id === id);
+        const matching = products.find((p: any) => p.id === id);
         if (matching) {
             setProductDetails(matching);
         }
@@ -160,11 +137,9 @@ export default function ProductsTabs() {
     async function fetchProducts() {
         setIsLoading(true)
         try {
-            OperationService.getInstance()
-            // const service = OperationService.getInstance()
-            // const data = await service.getProductsItems()
-            // setProducts(data)
-            // console.log(data)
+            const service = OperationService.getInstance()
+            const data = await service.getProductsItems()
+            setProducts(data)
         } catch (e: any) {
             NotificationsService.error("Fetch products", e.toString());
         }
@@ -194,7 +169,9 @@ export default function ProductsTabs() {
             />
             <Title>Products Management</Title>
             {
-                productDetails ? <ProductDetailsTab product={productDetails}/> : <>
+                productDetails ? <ProductDetailsTab product={productDetails} close={() => {
+                    setProductDetails(undefined);
+                }}/> : <>
                     <Group justify={"space-between"}>
                         <Stack gap={5}>
                             <Text>Filter</Text>

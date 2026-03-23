@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
+import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -37,7 +38,9 @@ export default function InventoriesModal({
             expired_at: "",
         },
         validate: {
+            item_id: FormValidationService.validateItemId,
             warehouse_id: FormValidationService.validateWarehouseId,
+            quantity: FormValidationService.validateQuantity
         },
     });
 
@@ -68,7 +71,7 @@ export default function InventoriesModal({
 
     async function handleSubmit() {
         try {
-            const service = OperationService.getInstance();
+            const service = InventoryService.getInstance();
 
             await service.addInventoryEntry(form.getValues());
 
@@ -82,7 +85,6 @@ export default function InventoriesModal({
             console.log(e);
             NotificationsService.error(`Add Inventory`, e.toString());
         }
-        refresh();
     }
 
     function handleClose() {
@@ -133,6 +135,7 @@ export default function InventoriesModal({
                         }}
                     />
                     <Select
+                        {...form.getInputProps('item_id')}
                         clearable
                         value={String(form.values.item_id)}
                         onChange={(value) => {
@@ -153,6 +156,7 @@ export default function InventoriesModal({
                         })}
                     />
                     <NumberInput
+                        {...form.getInputProps('quantity')}
                         required
                         label={`Quantity`}
                         value={form.values.quantity}

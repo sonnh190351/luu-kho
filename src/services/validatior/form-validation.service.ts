@@ -4,6 +4,14 @@ import { USER_ROLES } from "../../enums/roles";
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
 export class FormValidationService {
+    public static validateItemId(id: number) {
+        if (id === -1) {
+            return "Please select an item!";
+        }
+        return null;
+    }
+
+
     public static validateWarehouseId(id: number) {
         if (id === -1) {
             return "Please select a warehouse!";
@@ -24,6 +32,14 @@ export class FormValidationService {
         }
         return null;
     }
+
+    public static validateQuantity(quantity: number) {
+        if (quantity <= 0) {
+            return "Quantity must be greater than 0!";
+        }
+        return null;
+    }
+
 
     public static validateName(name: string) {
         if (name.length < 1) {

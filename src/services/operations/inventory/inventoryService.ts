@@ -26,6 +26,7 @@ export default class InventoryService {
         return InventoryService.instance;
     }
 
+
     private async responseLog(response: any, data: any, fn_name: string) {
         if(response.error) {
             await LogService.getInstance().writeLog(
@@ -83,6 +84,42 @@ export default class InventoryService {
         });
 
         await this.responseLog(response, "Add Inventory Entry", data)
+    }
+
+    public async addProductItem(data: any) {
+
+        const matching = await this.database.getByField(
+            DatabaseTables.ProductItems, 'item_id', data.item_id
+        )
+
+        if(matching.error) {
+            throw matching.error.message;
+        }
+
+        if(matching.data!.length > 0) {
+            throw `Already exists this item in the product!`
+        }
+
+        const response = await this.database.add(DatabaseTables.ProductItems, data)
+
+        await this.responseLog(response, "Add Inventory Entry", data)
+    }
+
+    public async editProductItem(data: any) {
+
+        const matching = await this.database.getByField(
+            DatabaseTables.ProductItems, 'id', data.id
+        )
+        if(matching.error) {
+            throw matching.error.message;
+        }
+
+        if(matching.data!.length === 0) {
+            throw `Does not exist this item in the product!`
+        }
+
+        const response = await this.database.edit(DatabaseTables.ProductItems, data.id, data)
+        await this.responseLog(response, "Edit Inventory Entry", data)
     }
 
 }
