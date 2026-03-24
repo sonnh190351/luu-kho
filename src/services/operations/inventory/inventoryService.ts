@@ -28,7 +28,7 @@ export default class InventoryService {
 
 
     private async responseLog(response: any, data: any, fn_name: string) {
-        if(response.error) {
+        if (response.error) {
             await LogService.getInstance().writeLog(
                 fn_name,
                 {
@@ -46,8 +46,48 @@ export default class InventoryService {
     private async checkOrderAvailability(data: any): Promise<boolean> {
         console.log(data)
         // Check remaining items in inventory. If not available, return false
+        const products = await this.database.getDatabase().from(DatabaseTables.ProductItems).select().eq('product_id', data.product_id)
 
-        // Update remaining items in inventory. If failed to update, return false
+        if (products.error) {
+            throw products.error.message
+        }
+
+        // Keep track inventory data
+        const currentProducts = []
+
+        for (let i = 0; i < products.data.length; i++) {
+            const productItem = products.data[i]
+            const currentProduct = await this.database.getDatabase().from(DatabaseTables.Inventories).select()
+                .eq('warehouse_id', this.userData.warehouses.id)
+                .eq('item_id', productItem.item_id)
+
+            if (currentProduct.error) {
+                throw currentProduct.error.message
+            }
+
+            if (currentProduct.data.length === 0) {
+                throw `Does not exist item with id: "${productItem.item_id}"`
+            }
+
+            const currentProductData = currentProduct.data[0]
+            if (currentProductData.quantity < productItem.quantity) {
+                throw `Not enough ingredients in Inventory for item: ${productItem.id}! Please refill!`
+            }
+
+            currentProducts.push({
+                id: currentProductData.id,
+                quantity: currentProductData.quantity - productItem.quantity
+            })
+        }
+
+        // Update remaining items in inventory.
+        for (let i = 0; i < currentProducts.length; i++) {
+            this.database.getDatabase().from(DatabaseTables.Inventories).update(
+                {
+                    quantity: currentProducts[i].quantity,
+                }
+            ).eq('id', currentProducts[i].id,)
+        }
 
         return true
     }
@@ -56,9 +96,9 @@ export default class InventoryService {
         // TO-DO: Check availability of order
 
         const response = await this.database.edit(DatabaseTables.Orders,
-            data.id,{
-            ...data,
-        })
+            data.id, {
+                ...data,
+            })
 
         await this.responseLog(response, "Edit Order Entry", data)
     }
@@ -92,11 +132,11 @@ export default class InventoryService {
             'item_id', data.item_id
         ).eq('product_id', data.product_id)
 
-        if(matching.error) {
+        if (matching.error) {
             throw matching.error.message;
         }
 
-        if(matching.data!.length > 0) {
+        if (matching.data!.length > 0) {
             throw `Already exists this item in the product!`
         }
 
@@ -110,11 +150,11 @@ export default class InventoryService {
         const matching = await this.database.getByField(
             DatabaseTables.ProductItems, 'id', data.id
         )
-        if(matching.error) {
+        if (matching.error) {
             throw matching.error.message;
         }
 
-        if(matching.data!.length === 0) {
+        if (matching.data!.length === 0) {
             throw `Does not exist this item in the product!`
         }
 

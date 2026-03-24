@@ -76,7 +76,6 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
                 });
             }
 
-
             refresh()
             handleClose()
             NotificationsService.success(

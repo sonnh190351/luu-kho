@@ -76,14 +76,21 @@ export default function OrderModal({
             }
 
             refresh()
-            close()
+            handleClose()
         } catch (e: any) {
             NotificationsService.error("Order Manage", e.toString());
         }
     }
 
+    function handleClose() {
+        close()
+        setTimeout(() => {
+            form.reset()
+        }, 200)
+    }
+
     return (
-        <Modal opened={open} onClose={close} centered
+        <Modal opened={open} onClose={handleClose} centered
                title={"Order Manage"}>
             <form onSubmit={handleSubmit}>
                 <Stack>
