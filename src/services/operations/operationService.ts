@@ -78,6 +78,7 @@ export default class OperationService {
             created_at,
             quantity,
             status,
+            remark,
             products(
                 id,
                 name

@@ -88,9 +88,9 @@ export default class InventoryService {
 
     public async addProductItem(data: any) {
 
-        const matching = await this.database.getByField(
-            DatabaseTables.ProductItems, 'item_id', data.item_id
-        )
+        const matching = await this.database.getDatabase().from(DatabaseTables.ProductItems).select().eq(
+            'item_id', data.item_id
+        ).eq('product_id', data.product_id)
 
         if(matching.error) {
             throw matching.error.message;

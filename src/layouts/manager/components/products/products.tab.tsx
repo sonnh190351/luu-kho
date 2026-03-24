@@ -12,15 +12,15 @@ import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
 import {IconEdit, IconInfoCircle, IconPlus, IconRefresh, IconSearch, IconTrash, IconX} from "@tabler/icons-react";
-import ProductModal from "./products.modal.tsx";
 import ProductDetailsTab from "./product.details.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
 import dayjs from "dayjs";
 import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import {InformationService} from "../../../../services/notifications/information.service.ts";
+import ManagerProductModal from "./products.modal.tsx";
 
-export default function ProductsTabs() {
+export default function ManagerProductsTabs() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [keyword, setKeyword] = useState("");
@@ -211,7 +211,7 @@ export default function ProductsTabs() {
                     <CommonTable data={products} columns={columns} />
                 </>
             }
-            <ProductModal refresh={fetchProducts} product={product} open={openModal} close={handleCloseModal}/>
+            <ManagerProductModal refresh={fetchProducts} product={product} open={openModal} close={handleCloseModal}/>
         </Stack>
     )
 }

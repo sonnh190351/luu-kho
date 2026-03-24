@@ -9,10 +9,11 @@ import {
 import {LocalStorage} from "../../enums/localStorage.ts";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconCommand, IconLogs} from "@tabler/icons-react";
+import {IconBuildingWarehouse, IconCommand, IconLogs, IconPizza} from "@tabler/icons-react";
 import ManagerWarehousesTab from "./components/warehouses/warehouses.main.tsx";
 import ManagerRequestsTab from "./components/requests/requests.main.tsx";
 import ManagerLogsTab from "./components/logs/logs.tab.tsx";
+import ManagerProductsTabs from "./components/products/products.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -33,8 +34,9 @@ export default function ManagerLayout() {
 
     const customerItems = [
         <ManagerWarehousesTab />,
+        <ManagerProductsTabs />,
+        <ManagerRequestsTab />,
         <ManagerLogsTab />,
-        <ManagerRequestsTab />
     ]
 
     const customerTabs: TabGroup[] = [
@@ -47,8 +49,8 @@ export default function ManagerLayout() {
                     index: 0
                 },
                 {
-                    icon: <IconLogs/>,
-                    title: "Logs",
+                    icon: <IconPizza/>,
+                    title: "Products",
                     index: 1
                 }
             ]
@@ -60,6 +62,16 @@ export default function ManagerLayout() {
                     icon: <IconCommand />,
                     title: "Requests",
                     index: 2
+                }
+            ]
+        },
+        {
+            name: "Logs",
+            items: [
+                {
+                    icon: <IconLogs/>,
+                    title: "Logs",
+                    index: 3
                 }
             ]
         }

@@ -17,10 +17,10 @@ interface ProductModalForm {
     name: string,
 }
 
-export default function ProductModal({product, open, close, refresh}: ProductModalProps) {
+export default function ManagerProductModal({product, open, close, refresh}: ProductModalProps) {
 
     const isEdit = Boolean(product);
-
+    
     const form = useForm<ProductModalForm>({
         initialValues: {
             name: ""

@@ -5,5 +5,6 @@ export interface Orders {
     user_id: number
     status: string
     quantity: number
+    remark: string
     created_at: string
 }

@@ -1,4 +1,4 @@
-import {Button, Modal, NumberInput, Select, Stack} from "@mantine/core";
+import {Button, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {OrderStatus} from "../../../../enums/orders.ts";
 import {useEffect, useState} from "react";
@@ -17,6 +17,7 @@ interface OrderModalProps {
 interface OrderFormValues {
     product_id: number;
     quantity: number;
+    remark: string;
     status: OrderStatus
 }
 
@@ -34,6 +35,7 @@ export default function StaffOrderModal({
         initialValues: {
             product_id: -1,
             quantity: 0,
+            remark: "",
             status: OrderStatus.RECEIVED
         }
     })
@@ -48,6 +50,7 @@ export default function StaffOrderModal({
                 product_id: Number(order.products.id),
                 quantity: order.quantity,
                 status: order.status,
+                remark: order.remark,
             })
         }
     }, [order]);
@@ -117,6 +120,8 @@ export default function StaffOrderModal({
                             return { label: value, value: value };
                         })}
                     />
+
+                    <TextInput {...form.getInputProps('remark')} label={"Remark"} />
 
                     <Button onClick={handleSubmit} fullWidth>Submit</Button>
                 </Stack>

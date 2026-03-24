@@ -127,6 +127,19 @@ export default function StaffOrdersLayout() {
             },
         },
         {
+            accessor: "remark",
+            title: "Remark",
+            sortable: true,
+            width: 400,
+            render: ({remark}: any) => {
+                return (
+                    <Group>
+                        <Text>{remark}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
             accessor: "actions",
             title: "Actions",
             sortable: false,
