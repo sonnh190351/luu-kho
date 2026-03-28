@@ -1,7 +1,7 @@
 import {
     Badge,
     Button,
-    Card,
+    Card, Divider,
     Grid,
     Group,
     LoadingOverlay,
@@ -229,7 +229,11 @@ export default function StaffOrdersLayout() {
                 />
                 <LoadingOverlay/>
 
-                <Title>Orders Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Orders Data</Title>
+                </Stack>
+                <Divider/>
 
                 <Grid>
                     <Grid.Col span={4}>
@@ -311,7 +315,7 @@ export default function StaffOrdersLayout() {
                         </Group>
                     </Stack>
                 </Group>
-                <CommonTable height={'55dvh'} data={orders} columns={columns}/>
+                <CommonTable height={'50dvh'} data={orders} columns={columns}/>
             </Stack>
 
             <StaffOrderModal order={selectedOrder} open={openModal} close={handleCloseModal} refresh={fetchOrders} />

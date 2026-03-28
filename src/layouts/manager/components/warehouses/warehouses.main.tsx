@@ -18,6 +18,7 @@ import dayjs from "dayjs";
 import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
 import ExportInventoryModal from "../../../../components/modals/export.modal.tsx";
 import OperationService from "../../../../services/operations/operationService.ts";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -88,7 +89,11 @@ export default function ManagerWarehousesTab() {
                     visible={isLoading}
                     overlayProps={{radius: "sm", blur: 2}}
                 />
-                <Title>Warehouse Inventory</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Warehouse Inventories Data</Title>
+                </Stack>
+                <Divider/>
                 <Grid>
                     <Grid.Col span={4}>
                         <Card style={{
@@ -134,11 +139,13 @@ export default function ManagerWarehousesTab() {
                         }}>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => setOpenModal(true)}
                                 leftSection={<IconPlus/>}>
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchItems()}
                                 leftSection={<IconRefresh/>}>
                                 Refresh
@@ -196,7 +203,7 @@ export default function ManagerWarehousesTab() {
                                         </Grid>
                                     </Group>
                                     <Group>
-                                        <ActionIcon onClick={() => handleSelectItem(item)}>
+                                        <ActionIcon color={BUTTON_COLOR.PRIMARY} onClick={() => handleSelectItem(item)}>
                                             <IconPlus />
                                         </ActionIcon>
                                     </Group>

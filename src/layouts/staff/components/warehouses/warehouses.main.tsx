@@ -222,7 +222,11 @@ export default function StaffWarehousesTab() {
                     visible={isLoading}
                     overlayProps={{radius: "sm", blur: 2}}
                 />
-                <Title>Warehouse Inventory</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Warehouse Inventory</Title>
+                </Stack>
+                <Divider/>
                 <Grid>
                     <Grid.Col span={3}>
                         <Card style={{
@@ -291,7 +295,7 @@ export default function StaffWarehousesTab() {
                     </Stack>
                 </Group>
                 <Divider />
-                <CommonTable height={'54dvh'} data={items} columns={columns} />
+                <CommonTable height={'51vh'} data={items} columns={columns} />
             </Stack>
 
             <WarehouseItemModal open={openModal} close={handleCloseModal} refresh={fetchItems} />

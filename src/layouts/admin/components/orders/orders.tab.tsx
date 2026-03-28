@@ -1,9 +1,9 @@
 import {
     Badge,
-    Button,
+    Button, Divider,
     Group,
     LoadingOverlay,
-     Select,
+    Select,
     Stack,
     Text,
     Title
@@ -17,6 +17,7 @@ import type {DataTableColumn} from "mantine-datatable";
 import {IconEdit, IconPlus, IconRefresh} from "@tabler/icons-react";
 import UtilsService from "../../../../services/utils.ts";
 import OrderModal from "./orders.modal.tsx";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function OrdersTabs() {
 
@@ -110,7 +111,7 @@ export default function OrdersTabs() {
             render: (order: any) => {
                 return (
                     <Group>
-                        <Button onClick={() => {
+                        <Button color={BUTTON_COLOR.PRIMARY} onClick={() => {
                             setSelectedOrder(order)
                             setOpenModal(true)
                         }} leftSection={<IconEdit/>}>Update</Button>
@@ -156,21 +157,23 @@ export default function OrdersTabs() {
                 />
                 <LoadingOverlay/>
 
-                <Title>Orders Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Orders Data</Title>
+                </Stack>
+                <Divider/>
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
                         <Text>Filter</Text>
                         <Group gap={10}>
-                            <Text style={{
-                                fontWeight: "bold"
-                            }}>Status:</Text>
-                            <Select/>
+                            <Select placeholder={"Status"} />
                         </Group>
                     </Stack>
                     <Stack gap={5}>
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => {
                                     setOpenModal(true)
                                 }}
@@ -178,6 +181,7 @@ export default function OrdersTabs() {
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchOrders()}
                                 leftSection={<IconRefresh/>}>
                                 Refresh

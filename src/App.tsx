@@ -9,7 +9,8 @@ import "./app.scss";
 
 import "mantine-datatable/styles.layer.css";
 
-import "@fontsource/be-vietnam-pro/200.css";
+import "@fontsource/google-sans/400.css";
+import "@fontsource/google-sans-code/400.css";
 
 import { Notifications } from "@mantine/notifications";
 
@@ -59,7 +60,7 @@ export default function App() {
     ]);
 
     const theme = createTheme({
-        fontFamily: "Be Vietnam Pro",
+        fontFamily: "Google Sans",
     });
 
     return (

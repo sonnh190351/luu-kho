@@ -6,7 +6,7 @@ import {
     Text,
     LoadingOverlay,
     TextInput,
-    Title,
+    Title, Divider,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -26,6 +26,7 @@ import {
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import dayjs from "dayjs";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function RequestsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -114,11 +115,14 @@ export default function RequestsTab() {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
                             <IconTrash />
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
+                        <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
+                            size={"lg"} onClick={() => handleEdit(id)}>
                             <IconEdit />
                         </ActionIcon>
                     </Group>
@@ -159,7 +163,11 @@ export default function RequestsTab() {
                     overlayProps={{ radius: "sm", blur: 2 }}
                 />
 
-                <Title>Requests Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Requests Data</Title>
+                </Stack>
+                <Divider/>
 
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
@@ -170,7 +178,7 @@ export default function RequestsTab() {
                                 value={keyword}
                                 onChange={(e) => setKeyword(e.target.value)}
                             />
-                            <ActionIcon size={"lg"}>
+                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>
                         </Group>
@@ -179,6 +187,7 @@ export default function RequestsTab() {
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={fetchRequests}
                                 leftSection={<IconRefresh />}>
                                 Refresh

@@ -24,11 +24,11 @@ export default function CommonTable({ data, columns, height }: DataTableProps) {
             sortStatus.direction === "asc" ? inputData.reverse() : inputData;
 
         setRecords(initialData.slice(from, to));
-    }, [sortStatus, data]);
+    }, [sortStatus, data, page]);
 
     return (
         <DataTable
-            height={height ?? "75dvh"}
+            height={height ?? "70dvh"}
             style={{
                 width: "100%",
             }}
@@ -36,7 +36,7 @@ export default function CommonTable({ data, columns, height }: DataTableProps) {
             onSortStatusChange={setSortStatus}
             withTableBorder
             borderRadius="sm"
-            totalRecords={records.length}
+            totalRecords={data.length}
             recordsPerPage={PAGE_SIZE}
             page={page}
             onPageChange={(p) => setPage(p)}

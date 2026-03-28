@@ -20,7 +20,6 @@ import { LocalStorage } from "../../enums/localStorage.ts";
 import {
     IconLogout,
     IconMoonStars,
-    IconSettings,
     IconSun,
     IconUser,
 } from "@tabler/icons-react";
@@ -99,9 +98,6 @@ export default function NavigationBar() {
                                     <Menu.Divider></Menu.Divider>
                                     <Menu.Item leftSection={<IconUser />} onClick={() => setOpenUserDetails(true)}>
                                         User Details
-                                    </Menu.Item>
-                                    <Menu.Item leftSection={<IconSettings />}>
-                                        Settings
                                     </Menu.Item>
                                     <Menu.Divider></Menu.Divider>
                                     <Menu.Item

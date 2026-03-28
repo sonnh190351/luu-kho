@@ -13,3 +13,11 @@ export enum ZIndexLevel {
     HIGH = 1000,
     HIGHEST = 10000,
 }
+
+export enum APP_COLOR  {
+    PRIMARY = "#12b886",
+}
+
+export enum BUTTON_COLOR {
+    PRIMARY = "gray"
+}

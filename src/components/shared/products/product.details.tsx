@@ -9,13 +9,14 @@ import {
     IconX
 } from "@tabler/icons-react";
 import {useEffect, useState} from "react";
-import CommonTable from "../../../../components/dataTable/common.table.tsx";
+import CommonTable from "../../dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
 import ProductDetailsModal from "./product.details.modal.tsx";
-import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import OperationService from "../../../../services/operations/operationService.ts";
-import {InformationService} from "../../../../services/notifications/information.service.ts";
-import {DatabaseTables} from "../../../../enums/tables.ts";
+import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
+import OperationService from "../../../services/operations/operationService.ts";
+import {InformationService} from "../../../services/notifications/information.service.ts";
+import {DatabaseTables} from "../../../enums/tables.ts";
+import {BUTTON_COLOR} from "../../../enums/styling.ts";
 
 interface ProductDetailsTabProps {
     product?: any
@@ -102,11 +103,12 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
                             <IconTrash />
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
+                        <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"} onClick={() => handleEdit(id)}>
                             <IconEdit />
                         </ActionIcon>
                     </Group>
@@ -161,7 +163,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                 overlayProps={{radius: "sm", blur: 2}}
             />
             <Group>
-                <ActionIcon onClick={close}>
+                <ActionIcon color={BUTTON_COLOR.PRIMARY} onClick={close}>
                     <IconChevronLeft/>
                 </ActionIcon>
                 <Title order={4}>
@@ -184,7 +186,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                                 <IconX/>
                             </ActionIcon>
                         }
-                        <ActionIcon size={"lg"}>
+                        <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
                             <IconSearch/>
                         </ActionIcon>
                     </Group>
@@ -193,11 +195,13 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                     <Text>Controls</Text>
                     <Group>
                         <Button
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => setOpenModal(true)}
                             leftSection={<IconPlus/>}>
                             Add
                         </Button>
                         <Button
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => fetchProductItems()}
                             leftSection={<IconRefresh/>}>
                             Refresh
@@ -205,7 +209,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                     </Group>
                 </Stack>
             </Group>
-            <CommonTable height={'70dvh'} data={productItem ? productItem.product_items : []} columns={columns}/>
+            <CommonTable height={'66dvh'} data={productItem ? productItem.product_items : []} columns={columns}/>
 
             <ProductDetailsModal product_id={product.id} refresh={fetchProductItems} open={openModal} product_details={selectedProductItem} close={handleCloseModal} />
         </Stack>

@@ -1,11 +1,11 @@
 import {Button, Modal, NumberInput, Select, Stack} from "@mantine/core";
 import {useEffect, useState} from "react";
-import OperationService from "../../../../services/operations/operationService.ts";
-import {DatabaseTables} from "../../../../enums/tables.ts";
-import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
+import OperationService from "../../../services/operations/operationService.ts";
+import {DatabaseTables} from "../../../enums/tables.ts";
+import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
 import {useForm} from "@mantine/form";
-import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
-import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
+import {FormValidationService} from "../../../services/validatior/form-validation.service.ts";
+import InventoryService from "../../../services/operations/inventory/inventoryService.ts";
 
 interface ProductDetailsModalProps {
     product_details?: any;

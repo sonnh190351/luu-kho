@@ -13,22 +13,22 @@ import {
     Title
 } from "@mantine/core";
 import {type ChangeEvent, useEffect, useState} from "react";
-import StaffRequestModal from "./request.modal.tsx";
-import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
+import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
 import {IconInfoCircle, IconPlus, IconRefresh} from "@tabler/icons-react";
-import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
-import DatabaseService from "../../../../services/database/database.service.ts";
-import {LocalStorage} from "../../../../enums/localStorage.ts";
+import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../enums/tables.ts";
+import DatabaseService from "../../../services/database/database.service.ts";
+import {LocalStorage} from "../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {CommonRequestType} from "../../../../enums/request.ts";
-import UtilsService from "../../../../services/utils.ts";
+import {RequestStatus, CommonRequestType} from "../../../enums/request.ts";
+import ManagerRequestModal from "./request.modal.tsx";
+import {BUTTON_COLOR} from "../../../enums/styling.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
     position: 'relative',
 }
 
-export default function StaffRequestsLayout() {
+export default function RequestsLayout() {
     const cachedData = JSON.parse(localStorage.getItem(LocalStorage.userData)!);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -86,13 +86,32 @@ export default function StaffRequestsLayout() {
         setItems(matchingItems)
     }
 
+    function getBadgeColor(status: RequestStatus) {
+        switch (status) {
+            case RequestStatus.SUBMITTED:
+                return "blue"
+            case RequestStatus.PROCESSING:
+                return "yellow"
+            case RequestStatus.ACCEPTED:
+                return "green"
+            case RequestStatus.REJECTED:
+                return "red"
+            default:
+                return "gray"
+        }
+    }
+
     return (
         <Stack pt={"lg"} pl={"sm"}>
             <LoadingOverlay
                 visible={isLoading}
                 overlayProps={{ radius: "sm", blur: 2 }}
             />
-            <Title>Requests</Title>
+            <Stack gap={0}>
+                <Text>Management</Text>
+                <Title>Requests Data</Title>
+            </Stack>
+            <Divider/>
             <Grid>
                 <Grid.Col span={3}>
                     <Card style={{
@@ -150,11 +169,13 @@ export default function StaffRequestsLayout() {
                 <Stack gap={5} mt={20}>
                     <Group>
                         <Button
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => setIsOpenModal(true)}
                             leftSection={<IconPlus />}>
                             New Request
                         </Button>
                         <Button
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => fetchRequests()}
                             leftSection={<IconRefresh />}>
                             Refresh
@@ -210,11 +231,11 @@ export default function StaffRequestsLayout() {
                                                 Status
                                             </Text>
                                             <Group>
-                                                <Badge color={UtilsService.getRequestBadgeColor(item.status)}>{item.status}</Badge>
+                                                <Badge color={getBadgeColor(item.status)}>{item.status}</Badge>
                                             </Group>
                                         </Stack>
                                         <Divider mr={'lg'} orientation={'vertical'} />
-                                        <Button leftSection={<IconInfoCircle />}>
+                                        <Button color={BUTTON_COLOR.PRIMARY}  leftSection={<IconInfoCircle />}>
                                             View Details
                                         </Button>
                                     </Group>
@@ -225,7 +246,7 @@ export default function StaffRequestsLayout() {
                 }
             </Stack>
 
-            <StaffRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
+            <ManagerRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
         </Stack>
     )
 }

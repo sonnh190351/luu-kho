@@ -8,13 +8,14 @@ import {
     useMantineColorScheme,
 } from "@mantine/core";
 import {
+    APP_COLOR,
     BG_COLOR_DARK,
     BG_COLOR_LIGHT,
     BORDER_COLOR_DARK,
     BORDER_COLOR_LIGHT,
     NAV_BAR_HEIGHT,
 } from "../../enums/styling.ts";
-import { useRef, useState } from "react";
+import {useRef, useState} from "react";
 
 import {
     IconBuildingWarehouse,
@@ -26,40 +27,40 @@ import {
     IconUser,
     IconUserDollar,
 } from "@tabler/icons-react";
-import ItemsTab from "./components/items/items.tab.tsx";
+import ItemsTab from "../../components/shared/items/items.tab.tsx";
 import CategoriesTab from "./components/categories/categories.tab.tsx";
 import TagsTab from "./components/tags/tags.tab.tsx";
 import InventoriesTab from "./components/inventories/inventories.tab.tsx";
-import WarehousesTab from "./components/warehouses/warehouses.tab.tsx";
+import WarehousesTab from "../../components/shared/warehouses/warehouses.tab.tsx";
 import SuppliersTab from "./components/suppliers/suppliers.tab.tsx";
 import UsersTab from "./components/users/users.tab.tsx";
 import RequestsTab from "./components/requests/requests.tab.tsx";
-import type { TabGroup } from "../common.types.ts";
+import type {TabGroup} from "../common.types.ts";
 import AdminDashboardTab from "./components/dashboard/dashboard.tab.tsx";
-import LogsTab from "./components/logs/logs.tab.tsx";
-import ProductsTabs from "./components/products/products.tab.tsx";
+import LogsTab from "../../components/shared/logs/logs.tab.tsx";
+import ProductsTabs from "../../components/shared/products/products.tab.tsx";
 import OrdersTab from "./components/orders/orders.tab.tsx";
 
 const openMenuWidth = 200;
 
 export default function AdminLayout() {
-    const { colorScheme } = useMantineColorScheme();
+    const {colorScheme} = useMantineColorScheme();
 
     const isDarkMode = colorScheme === "dark";
 
     const adminItems = [
-        <AdminDashboardTab />,
-        <ItemsTab />,
-        <CategoriesTab />,
-        <TagsTab />,
-        <InventoriesTab />,
-        <WarehousesTab />,
-        <ProductsTabs />,
-        <OrdersTab />,
-        <UsersTab />,
-        <SuppliersTab />,
-        <RequestsTab />,
-        <LogsTab />
+        <AdminDashboardTab/>,
+        <ItemsTab/>,
+        <CategoriesTab/>,
+        <TagsTab/>,
+        <InventoriesTab/>,
+        <WarehousesTab/>,
+        <ProductsTabs/>,
+        <OrdersTab/>,
+        <UsersTab/>,
+        <SuppliersTab/>,
+        <RequestsTab/>,
+        <LogsTab/>
     ];
 
     const adminTabs: TabGroup[] = [
@@ -67,7 +68,7 @@ export default function AdminLayout() {
             name: "",
             items: [
                 {
-                    icon: <IconChartArea />,
+                    icon: <IconChartArea/>,
                     title: "Dashboard",
                     index: 0,
                 },
@@ -77,17 +78,17 @@ export default function AdminLayout() {
             name: "Items",
             items: [
                 {
-                    icon: <IconTemplate />,
+                    icon: <IconTemplate/>,
                     title: "Items",
                     index: 1,
                 },
                 {
-                    icon: <IconCategory />,
+                    icon: <IconCategory/>,
                     title: "Categories",
                     index: 2,
                 },
                 {
-                    icon: <IconTag />,
+                    icon: <IconTag/>,
                     title: "Tags",
                     index: 3,
                 },
@@ -97,12 +98,12 @@ export default function AdminLayout() {
             name: "Inventory",
             items: [
                 {
-                    icon: <IconPackage />,
+                    icon: <IconPackage/>,
                     title: "Inventories",
                     index: 4,
                 },
                 {
-                    icon: <IconBuildingWarehouse />,
+                    icon: <IconBuildingWarehouse/>,
                     title: "Warehouses",
                     index: 5,
                 },
@@ -112,12 +113,12 @@ export default function AdminLayout() {
             name: "Orders",
             items: [
                 {
-                    icon: <IconPizza />,
+                    icon: <IconPizza/>,
                     title: "Products",
                     index: 6,
                 },
                 {
-                    icon: <IconMenuOrder />,
+                    icon: <IconMenuOrder/>,
                     title: "Orders",
                     index: 7,
                 },
@@ -127,18 +128,18 @@ export default function AdminLayout() {
             name: "Users",
             items: [
                 {
-                    icon: <IconUser />,
+                    icon: <IconUser/>,
                     title: "Users",
                     index: 8,
                 },
                 {
-                    icon: <IconUserDollar />,
+                    icon: <IconUserDollar/>,
                     title: "Suppliers",
                     index: 9,
                 },
 
                 {
-                    icon: <IconReceipt />,
+                    icon: <IconReceipt/>,
                     title: "Requests",
                     index: 10,
                 },
@@ -148,7 +149,7 @@ export default function AdminLayout() {
             name: "Logs",
             items: [
                 {
-                    icon: <IconLogs />,
+                    icon: <IconLogs/>,
                     title: "Logs",
                     index: 11,
                 },
@@ -209,28 +210,31 @@ export default function AdminLayout() {
                                             cursor: "pointer",
                                             backgroundColor:
                                                 item.index === currentTab
-                                                    ? isDarkMode
-                                                        ? "rgba(255,255,255, 0.05)"
-                                                        : "rgba(37,36,37, 0.05)"
+                                                    ? APP_COLOR.PRIMARY
                                                     : "transparent",
                                             borderRadius: "5px",
                                         }}>
                                         <ActionIcon
-                                            variant={"outline"}
-                                            color={"white.5"}>
+                                            style={{
+                                                color: item.index === currentTab
+                                                    ? "white" : isDarkMode ? "white" : "black",
+                                            }}
+                                            variant={"transparent"}>
                                             {item.icon}
                                         </ActionIcon>
                                         <Text
                                             style={{
                                                 position: "absolute",
                                                 left: 50,
+                                                color: item.index === currentTab
+                                                    ? "white" : isDarkMode ? "white" : "black",
                                             }}>
                                             {item.title}
                                         </Text>
                                     </Group>
                                 ))}
                                 {tab_index < adminTabs.length - 1 && (
-                                    <Divider mt={"sm"} />
+                                    <Divider mt={"sm"}/>
                                 )}
                             </Stack>
                         ))}

@@ -1,6 +1,6 @@
 import {
     ActionIcon,
-    Button,
+    Button, Divider,
     Group,
     LoadingOverlay,
     Stack,
@@ -26,6 +26,7 @@ import {
 import {InformationService} from "../../../../services/notifications/information.service.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import dayjs from "dayjs";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function InventoriesTab() {
     const [isLoading, setLoading] = useState(true);
@@ -158,6 +159,7 @@ export default function InventoriesTab() {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             style={{
                                 width: "100%",
                             }}
@@ -222,7 +224,11 @@ export default function InventoriesTab() {
                     overlayProps={{radius: "sm", blur: 2}}
                 />
 
-                <Title>Inventories Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Inventories Data</Title>
+                </Stack>
+                <Divider/>
 
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
@@ -238,7 +244,7 @@ export default function InventoriesTab() {
                                     <IconX />
                                 </ActionIcon>
                             }
-                            <ActionIcon size={"lg"}>
+                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>
                         </Group>
@@ -247,11 +253,13 @@ export default function InventoriesTab() {
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => setOpenItemModal(true)}
                                 leftSection={<IconPlus/>}>
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchInventories()}
                                 leftSection={<IconRefresh/>}>
                                 Refresh

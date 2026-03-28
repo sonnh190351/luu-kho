@@ -6,7 +6,7 @@ import {
     Text,
     TextInput,
     LoadingOverlay,
-    Title,
+    Title, Divider,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -27,6 +27,7 @@ import {
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import dayjs from "dayjs";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function TagsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -115,11 +116,12 @@ export default function TagsTab() {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
                             <IconTrash />
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
+                        <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"} onClick={() => handleEdit(id)}>
                             <IconEdit />
                         </ActionIcon>
                     </Group>
@@ -186,7 +188,11 @@ export default function TagsTab() {
                     overlayProps={{ radius: "sm", blur: 2 }}
                 />
 
-                <Title>Tags Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Tags Data</Title>
+                </Stack>
+                <Divider/>
 
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
@@ -202,7 +208,7 @@ export default function TagsTab() {
                                     <IconX />
                                 </ActionIcon>
                             }
-                            <ActionIcon size={"lg"}>
+                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>
                         </Group>
@@ -211,11 +217,13 @@ export default function TagsTab() {
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => setOpenItemModal(true)}
                                 leftSection={<IconPlus />}>
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={fetchTags}
                                 leftSection={<IconRefresh />}>
                                 Refresh

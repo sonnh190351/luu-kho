@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     LoadingOverlay,
-    Title,
+    Title, Divider,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -26,11 +26,12 @@ import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
 } from "../../../../enums/tables.ts";
-import type { UserDetails } from "../../../../models/user.ts";
-import { InformationService } from "../../../../services/notifications/information.service.ts";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+import type {UserDetails} from "../../../../models/user.ts";
+import {InformationService} from "../../../../services/notifications/information.service.ts";
+import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../../services/utils.ts";
 import dayjs from "dayjs";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function UserDetailsTab() {
     const [isLoading, setLoading] = useState(true);
@@ -71,7 +72,7 @@ export default function UserDetailsTab() {
             accessor: "id",
             title: "ID",
             sortable: true,
-            render: ({ id }: UserDetails) => {
+            render: ({id}: UserDetails) => {
                 return (
                     <Group>
                         <Text>{id}</Text>
@@ -83,7 +84,7 @@ export default function UserDetailsTab() {
             accessor: "email",
             title: "Email",
             sortable: true,
-            render: ({ email }: UserDetails) => {
+            render: ({email}: UserDetails) => {
                 return (
                     <Group>
                         <Text>{email}</Text>
@@ -95,7 +96,7 @@ export default function UserDetailsTab() {
             accessor: "first_name",
             title: "First Name",
             sortable: true,
-            render: ({ first_name }: UserDetails) => {
+            render: ({first_name}: UserDetails) => {
                 return (
                     <Group>
                         <Text>{first_name}</Text>
@@ -107,7 +108,7 @@ export default function UserDetailsTab() {
             accessor: "last_name",
             title: "Last Name",
             sortable: true,
-            render: ({ last_name }: UserDetails) => {
+            render: ({last_name}: UserDetails) => {
                 return (
                     <Group>
                         <Text>{last_name}</Text>
@@ -118,13 +119,15 @@ export default function UserDetailsTab() {
         {
             accessor: "avatar",
             title: "Avatar",
-            render: ({ avatar }: UserDetails) => {
+            render: ({avatar}: UserDetails) => {
                 return (
                     <Group justify={'center'} style={{
                         textAlign: "center"
                     }}>
                         {
-                            Boolean(avatar) ? <img alt={"avatar"} width={100} src={UtilsService.getAvatarUrl(avatar!)} /> :  <Text>No Avatar Available</Text>
+                            Boolean(avatar) ?
+                                <img alt={"avatar"} width={100} src={UtilsService.getAvatarUrl(avatar!)}/> :
+                                <Text>No Avatar Available</Text>
                         }
                     </Group>
                 );
@@ -134,7 +137,7 @@ export default function UserDetailsTab() {
             accessor: "dob",
             title: "Date Of Birth",
             sortable: true,
-            render: ({ dob }: UserDetails) => {
+            render: ({dob}: UserDetails) => {
                 return (
                     <Group>
                         <Text>{dob}</Text>
@@ -146,7 +149,7 @@ export default function UserDetailsTab() {
             accessor: "role",
             title: "Role",
             sortable: true,
-            render: ({ role }: UserDetails) => {
+            render: ({role}: UserDetails) => {
                 return (
                     <Group>
                         <Text>{UtilsService.getRoleLevel(role)}</Text>
@@ -159,15 +162,16 @@ export default function UserDetailsTab() {
             title: "Warehouse",
             sortable: true,
             width: 175,
-            render: ({ warehouse_id }: UserDetails) => {
+            render: ({warehouse_id}: UserDetails) => {
                 return (
                     <Group>
                         {warehouse_id ? (
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 style={{
                                     width: "100%",
                                 }}
-                                leftSection={<IconInfoCircle />}
+                                leftSection={<IconInfoCircle/>}
                                 onClick={() => {
                                     InformationService.getInstance().showItemDetailsById(
                                         DatabaseTables.Warehouses,
@@ -188,7 +192,7 @@ export default function UserDetailsTab() {
             accessor: "created_at",
             title: "Created At",
             sortable: true,
-            render: ({ created_at }: UserDetails) => {
+            render: ({created_at}: UserDetails) => {
                 return (
                     <Group>
                         {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
@@ -200,7 +204,7 @@ export default function UserDetailsTab() {
             accessor: "updated_at",
             title: "Last Updated At",
             sortable: true,
-            render: ({ updated_at }: UserDetails) => {
+            render: ({updated_at}: UserDetails) => {
                 return (
                     <Group>
                         {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
@@ -212,7 +216,7 @@ export default function UserDetailsTab() {
             accessor: "status",
             title: "Status",
             width: 130,
-            render: ({ status }: UserDetails) => {
+            render: ({status}: UserDetails) => {
                 return (
                     <Group justify={'center'}>
                         {status ? (
@@ -228,16 +232,19 @@ export default function UserDetailsTab() {
             accessor: "actions",
             title: "Actions",
             width: 120,
-            render: ({ id }: UserDetails) => {
+            render: ({id}: UserDetails) => {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
-                            <IconTrash />
+                            <IconTrash/>
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
-                            <IconEdit />
+                        <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
+                            size={"lg"} onClick={() => handleEdit(id)}>
+                            <IconEdit/>
                         </ActionIcon>
                     </Group>
                 );
@@ -269,10 +276,10 @@ export default function UserDetailsTab() {
         }
     }
 
-    async function clearSearch(){
+    async function clearSearch() {
         setKeyword("")
         const temp = localStorage.getItem(DatabaseTables.UserDetails);
-        if(!temp) {
+        if (!temp) {
             setUserDetails([])
         } else {
             setUserDetails(JSON.parse(temp));
@@ -284,7 +291,7 @@ export default function UserDetailsTab() {
 
         const temp = localStorage.getItem(DatabaseTables.UserDetails);
         let cache = []
-        if(!temp) {
+        if (!temp) {
             localStorage.setItem(DatabaseTables.UserDetails, JSON.stringify(items));
             cache = JSON.parse(JSON.stringify(items));
         } else {
@@ -300,10 +307,14 @@ export default function UserDetailsTab() {
             <Stack pt={"lg"} pl={"sm"}>
                 <LoadingOverlay
                     visible={isLoading}
-                    overlayProps={{ radius: "sm", blur: 2 }}
+                    overlayProps={{radius: "sm", blur: 2}}
                 />
 
-                <Title>Users Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Users Data</Title>
+                </Stack>
+                <Divider/>
 
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
@@ -316,11 +327,11 @@ export default function UserDetailsTab() {
                             />
                             {
                                 keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>
-                                    <IconX />
+                                    <IconX/>
                                 </ActionIcon>
                             }
-                            <ActionIcon size={"lg"}>
-                                <IconSearch />
+                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
+                                <IconSearch/>
                             </ActionIcon>
                         </Group>
                     </Stack>
@@ -328,20 +339,22 @@ export default function UserDetailsTab() {
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => setOpenItemModal(true)}
-                                leftSection={<IconPlus />}>
+                                leftSection={<IconPlus/>}>
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={fetchUserDetails}
-                                leftSection={<IconRefresh />}>
+                                leftSection={<IconRefresh/>}>
                                 Refresh
                             </Button>
                         </Group>
                     </Stack>
                 </Group>
 
-                <CommonTable data={items} columns={columns} />
+                <CommonTable data={items} columns={columns}/>
             </Stack>
 
             {/*Item modal*/}

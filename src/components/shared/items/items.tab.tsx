@@ -7,7 +7,7 @@ import {
     Text,
     TextInput,
     LoadingOverlay,
-    Title, Grid, Card, type MantineStyleProp,
+    Title, Divider,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -18,25 +18,21 @@ import {
     IconTrash, IconX,
 } from "@tabler/icons-react";
 import {type ChangeEvent, useEffect, useState} from "react";
-import type { Items } from "../../../../models/items.ts";
-import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import OperationService from "../../../../services/operations/operationService.ts";
+import type {Items} from "../../../models/items.ts";
+import ItemsModal from "./items.modal.tsx";
+import CommonTable from "../../dataTable/common.table.tsx";
+import OperationService from "../../../services/operations/operationService.ts";
 import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
-} from "../../../../enums/tables.ts";
-import type { DataTableColumn } from "mantine-datatable";
-import { InformationService } from "../../../../services/notifications/information.service.ts";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
+} from "../../../enums/tables.ts";
+import type {DataTableColumn} from "mantine-datatable";
+import {InformationService} from "../../../services/notifications/information.service.ts";
+import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
 import dayjs from "dayjs";
-import StaffItemsModal from "./items.modal.tsx";
+import {BUTTON_COLOR} from "../../../enums/styling.ts";
 
-const cardStyle: MantineStyleProp = {
-    height: '150px',
-    position: 'relative',
-}
-
-export default function StaffItemsTab() {
+export default function ItemsTab() {
     const [isLoading, setLoading] = useState(true);
 
     const [items, setItems] = useState<Items[]>([]);
@@ -75,7 +71,7 @@ export default function StaffItemsTab() {
             accessor: "id",
             title: "ID",
             sortable: true,
-            render: ({ id }: any) => {
+            render: ({id}: any) => {
                 return (
                     <Group>
                         <Text>{id}</Text>
@@ -87,7 +83,7 @@ export default function StaffItemsTab() {
             accessor: "name",
             title: "Name",
             sortable: true,
-            render: ({ name }: any) => {
+            render: ({name}: any) => {
                 return <Group>{name}</Group>;
             },
         },
@@ -95,15 +91,15 @@ export default function StaffItemsTab() {
             accessor: "tags",
             title: "Tags",
             sortable: true,
-            render: ({ id, tags }: any, index: number) => {
+            render: ({id, tags}: any, index: number) => {
                 return (
                     <Group>
                         {tags
                             ? tags.map((tag: any, idx: number) => (
-                                  <Badge key={`item-${id}-tag-${index}-${idx}`}>
-                                      {tag}
-                                  </Badge>
-                              ))
+                                <Badge key={`item-${id}-tag-${index}-${idx}`}>
+                                    {tag}
+                                </Badge>
+                            ))
                             : "N/A"}
                     </Group>
                 );
@@ -113,7 +109,7 @@ export default function StaffItemsTab() {
             accessor: "warning_limit",
             title: "Warning Limit",
             sortable: true,
-            render: ({ warning_limit }: any) => {
+            render: ({warning_limit}: any) => {
                 return <Group>{String(warning_limit)}</Group>;
             },
         },
@@ -121,7 +117,7 @@ export default function StaffItemsTab() {
             accessor: "quantity_type",
             title: "Quantity Type",
             sortable: true,
-            render: ({ quantity_type }: any) => {
+            render: ({quantity_type}: any) => {
                 return <Group>{quantity_type}</Group>;
             },
         },
@@ -129,7 +125,7 @@ export default function StaffItemsTab() {
             accessor: "created_at",
             title: "Created At",
             sortable: true,
-            render: ({ created_at }: any) => {
+            render: ({created_at}: any) => {
                 return (
                     <Group>
                         {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
@@ -141,7 +137,7 @@ export default function StaffItemsTab() {
             accessor: "updated_at",
             title: "Last Updated At",
             sortable: true,
-            render: ({ updated_at }: any) => {
+            render: ({updated_at}: any) => {
                 return (
                     <Group>
                         {dayjs(updated_at).format(DISPLAY_TIME_FORMAT)}
@@ -154,14 +150,14 @@ export default function StaffItemsTab() {
             title: "Category ID",
             sortable: true,
             width: 175,
-            render: ({ category_id }: any) => {
+            render: ({category_id}: any) => {
                 return (
                     <Button
-                        variant={'outline'}
+                        color={BUTTON_COLOR.PRIMARY}
                         style={{
                             width: "100%",
                         }}
-                        leftSection={<IconInfoCircle />}
+                        leftSection={<IconInfoCircle/>}
                         onClick={() => {
                             InformationService.getInstance().showItemDetailsById(
                                 DatabaseTables.Categories,
@@ -179,14 +175,14 @@ export default function StaffItemsTab() {
             title: "Supplier ID",
             sortable: true,
             width: 175,
-            render: ({ supplier_id }: any) => {
+            render: ({supplier_id}: any) => {
                 return (
                     <Button
-                        variant={'outline'}
                         style={{
                             width: "100%",
                         }}
-                        leftSection={<IconInfoCircle />}
+                        color={BUTTON_COLOR.PRIMARY}
+                        leftSection={<IconInfoCircle/>}
                         onClick={() => {
                             InformationService.getInstance().showItemDetailsById(
                                 DatabaseTables.Suppliers,
@@ -203,16 +199,19 @@ export default function StaffItemsTab() {
             accessor: "actions",
             title: "Actions",
             width: 120,
-            render: ({ id }: any) => {
+            render: ({id}: any) => {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
-                            <IconTrash />
+                            <IconTrash/>
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
-                            <IconEdit />
+                        <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
+                            size={"lg"} onClick={() => handleEdit(id)}>
+                            <IconEdit/>
                         </ActionIcon>
                     </Group>
                 );
@@ -244,10 +243,10 @@ export default function StaffItemsTab() {
         }
     }
 
-    async function clearSearch(){
+    async function clearSearch() {
         setKeyword("")
         const temp = localStorage.getItem(DatabaseTables.Items);
-        if(!temp) {
+        if (!temp) {
             setItems([])
         } else {
             setItems(JSON.parse(temp));
@@ -259,7 +258,7 @@ export default function StaffItemsTab() {
 
         const temp = localStorage.getItem(DatabaseTables.Items);
         let cache = []
-        if(!temp) {
+        if (!temp) {
             localStorage.setItem(DatabaseTables.Items, JSON.stringify(items));
             cache = JSON.parse(JSON.stringify(items));
         } else {
@@ -275,42 +274,15 @@ export default function StaffItemsTab() {
             <Stack pt={"lg"} pl={"sm"}>
                 <LoadingOverlay
                     visible={isLoading}
-                    overlayProps={{ radius: "sm", blur: 2 }}
+                    overlayProps={{radius: "sm", blur: 2}}
                 />
 
-                <Title>Items Management</Title>
-                <Grid>
-                    <Grid.Col span={4}>
-                        <Card style={{
-                            ...cardStyle
-                        }}>
-                            <Stack gap={5} justify={'flex-end'} align={'start'}>
-                                <Text>Total Items</Text>
-                                <Title>{items.length}</Title>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                        <Card style={{
-                            ...cardStyle
-                        }}>
-                            <Stack gap={5} justify={'flex-end'} align={'start'}>
-                                <Text>Ongoing requests</Text>
-                                <Title>1</Title>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                        <Card style={{
-                            ...cardStyle
-                        }}>
-                            <Stack gap={5}  justify={'flex-end'} align={'start'}>
-                                <Text>Finished requests</Text>
-                                <Title>1</Title>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                </Grid>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Items Data</Title>
+                </Stack>
+                <Divider/>
+
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
                         <Text>Filter</Text>
@@ -322,11 +294,11 @@ export default function StaffItemsTab() {
                             />
                             {
                                 keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>
-                                    <IconX />
+                                    <IconX/>
                                 </ActionIcon>
                             }
-                            <ActionIcon size={"lg"}>
-                                <IconSearch />
+                            <ActionIcon size={"lg"} color={BUTTON_COLOR.PRIMARY}>
+                                <IconSearch/>
                             </ActionIcon>
                         </Group>
                     </Stack>
@@ -334,23 +306,25 @@ export default function StaffItemsTab() {
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => setOpenItemModal(true)}
-                                leftSection={<IconPlus />}>
+                                leftSection={<IconPlus/>}>
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchItems()}
-                                leftSection={<IconRefresh />}>
+                                leftSection={<IconRefresh/>}>
                                 Refresh
                             </Button>
                         </Group>
                     </Stack>
                 </Group>
-                <CommonTable height={'55dvh'} data={items} columns={columns} />
+                <CommonTable data={items} columns={columns}/>
             </Stack>
 
             {/*Item modal*/}
-            <StaffItemsModal
+            <ItemsModal
                 item={selectedItem}
                 open={openItemModal}
                 refresh={fetchItems}

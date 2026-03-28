@@ -1,18 +1,26 @@
-import type {Items} from "../../../../models/items.ts";
-import {Button, FileInput, Modal, MultiSelect, NumberInput, Select, Stack, TextInput,} from "@mantine/core";
-import {useEffect, useState} from "react";
-import type {Suppliers} from "../../../../models/suppliers.ts";
-import type {Categories} from "../../../../models/categories.ts";
-import {useForm} from "@mantine/form";
-import OperationService from "../../../../services/operations/operationService.ts";
-import {DatabaseTables, StorageBuckets} from "../../../../enums/tables.ts";
-import {QUANTITY_TYPES} from "../../../../enums/data.ts";
-import type {Tags} from "../../../../models/tags.ts";
-import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import UtilsService from "../../../../services/utils.ts";
-import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
-import DatabaseService from "../../../../services/database/database.service.ts";
+import type { Items } from "../../../models/items.ts";
+import {
+    Button, FileInput,
+    Modal,
+    MultiSelect,
+    NumberInput,
+    Select,
+    Stack,
+    TextInput,
+} from "@mantine/core";
+import { useEffect, useState } from "react";
+import type { Suppliers } from "../../../models/suppliers.ts";
+import type { Categories } from "../../../models/categories.ts";
+import { useForm } from "@mantine/form";
+import OperationService from "../../../services/operations/operationService.ts";
+import {DatabaseTables, StorageBuckets} from "../../../enums/tables.ts";
+import { QUANTITY_TYPES } from "../../../enums/data.ts";
+import type { Tags } from "../../../models/tags.ts";
+import { NotificationsService } from "../../../services/notifications/notifications.service.ts";
+import UtilsService from "../../../services/utils.ts";
+import { FormValidationService } from "../../../services/validatior/form-validation.service.ts";
 import {IconFile} from "@tabler/icons-react";
+import DatabaseService from "../../../services/database/database.service.ts";
 
 interface ItemsModalProps {
     item: Items | null;
@@ -30,7 +38,7 @@ interface ItemFormValues {
     warning_limit: number;
 }
 
-export default function StaffItemsModal({
+export default function ItemsModal({
     item,
     open = false,
     close,
@@ -75,7 +83,6 @@ export default function StaffItemsModal({
     }, [isEdit]);
 
     useEffect(() => {
-        // Fetch items
         (async () => await fetchSuppliers())();
         (async () => await fetchCategories())();
         (async () => await fetchTags())();
@@ -118,15 +125,11 @@ export default function StaffItemsModal({
                 await service.editItemName(DatabaseTables.Items, {
                     id: item?.id,
                     ...form.getValues(),
-                    image: `${item?.name}.jpg`
                 });
             } else {
                 await service.addItemWithUniqueName(
                     DatabaseTables.Items,
-                    {
-                        ...form.getValues(),
-                        image: `${form.getValues().name}.jpg`
-                    },
+                    form.getValues(),
                 );
             }
 
@@ -140,7 +143,7 @@ export default function StaffItemsModal({
             handleClose();
             NotificationsService.success(
                 `${isEdit ? "Edit" : "Add"} Item`,
-                `New item has been ${isEdit ? "edit" : "added"} successfully!`,
+                `New category has been ${isEdit ? "edit" : "added"} successfully!`,
             );
         } catch (e: any) {
             NotificationsService.error(

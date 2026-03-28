@@ -6,7 +6,7 @@ import {
     Text,
     LoadingOverlay,
     TextInput,
-    Title,
+    Title, Divider,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -27,6 +27,7 @@ import {
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import { InformationService } from "../../../../services/notifications/information.service.ts";
 import dayjs from "dayjs";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function SuppliersTab() {
     const [isLoading, setLoading] = useState(true);
@@ -115,11 +116,14 @@ export default function SuppliersTab() {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
                             <IconTrash />
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
+                        <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
+                            size={"lg"} onClick={() => handleEdit(id)}>
                             <IconEdit />
                         </ActionIcon>
                     </Group>
@@ -186,7 +190,11 @@ export default function SuppliersTab() {
                     overlayProps={{ radius: "sm", blur: 2 }}
                 />
 
-                <Title>Suppliers Management</Title>
+                <Stack gap={0}>
+                    <Text>Management</Text>
+                    <Title>Suppliers Data</Title>
+                </Stack>
+                <Divider/>
 
                 <Group justify={"space-between"}>
                     <Stack gap={5}>
@@ -202,7 +210,7 @@ export default function SuppliersTab() {
                                     <IconX />
                                 </ActionIcon>
                             }
-                            <ActionIcon size={"lg"}>
+                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
                                 <IconSearch />
                             </ActionIcon>
                         </Group>
@@ -211,11 +219,13 @@ export default function SuppliersTab() {
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => setOpenItemModal(true)}
                                 leftSection={<IconPlus />}>
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={fetchSuppliers}
                                 leftSection={<IconRefresh />}>
                                 Refresh

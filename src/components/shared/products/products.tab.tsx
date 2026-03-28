@@ -1,6 +1,6 @@
 import {
     ActionIcon,
-    Button,
+    Button, Divider,
     Group,
     LoadingOverlay,
     Stack,
@@ -9,16 +9,17 @@ import {
     Title,
 } from "@mantine/core";
 import {useEffect, useState} from "react";
-import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import OperationService from "../../../../services/operations/operationService.ts";
+import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
+import OperationService from "../../../services/operations/operationService.ts";
 import {IconEdit, IconInfoCircle, IconPlus, IconRefresh, IconSearch, IconTrash, IconX} from "@tabler/icons-react";
 import ProductModal from "./products.modal.tsx";
 import ProductDetailsTab from "./product.details.tsx";
-import CommonTable from "../../../../components/dataTable/common.table.tsx";
+import CommonTable from "../../dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
 import dayjs from "dayjs";
-import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
-import {InformationService} from "../../../../services/notifications/information.service.ts";
+import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../enums/tables.ts";
+import {InformationService} from "../../../services/notifications/information.service.ts";
+import {BUTTON_COLOR} from "../../../enums/styling.ts";
 
 export default function ProductsTabs() {
     const [isLoading, setIsLoading] = useState(false);
@@ -45,7 +46,7 @@ export default function ProductsTabs() {
             title: "ID",
             width: 120,
             sortable: true,
-            render: ({ id }: any) => {
+            render: ({id}: any) => {
                 return (
                     <Group>
                         <Text>{id}</Text>
@@ -57,7 +58,7 @@ export default function ProductsTabs() {
             accessor: "name",
             title: "Name",
             sortable: true,
-            render: ({ name }: any) => {
+            render: ({name}: any) => {
                 return <Group>{name}</Group>;
             },
         },
@@ -66,7 +67,7 @@ export default function ProductsTabs() {
             title: "Created At",
             sortable: true,
             width: 250,
-            render: ({ created_at }: any) => {
+            render: ({created_at}: any) => {
                 return (
                     <Group>
                         {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
@@ -79,19 +80,26 @@ export default function ProductsTabs() {
             accessor: "actions",
             title: "Actions",
             width: 160,
-            render: ({ id }: any) => {
+            render: ({id}: any) => {
                 return (
                     <Group>
                         <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
                             onClick={() => handleDelete(id)}
                             size={"lg"}>
-                            <IconTrash />
+                            <IconTrash/>
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleEdit(id)}>
-                            <IconEdit />
+                        <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
+                            size={"lg"}
+                            onClick={() => handleEdit(id)}>
+                            <IconEdit/>
                         </ActionIcon>
-                        <ActionIcon size={"lg"} onClick={() => handleViewInfo(id)}>
-                            <IconInfoCircle />
+                        <ActionIcon
+                            color={BUTTON_COLOR.PRIMARY}
+                            size={"lg"}
+                            onClick={() => handleViewInfo(id)}>
+                            <IconInfoCircle/>
                         </ActionIcon>
                     </Group>
                 );
@@ -167,7 +175,11 @@ export default function ProductsTabs() {
                 visible={isLoading}
                 overlayProps={{radius: "sm", blur: 2}}
             />
-            <Title>Products Management</Title>
+            <Stack gap={0}>
+                <Text>Management</Text>
+                <Title>Products Data</Title>
+            </Stack>
+            <Divider/>
             {
                 productDetails ? <ProductDetailsTab product={productDetails} close={() => {
                     setProductDetails(undefined);
@@ -187,7 +199,9 @@ export default function ProductsTabs() {
                                         <IconX/>
                                     </ActionIcon>
                                 }
-                                <ActionIcon size={"lg"}>
+                                <ActionIcon
+                                    color={BUTTON_COLOR.PRIMARY}
+                                    size={"lg"}>
                                     <IconSearch/>
                                 </ActionIcon>
                             </Group>
@@ -196,11 +210,13 @@ export default function ProductsTabs() {
                             <Text>Controls</Text>
                             <Group>
                                 <Button
+                                    color={BUTTON_COLOR.PRIMARY}
                                     onClick={() => setOpenModal(true)}
                                     leftSection={<IconPlus/>}>
                                     Add
                                 </Button>
                                 <Button
+                                    color={BUTTON_COLOR.PRIMARY}
                                     onClick={() => fetchProducts()}
                                     leftSection={<IconRefresh/>}>
                                     Refresh
@@ -208,7 +224,7 @@ export default function ProductsTabs() {
                             </Group>
                         </Stack>
                     </Group>
-                    <CommonTable data={products} columns={columns} />
+                    <CommonTable data={products} columns={columns}/>
                 </>
             }
             <ProductModal refresh={fetchProducts} product={product} open={openModal} close={handleCloseModal}/>

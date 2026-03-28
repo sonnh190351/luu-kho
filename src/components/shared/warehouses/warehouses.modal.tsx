@@ -1,11 +1,11 @@
 import { Button, Modal, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import type { Warehouses } from "../../../../models/warehouses.ts";
+import type { Warehouses } from "../../../models/warehouses.ts";
 import { useEffect } from "react";
-import OperationService from "../../../../services/operations/operationService.ts";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
-import { DatabaseTables } from "../../../../enums/tables.ts";
-import UtilsService from "../../../../services/utils.ts";
+import OperationService from "../../../services/operations/operationService.ts";
+import { NotificationsService } from "../../../services/notifications/notifications.service.ts";
+import { DatabaseTables } from "../../../enums/tables.ts";
+import UtilsService from "../../../services/utils.ts";
 
 interface WarehousesModalProps {
     warehouse: Warehouses | null;

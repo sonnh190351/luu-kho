@@ -2,6 +2,7 @@ import DatabaseService from "../../database/database.service.ts";
 import {DatabaseTables} from "../../../enums/tables.ts";
 import {LogService} from "../log.service.ts";
 import {LocalStorage} from "../../../enums/localStorage.ts";
+import {LOG_ACTIONS} from "../../../enums/log.ts";
 
 export default class InventoryService {
 
@@ -100,7 +101,7 @@ export default class InventoryService {
                 ...data,
             })
 
-        await this.responseLog(response, "Edit Order Entry", data)
+        await this.responseLog(response, LOG_ACTIONS.EDIT_ORDER, data)
     }
 
     public async addOrderEntry(data: any) {
@@ -114,7 +115,7 @@ export default class InventoryService {
             user_id: this.userData.id
         })
 
-        await this.responseLog(response, "Add Order Entry", data)
+        await this.responseLog(response, LOG_ACTIONS.ADD_ORDER, data)
     }
 
     public async addInventoryEntry(data: any) {
@@ -123,7 +124,7 @@ export default class InventoryService {
             warehouse_id: this.userData.warehouses.id
         });
 
-        await this.responseLog(response, "Add Inventory Entry", data)
+        await this.responseLog(response, LOG_ACTIONS.ADD_INVENTORY, data)
     }
 
     public async addProductItem(data: any) {
@@ -142,7 +143,7 @@ export default class InventoryService {
 
         const response = await this.database.add(DatabaseTables.ProductItems, data)
 
-        await this.responseLog(response, "Add Inventory Entry", data)
+        await this.responseLog(response, LOG_ACTIONS.ADD_PRODUCT, data)
     }
 
     public async editProductItem(data: any) {
@@ -159,7 +160,7 @@ export default class InventoryService {
         }
 
         const response = await this.database.edit(DatabaseTables.ProductItems, data.id, data)
-        await this.responseLog(response, "Edit Inventory Entry", data)
+        await this.responseLog(response, LOG_ACTIONS.EDIT_PRODUCT, data)
     }
 
 }

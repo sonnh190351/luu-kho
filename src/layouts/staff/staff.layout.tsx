@@ -1,5 +1,6 @@
 import {ActionIcon, Container, Divider, Group, Stack, Text, useMantineColorScheme} from "@mantine/core";
 import {
+    APP_COLOR,
     BG_COLOR_DARK,
     BG_COLOR_LIGHT,
     BORDER_COLOR_DARK,
@@ -11,10 +12,10 @@ import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
 import {IconBuildingWarehouse, IconCommand, IconLogs, IconMenuOrder, IconTemplate} from "@tabler/icons-react";
-import StaffRequestsLayout from "./components/requests/requests.main.tsx";
-import StaffItemsLayout from "./components/items/items.tab.tsx";
-import StaffLogsLayout from "./components/logs/logs.tab.tsx";
 import StaffOrdersLayout from "./components/orders/orders.tab.tsx";
+import LogsTab from "../../components/shared/logs/logs.tab.tsx";
+import ItemsTab from "../../components/shared/items/items.tab.tsx";
+import RequestsLayout from "../../components/shared/requests/requests.main.tsx";
 
 const openMenuWidth = 200;
 
@@ -34,10 +35,10 @@ export default function StaffLayout() {
     }
 
     const staffItems = [
-        <StaffItemsLayout />,
+        <ItemsTab />,
         <StaffWarehousesLayout />,
-        <StaffLogsLayout />,
-        <StaffRequestsLayout />,
+        <LogsTab />,
+        <RequestsLayout />,
         <StaffOrdersLayout />
     ]
 
@@ -90,7 +91,7 @@ export default function StaffLayout() {
         <Container
             fluid
             style={{
-                paddingTop: NAV_BAR_HEIGHT + 20
+                paddingTop: NAV_BAR_HEIGHT
             }}>
             <Group p={0} m={0}>
                 <Stack
@@ -134,21 +135,24 @@ export default function StaffLayout() {
                                                 cursor: "pointer",
                                                 backgroundColor:
                                                     item.index === currentTab
-                                                        ? isDarkMode
-                                                            ? "rgba(255,255,255, 0.05)"
-                                                            : "rgba(37,36,37, 0.05)"
+                                                        ? APP_COLOR.PRIMARY
                                                         : "transparent",
                                                 borderRadius: "5px",
                                             }}>
                                             <ActionIcon
-                                                variant={"outline"}
-                                                color={"white.5"}>
+                                                style={{
+                                                    color: item.index === currentTab
+                                                        ? "white" : isDarkMode ? "white" : "black",
+                                                }}
+                                                variant={"transparent"}>
                                                 {item.icon}
                                             </ActionIcon>
                                             <Text
                                                 style={{
                                                     position: "absolute",
                                                     left: 50,
+                                                    color: item.index === currentTab
+                                                        ? "white" : isDarkMode ? "white" : "black",
                                                 }}>
                                                 {item.title}
                                             </Text>
