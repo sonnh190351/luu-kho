@@ -109,31 +109,36 @@ export default function LogsTab() {
                 <Title>Activity Logs</Title>
             </Stack>
             <Divider/>
-            <Group gap={10}>
-                <TextInput
-                    {...form.getInputProps('email')}
-                    style={{width: 200}} leftSection={<IconMail/>}
-                    label={"Sort by User Email"}/>
-                <DateTimePicker
-                    {...form.getInputProps('start_date')} leftSection={<IconCalendar/>} style={{
-                    width: 200
-                }} label={"Sort By Start Date"}/>
-                <DateTimePicker
-                    {...form.getInputProps('end_date')} leftSection={<IconCalendar/>} style={{
-                    width: 200
-                }} label={"Sort By End Date"}/>
-                <Select
-                    data={action_options}
-                    {...form.getInputProps('action_type')} style={{width: 200}} leftSection={<IconHandClick/>}
-                    label={"Sort By Action Type"}/>
-                <Group gap={10} pt={25}>
-                    <Button onClick={handleFilter} leftSection={<IconFilter/>} color={APP_COLOR.PRIMARY}>Sort</Button>
-                    {
-                        isSorted && <Button onClick={handleClearFilter} leftSection={<IconRefresh/>}
-                                            color={BUTTON_COLOR.PRIMARY}>Reset</Button>
-                    }
+            <Group justify={'space-between'}>
+                <Group gap={10}>
+                    <TextInput
+                        {...form.getInputProps('email')}
+                        style={{width: 200}} leftSection={<IconMail/>}
+                        label={"Sort by User Email"}/>
+                    <DateTimePicker
+                        {...form.getInputProps('start_date')} leftSection={<IconCalendar/>} style={{
+                        width: 200
+                    }} label={"Sort By Start Date"}/>
+                    <DateTimePicker
+                        {...form.getInputProps('end_date')} leftSection={<IconCalendar/>} style={{
+                        width: 200
+                    }} label={"Sort By End Date"}/>
+                    <Select
+                        data={action_options}
+                        {...form.getInputProps('action_type')} style={{width: 200}} leftSection={<IconHandClick/>}
+                        label={"Sort By Action Type"}/>
+                    <Group gap={10} pt={25}>
+                        <Button onClick={handleFilter} leftSection={<IconFilter/>} color={APP_COLOR.PRIMARY}>Sort</Button>
+                        {
+                            isSorted && <Button onClick={handleClearFilter} leftSection={<IconRefresh/>}
+                                                color={BUTTON_COLOR.PRIMARY}>Reset</Button>
+                        }
+                    </Group>
                 </Group>
+
+                <Button onClick={fetchLogs} mt={25} leftSection={<IconRefresh/>} color={APP_COLOR.PRIMARY}>Refresh</Button>
             </Group>
+
             <div style={{
                 height: '72dvh',
                 overflowY: 'scroll',

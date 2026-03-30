@@ -115,10 +115,14 @@ export default class OperationService {
                 expired_at,
                 quantity,
                 items(
+                    id,
                     name,
-                    quantity_type
+                    quantity_type,
+                    warning_limit,
+                    category_id
                 ),
                 warehouses(
+                    id,
                     name,
                     address
                 )
@@ -172,7 +176,7 @@ export default class OperationService {
             }
         }
 
-        return await this.database.edit(table, data.id, data);
+        return this.database.edit(table, data.id, data);
     }
 
     public async addItemWithUniqueName(table: DatabaseTables, data: any) {
@@ -194,7 +198,7 @@ export default class OperationService {
             throw `Duplicate name in table: "${data.name}"!`;
         }
 
-        return await this.database.add(table, data);
+        return this.database.add(table, data);
     }
 
     public async deleteById(table: DatabaseTables, id: number) {

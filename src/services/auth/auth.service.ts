@@ -1,7 +1,10 @@
 import DatabaseService from "../database/database.service.ts";
 import { DatabaseTables } from "../../enums/tables.ts";
+import {LogService} from "../operations/log.service.ts";
+import {LOG_ACTIONS} from "../../enums/log.ts";
 
 export default class AuthService {
+
     public async login(email: string, password: string) {
         try {
             const database = DatabaseService.getInstance().getDatabase();
@@ -38,12 +41,22 @@ export default class AuthService {
                 };
             }
 
+            await LogService.getInstance().writeLog(
+                LOG_ACTIONS.LOGIN,
+                `User logged in success: ${email}`
+            )
+
             return {
                 status: true,
                 data: data[0],
             };
+
         } catch (e: any) {
             console.log(e)
+            await LogService.getInstance().writeLog(
+                LOG_ACTIONS.LOGIN,
+                `User logged in failed: ${email}. Reason: ${e.toString()}`
+            )
             return {
                 status: false,
                 message: e.toString(),
