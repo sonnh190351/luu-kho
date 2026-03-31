@@ -66,6 +66,7 @@ export default function StaffWarehousesTab() {
     });
 
     useEffect(() => {
+        console.log(selectedItem);
         (async () => await fetchItems())();
     }, []);
 
