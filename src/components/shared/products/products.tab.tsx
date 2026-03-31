@@ -32,13 +32,7 @@ export default function ProductsTabs() {
 
     const [productDetails, setProductDetails] = useState<any>(undefined);
 
-    const [products, setProducts] = useState<any[]>([
-        {
-            "id": 1,
-            "created_at": "2026-03-19T14:33:32.35953+00:00",
-            "name": "Cơm rang dưa bò",
-        }
-    ]);
+    const [products, setProducts] = useState<any[]>([]);
 
     const columns: DataTableColumn[] = [
         {
@@ -156,10 +150,21 @@ export default function ProductsTabs() {
 
     function handleSearchByName(e: any) {
         setKeyword(e.target.value)
+        let tempData = localStorage.getItem(DatabaseTables.Products);
+        if(!tempData) {
+            tempData =  JSON.stringify(products)
+            localStorage.setItem(DatabaseTables.Products, tempData);
+        }
+
+        const temp = JSON.parse(tempData);
+
+        const matching = temp.filter((p: any) => p.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
+        setProducts(matching)
     }
 
-    function handleClearSearch() {
+    async function handleClearSearch() {
         setKeyword("");
+        await fetchProducts()
     }
 
     function handleCloseModal() {

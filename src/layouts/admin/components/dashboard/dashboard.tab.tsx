@@ -1,26 +1,14 @@
-import {Card, Divider, Grid, Group, LoadingOverlay, Stack, Text, Title} from "@mantine/core";
+import {Card, Divider, Grid, Group, Stack, Text, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {IconBox, IconBuildingWarehouse, IconChartArea, IconMenuOrder, IconUser} from "@tabler/icons-react";
-import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Label,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    Tooltip,
-    XAxis,
-    YAxis
-} from "recharts";
 import dayjs from "dayjs";
-import {APP_COLOR} from "../../../../enums/styling.ts";
+import CategoryChart from "../../../../components/charts/category.chart.tsx";
+import ItemsChart from "../../../../components/charts/items.chart.tsx";
+import SalesChart from "../../../../components/charts/sales.chart.tsx";
 
 export default function AdminDashboardTab() {
 
@@ -47,15 +35,16 @@ export default function AdminDashboardTab() {
         try {
             const service = OperationService.getInstance();
 
-            //
+            // Create sales data
             const orders = await service.getAllWarehousesOrders()
             updateSalesChart(orders)
 
-            //
+            // Create inventory data
             const inventoryItems = await service.getAllInventoryItems()
             const categories = await service.getAllRows(DatabaseTables.Categories)
             updateInventoryStatusChart(inventoryItems, categories)
 
+            // Create overall data
             const users = await service.getAllRows(DatabaseTables.UserDetails)
             const warehouses = await service.getAllRows(DatabaseTables.Warehouses)
             updateOverallChart(users, warehouses)
@@ -123,8 +112,6 @@ export default function AdminDashboardTab() {
             }
         }
 
-        console.log(itemsData)
-
         setCategoriesData(categoriesData)
         setItemsData(itemsData)
     }
@@ -188,22 +175,7 @@ export default function AdminDashboardTab() {
                                 Total Order Sales
                             </Text>
                         </Group>
-
-                        <LineChart
-                            data={salesData}
-                            responsive={true}
-                            style={{
-                                width: '100%',
-                                maxHeight: '30vh',
-                                aspectRatio: 1.318
-                            }}>
-                            <CartesianGrid strokeDasharray="3 3"/>
-                            <XAxis dataKey="name"/>
-                            <YAxis width="auto"/>
-                            <Tooltip/>
-                            <Legend/>
-                            <Line type="monotone" dataKey="total" stroke={APP_COLOR.PRIMARY}/>
-                        </LineChart>
+                        <SalesChart chartData={salesData} />
                     </Card>
                 </Grid.Col>
                 <Grid.Col span={{base: 6, md: 3}}>
@@ -264,21 +236,7 @@ export default function AdminDashboardTab() {
                                 Items in All Warehouse Inventories
                             </Text>
                         </Group>
-                        <PieChart
-                            responsive
-                            style={{width: '100%', height: '500px', aspectRatio: 1}}
-                        >
-                            <Pie
-                                dataKey={"total"}
-                                data={categoriesData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius="60%"
-                                outerRadius="80%"/>
-                            <Label/>
-                            <Legend/>
-                            <Tooltip/>
-                        </PieChart>
+                        <CategoryChart chartData={categoriesData} />
                     </Card>
                 </Grid.Col>
                 <Grid.Col span={{base: 12, md: 6}}>
@@ -289,15 +247,7 @@ export default function AdminDashboardTab() {
                                 Most Stored Items
                             </Text>
                         </Group>
-                        <BarChart
-                            data={itemsData}
-                            responsive
-                            style={{width: '100%', height: '500px', aspectRatio: 1}}>
-                            <Bar dataKey={"quantity"} fill={APP_COLOR.PRIMARY} />
-                            <XAxis dataKey="name"/>
-                            <YAxis width="auto"/>
-                            <Legend/>
-                        </BarChart>
+                        <ItemsChart chartData={itemsData} />
                     </Card>
                 </Grid.Col>
             </Grid>

@@ -143,10 +143,21 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
 
     function handleSearchByName(e: any) {
         setKeyword(e.target.value)
+        let tempData = localStorage.getItem(DatabaseTables.ProductItems);
+        if(!tempData) {
+            tempData =  JSON.stringify(productItem.product_items)
+            localStorage.setItem(DatabaseTables.ProductItems, tempData);
+        }
+
+        const temp = JSON.parse(tempData);
+
+        const matching = temp.filter((p: any) => p.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
+        setProductItem(matching)
     }
 
-    function handleClearSearch() {
+    async function handleClearSearch() {
         setKeyword("");
+        await fetchProductItems();
     }
 
     function handleCloseModal() {

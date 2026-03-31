@@ -229,9 +229,11 @@ export default class OperationService {
                 expired_at,
                 quantity,
                 items(
+                    id,
                     name,
-                    tags,
-                    quantity_type
+                    quantity_type,
+                    warning_limit,
+                    category_id
                 )
             `).in(
             'warehouse_id', [warehouse_id]

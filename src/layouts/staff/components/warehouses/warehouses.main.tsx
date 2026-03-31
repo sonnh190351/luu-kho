@@ -104,7 +104,6 @@ export default function StaffWarehousesTab() {
     function handleCloseModal() {
         setOpenModal(false);
         setTimeout(() => {
-            console.log(selectedItem)
             setSelectedItem(null);
         }, 200)
     }
