@@ -3,8 +3,6 @@ import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import OperationService from "../../../../services/operations/operationService.ts";
 import { DatabaseTables } from "../../../../enums/tables.ts";
-import dayjs from "dayjs";
-import {DatePickerInput, DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
@@ -16,13 +14,11 @@ interface InventoriesModalProps {
 }
 
 interface InventoriesFormValues {
-    date: string | null;
     quantity: number;
-    expired_at: string;
     item_id: number;
 }
 
-export default function StaffInventoriesModal({
+export default function ManagerInventoryImportModal({
                                              open = false,
                                              close,
                                              refresh,
@@ -34,10 +30,8 @@ export default function StaffInventoriesModal({
 
     const form = useForm<InventoriesFormValues>({
         initialValues: {
-            date: dayjs().format("YYYY-MM-DD"),
             quantity: 0,
             item_id: -1,
-            expired_at: "",
         },
         validate: {
 
@@ -56,6 +50,7 @@ export default function StaffInventoriesModal({
             const data = await service.getAllRows(DatabaseTables.Items);
             setItems(data);
         } catch (e: any) {
+
             NotificationsService.error("Fetch Items", e.toString());
         }
     }
@@ -91,26 +86,9 @@ export default function StaffInventoriesModal({
             opened={open}
             onClose={handleClose}
             centered
-            title={"Add Inventory Item"}>
+            title={"Import Inventory Item"}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
-                    <DatePickerInput
-                        {...form.getInputProps('date')}
-                        label={"Date"}
-                        required={true}
-                        value={
-                            form.values.date
-                                ? new Date(form.values.date)
-                                : new Date()
-                        }
-                        onChange={(e) => {
-                            if (e) {
-                                form.setValues({
-                                    date: dayjs(e).format("YYYY-MM-DD"),
-                                });
-                            }
-                        }}
-                    />
                     <Select
                         clearable
                         value={String(form.values.item_id)}
@@ -143,28 +121,6 @@ export default function StaffInventoriesModal({
                             }
                         }}
                     />
-
-                    <DateTimePicker
-                        label={"Expiration Date"}
-                        required={true}
-                        valueFormat="YYYY-MM-DD hh:mm A"
-                        value={
-                            form.values.expired_at
-                                ? new Date(form.values.expired_at)
-                                : new Date()
-                        }
-                        onChange={(e) => {
-                            if (e) {
-                                form.setValues({
-                                    expired_at:
-                                        dayjs(e).format(
-                                            "YYYY-MM-DD hh:mm A",
-                                        ),
-                                });
-                            }
-                        }}
-                    />
-
                     <Button type="submit" fullWidth mt="md">
                         Submit
                     </Button>

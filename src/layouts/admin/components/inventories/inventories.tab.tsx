@@ -127,21 +127,10 @@ export default function InventoriesTab() {
             },
         },
         {
-            accessor: "expired_at",
-            title: "Expired At",
-            sortable: true,
-            render: ({expired_at}: Inventories) => {
-                return (
-                    <Group>
-                        {dayjs(expired_at).format(DISPLAY_TIME_FORMAT)}
-                    </Group>
-                );
-            },
-        },
-        {
             accessor: "created_at",
             title: "Created At",
             sortable: true,
+            width: 250,
             render: ({created_at}: Inventories) => {
                 return (
                     <Group>

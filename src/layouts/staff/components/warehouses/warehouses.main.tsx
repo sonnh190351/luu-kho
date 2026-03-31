@@ -183,7 +183,7 @@ export default function StaffWarehousesTab() {
             },
         },
         {
-            accessor: "expired_at",
+            accessor: "status",
             title: "Status",
             sortable: true,
             render: ({ expired_at }: Inventories) => {

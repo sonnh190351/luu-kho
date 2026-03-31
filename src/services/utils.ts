@@ -90,8 +90,6 @@ export default class UtilsService {
                 return "yellow"
             case OrderStatus.FINISHED:
                 return "green"
-            case OrderStatus.CANCELLED:
-                return "red"
             default:
                 return "gray"
         }

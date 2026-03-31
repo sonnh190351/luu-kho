@@ -31,7 +31,6 @@ interface OrderStatistics {
     received: number;
     processing: number;
     finished: number;
-    cancelled: number;
 }
 
 export default function StaffOrdersLayout() {
@@ -43,7 +42,6 @@ export default function StaffOrdersLayout() {
         received: 0,
         processing: 0,
         finished: 0,
-        cancelled: 0,
     })
 
     const [orders, setOrders] = useState<any[]>([]);
@@ -183,7 +181,6 @@ export default function StaffOrdersLayout() {
         let received = 0
         let processing = 0
         let finished = 0
-        let cancelled = 0
 
         for(let i = 0; i < data.length; i++) {
             switch (data[i].status) {
@@ -196,9 +193,6 @@ export default function StaffOrdersLayout() {
                 case OrderStatus.FINISHED:
                     finished += 1
                     break
-                case OrderStatus.CANCELLED:
-                    cancelled += 1
-                    break
                 default:
                     break
             }
@@ -209,7 +203,6 @@ export default function StaffOrdersLayout() {
             received: received,
             processing: processing,
             finished: finished,
-            cancelled: cancelled,
         })
     }
 
@@ -236,7 +229,7 @@ export default function StaffOrdersLayout() {
                 <Divider/>
 
                 <Grid>
-                    <Grid.Col span={4}>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
@@ -246,7 +239,7 @@ export default function StaffOrdersLayout() {
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={2}>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
@@ -256,7 +249,7 @@ export default function StaffOrdersLayout() {
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={2}>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
@@ -266,23 +259,13 @@ export default function StaffOrdersLayout() {
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={2}>
+                    <Grid.Col span={3}>
                         <Card style={{
                             ...cardStyle
                         }}>
                             <Stack gap={5} justify={'flex-end'} align={'start'}>
                                 <Text>Finished orders</Text>
                                 <Title>{statistics.finished}</Title>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                    <Grid.Col span={2}>
-                        <Card style={{
-                            ...cardStyle
-                        }}>
-                            <Stack gap={5} justify={'flex-end'} align={'start'}>
-                                <Text>Canceled orders</Text>
-                                <Title>{statistics.cancelled}</Title>
                             </Stack>
                         </Card>
                     </Grid.Col>

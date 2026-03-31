@@ -76,16 +76,33 @@ export default function RequestsTab() {
             },
         },
         {
-            accessor: "name",
-            title: "Name",
+            accessor: "type",
+            title: "Type",
             sortable: true,
-            render: ({ name }: Requests) => {
-                return <Group>{name}</Group>;
+            render: ({ type }: Requests) => {
+                return <Group>{type}</Group>;
+            },
+        },
+        {
+            accessor: "description",
+            title: "Description",
+            sortable: true,
+            render: ({ description }: Requests) => {
+                return <Group>{description}</Group>;
+            },
+        },
+        {
+            accessor: "status",
+            title: "Status",
+            sortable: true,
+            render: ({ status }: Requests) => {
+                return <Group>{status}</Group>;
             },
         },
         {
             accessor: "created_at",
             title: "Created At",
+            width: 250,
             sortable: true,
             render: ({ created_at }: Requests) => {
                 return (
@@ -98,6 +115,7 @@ export default function RequestsTab() {
         {
             accessor: "updated_at",
             title: "Last Updated At",
+            width: 250,
             sortable: true,
             render: ({ updated_at }: Requests) => {
                 return (

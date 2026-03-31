@@ -2,6 +2,7 @@ export enum DatabaseTables {
     Auth = "auth",
     Tags = "tags",
     Inventories = "inventories",
+    InventoryStatus = "inventory_status",
     Items = "items",
     Warehouses = "warehouses",
     Categories = "categories",

@@ -219,6 +219,35 @@ export default class OperationService {
         await this.database.delete(table, id);
     }
 
+    public async getWarehouseStatus(warehouse_id: number) {
+
+        // get matching data
+        const data = await this.database.getDatabase().from(DatabaseTables.InventoryStatus).select(`
+                id,
+                created_at,
+                quantity,
+                items(
+                    id,
+                    name,
+                    quantity_type,
+                    warning_limit,
+                    category_id
+                )
+            `).in(
+            'warehouse_id', [warehouse_id]
+        )
+
+        if(data.error) {
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get warehouse status: ${data.error}`,
+            );
+            return []
+        }
+
+        return data.data
+    }
+
     public async getWarehouseInventoryItems(warehouse_id: number) {
 
         // get matching data
@@ -226,7 +255,6 @@ export default class OperationService {
                 id,
                 created_at,
                 updated_at,
-                expired_at,
                 quantity,
                 items(
                     id,

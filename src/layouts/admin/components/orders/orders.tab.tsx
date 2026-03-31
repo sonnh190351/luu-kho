@@ -18,6 +18,9 @@ import {IconEdit, IconPlus, IconRefresh} from "@tabler/icons-react";
 import UtilsService from "../../../../services/utils.ts";
 import OrderModal from "./orders.modal.tsx";
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import type {Inventories} from "../../../../models/inventories.ts";
+import dayjs from "dayjs";
+import {DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 
 export default function OrdersTabs() {
 
@@ -86,6 +89,19 @@ export default function OrdersTabs() {
                 return (
                     <Group>
                         <Text>{quantity}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "created_at",
+            title: "Created At",
+            width: 250,
+            sortable: true,
+            render: ({created_at}: Inventories) => {
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
                     </Group>
                 );
             },
