@@ -5,8 +5,7 @@ import {LocalStorage} from "../../../../enums/localStorage.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
-import {IconSearch, IconX} from "@tabler/icons-react";
-import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import {IconX} from "@tabler/icons-react";
 import {DatabaseTables} from "../../../../enums/tables.ts";
 
 export default function ManagerStatusTab() {
