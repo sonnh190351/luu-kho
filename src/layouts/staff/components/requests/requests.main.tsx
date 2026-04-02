@@ -13,15 +13,16 @@ import {
     Title
 } from "@mantine/core";
 import {type ChangeEvent, useEffect, useState} from "react";
-import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
-import {IconInfoCircle, IconPlus, IconRefresh} from "@tabler/icons-react";
-import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../enums/tables.ts";
-import DatabaseService from "../../../services/database/database.service.ts";
-import {LocalStorage} from "../../../enums/localStorage.ts";
+import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
+import { IconPlus, IconRefresh} from "@tabler/icons-react";
+import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
+import {LocalStorage} from "../../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {RequestStatus, CommonRequestType} from "../../../enums/request.ts";
-import ManagerRequestModal from "./request.modal.tsx";
-import {BUTTON_COLOR} from "../../../enums/styling.ts";
+import {CommonRequestType} from "../../../../enums/request.ts";
+import StaffRequestModal from "./request.modal.tsx";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import UtilsService from "../../../../services/utils.ts";
+import RequestService from "../../../../services/operations/request/request.service.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -46,19 +47,12 @@ export default function RequestsLayout() {
     async function fetchRequests() {
         setIsLoading(true);
 
-        const service = DatabaseService.getInstance()
+        const service = RequestService.getInstance()
 
         try {
-            const response = await service.getByField(
-                DatabaseTables.Requests, 'user_id', cachedData.id
-            )
-
-            if(response.error) {
-                NotificationsService.error("Fetch Requests", response.error.message)
-            } else {
-                setItems(response.data);
-            }
-
+            const response = await service.getRequestDetailsByUserId(cachedData.id)
+            setItems(response);
+            console.log(response)
         } catch (e: any) {
             NotificationsService.error("Fetch requests", e.toString());
         }
@@ -86,24 +80,12 @@ export default function RequestsLayout() {
         setItems(matchingItems)
     }
 
-    function getBadgeColor(status: RequestStatus) {
-        switch (status) {
-            case RequestStatus.SUBMITTED:
-                return "blue"
-            case RequestStatus.PROCESSING:
-                return "yellow"
-            case RequestStatus.ACCEPTED:
-                return "green"
-            case RequestStatus.REJECTED:
-                return "red"
-            default:
-                return "gray"
-        }
-    }
-
     return (
         <Stack pt={"lg"} pl={"sm"}>
             <LoadingOverlay
+                style={{
+                    position: "fixed",
+                }}
                 visible={isLoading}
                 overlayProps={{ radius: "sm", blur: 2 }}
             />
@@ -208,7 +190,9 @@ export default function RequestsLayout() {
                                                 }
                                             </Group>
                                         </Stack>
-                                        <Stack gap={5}>
+                                        <Stack mr={'xl'} gap={5} style={{
+                                            width: 250
+                                        }}>
                                             <Text style={{
                                                 fontWeight: 'bold'
                                             }}>
@@ -220,6 +204,40 @@ export default function RequestsLayout() {
                                                 }
                                             </Group>
                                         </Stack>
+                                        <Stack gap={5} style={{
+                                            width: 250
+                                        }}>
+                                            <Text style={{
+                                                fontWeight: 'bold'
+                                            }}>
+                                                Handling Result
+                                            </Text>
+                                            <Group>
+                                                {
+                                                    item.handler ? (
+                                                        <>
+                                                            Handled by: {item.handler.last_name} {item.handler.first_name}
+                                                        </>
+                                                    ) : <Text style={{
+                                                        color: '#fa5252'
+                                                    }}>Not yet handled</Text>
+                                                }
+                                            </Group>
+                                        </Stack>
+                                        {
+                                            item.handler && <Stack gap={5}>
+                                                <Text style={{
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    Remark
+                                                </Text>
+                                                <Group>
+                                                    {
+                                                        item.remark ?? "N/A"
+                                                    }
+                                                </Group>
+                                            </Stack>
+                                        }
                                     </Group>
                                     <Group>
                                         <Stack gap={5} style={{
@@ -231,13 +249,9 @@ export default function RequestsLayout() {
                                                 Status
                                             </Text>
                                             <Group>
-                                                <Badge color={getBadgeColor(item.status)}>{item.status}</Badge>
+                                                <Badge color={UtilsService.getRequestBadgeColor(item.status)}>{item.status}</Badge>
                                             </Group>
                                         </Stack>
-                                        <Divider mr={'lg'} orientation={'vertical'} />
-                                        <Button color={BUTTON_COLOR.PRIMARY}  leftSection={<IconInfoCircle />}>
-                                            View Details
-                                        </Button>
                                     </Group>
                                 </Group>
                             </Card>
@@ -246,7 +260,7 @@ export default function RequestsLayout() {
                 }
             </Stack>
 
-            <ManagerRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
+            <StaffRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
         </Stack>
     )
 }

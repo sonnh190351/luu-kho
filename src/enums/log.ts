@@ -5,5 +5,7 @@ export enum LOG_ACTIONS {
     EDIT_INVENTORY = "Edit Inventory Entry",
     ADD_PRODUCT = "Add Product Entry",
     EDIT_PRODUCT = "Edit Product Entry",
-    LOGIN = "Login"
+    LOGIN = "Login",
+    UPDATE_REQUEST = "Update Request",
+    CREATE_REQUEST = "Create Request",
 }

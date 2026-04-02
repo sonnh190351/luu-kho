@@ -6,7 +6,7 @@ import {
     Text,
     LoadingOverlay,
     TextInput,
-    Title, Divider,
+    Title, Divider, Badge,
 } from "@mantine/core";
 import {
     IconEdit,
@@ -15,23 +15,26 @@ import {
     IconTrash,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import type { Requests } from "../../../../models/requests.ts";
-import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import OperationService from "../../../../services/operations/operationService.ts";
+import type { Requests } from "../../../models/requests.ts";
+import CommonTable from "../../dataTable/common.table.tsx";
+import OperationService from "../../../services/operations/operationService.ts";
 import RequestsModal from "./requests.modal.tsx";
 import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
-} from "../../../../enums/tables.ts";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
-import { InformationService } from "../../../../services/notifications/information.service.ts";
+} from "../../../enums/tables.ts";
+import { NotificationsService } from "../../../services/notifications/notifications.service.ts";
+import { InformationService } from "../../../services/notifications/information.service.ts";
 import dayjs from "dayjs";
-import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import {BUTTON_COLOR} from "../../../enums/styling.ts";
+import UtilsService from "../../../services/utils.ts";
+import type {RequestStatus} from "../../../enums/request.ts";
+import RequestService from "../../../services/operations/request/request.service.ts";
 
 export default function RequestsTab() {
     const [isLoading, setLoading] = useState(true);
 
-    const [items, setRequests] = useState<Requests[]>([]);
+    const [items, setRequests] = useState<any[]>([]);
 
     const [keyword, setKeyword] = useState<string>("");
 
@@ -43,10 +46,11 @@ export default function RequestsTab() {
     }, []);
 
     async function fetchRequests() {
-        const service = OperationService.getInstance();
+        const service = RequestService.getInstance();
 
         try {
-            const data = await service.getAllRows(DatabaseTables.Requests);
+            const data = await service.getRequestDetails()
+            console.log(data)
             setRequests(data);
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
@@ -96,7 +100,36 @@ export default function RequestsTab() {
             title: "Status",
             sortable: true,
             render: ({ status }: Requests) => {
-                return <Group>{status}</Group>;
+                return <Group>
+                    <Badge color={UtilsService.getRequestBadgeColor(status as RequestStatus)}>{status}</Badge>
+
+                </Group>;
+            },
+        },
+        {
+            accessor: "requester",
+            title: "Requester",
+            sortable: true,
+            render: ({ requester }: any) => {
+                return <Group>{requester.last_name} {requester.first_name} ({requester.email})</Group>;
+            },
+        },
+        {
+            accessor: "handler",
+            title: "Handler",
+            sortable: true,
+            render: ({ handler }: any) => {
+                return <Group>{handler ? handler.email : <Text style={{
+                    color: '#fa5252'
+                }}>Not yet handled</Text>}</Group>;
+            },
+        },
+        {
+            accessor: "remark",
+            title: "Remark",
+            sortable: true,
+            render: ({ remark }: any) => {
+                return <Group>{remark ?? "N/A"}</Group>;
             },
         },
         {

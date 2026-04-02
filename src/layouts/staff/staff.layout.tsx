@@ -15,7 +15,7 @@ import {IconBuildingWarehouse, IconCommand, IconLogs, IconMenuOrder, IconTemplat
 import StaffOrdersLayout from "./components/orders/orders.tab.tsx";
 import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ItemsTab from "../../components/shared/items/items.tab.tsx";
-import RequestsLayout from "../../components/shared/requests/requests.main.tsx";
+import RequestsLayout from "./components/requests/requests.main.tsx";
 
 const openMenuWidth = 200;
 

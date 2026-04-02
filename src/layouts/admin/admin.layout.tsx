@@ -34,7 +34,7 @@ import InventoriesTab from "./components/inventories/inventories.tab.tsx";
 import WarehousesTab from "../../components/shared/warehouses/warehouses.tab.tsx";
 import SuppliersTab from "./components/suppliers/suppliers.tab.tsx";
 import UsersTab from "./components/users/users.tab.tsx";
-import RequestsTab from "./components/requests/requests.tab.tsx";
+import RequestsTab from "../../components/shared/requests/requests.tab.tsx";
 import type {TabGroup} from "../common.types.ts";
 import AdminDashboardTab from "./components/dashboard/dashboard.tab.tsx";
 import LogsTab from "../../components/shared/logs/logs.tab.tsx";

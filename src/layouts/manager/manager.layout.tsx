@@ -15,7 +15,7 @@ import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ProductsTabs from "../../components/shared/products/products.tab.tsx";
 import ManagerStatusTab from "./components/status/status.main.tsx";
 import ManagerInventoryImportTab from "./components/inventoryImport/inventoryImport.main.tsx";
-import RequestsTab from "../admin/components/requests/requests.tab.tsx";
+import RequestsTab from "../../components/shared/requests/requests.tab.tsx";
 
 const openMenuWidth = 200;
 

@@ -1,15 +1,12 @@
 import {Button, Modal, Select, Stack, TextInput} from "@mantine/core";
-import {LocalStorage} from "../../../enums/localStorage.ts";
+import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {useForm} from "@mantine/form";
-import {FormValidationService} from "../../../services/validatior/form-validation.service.ts";
-import {RequestStatus, CommonRequestType, ManagerRequestType} from "../../../enums/request.ts";
-import {useEffect, useState} from "react";
-import UtilsService from "../../../services/utils.ts";
-import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
-import DatabaseService from "../../../services/database/database.service.ts";
-import {DatabaseTables} from "../../../enums/tables.ts";
-import OperationService from "../../../services/operations/operationService.ts";
-import type {Warehouses} from "../../../models/warehouses.ts";
+import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
+import {RequestStatus, CommonRequestType, ManagerRequestType} from "../../../../enums/request.ts";
+import {useEffect} from "react";
+import UtilsService from "../../../../services/utils.ts";
+import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
+import RequestService from "../../../../services/operations/request/request.service.ts";
 
 interface RequestModalProps {
     open: boolean;
@@ -24,11 +21,9 @@ interface RequestFormValues {
     type: string;
 }
 
-export default function ManagerRequestModal({open, close, request}: RequestModalProps) {
+export default function StaffRequestModal({open, close, request}: RequestModalProps) {
 
     const cachedData = JSON.parse(localStorage.getItem(LocalStorage.userData)!);
-
-    const [warehouses, setWarehouses] = useState<Warehouses[]>([]);
 
     const form = useForm<RequestFormValues>({
         initialValues: {
@@ -42,30 +37,21 @@ export default function ManagerRequestModal({open, close, request}: RequestModal
         },
     });
 
-    useEffect(() => {
-        (async () => await fetchWarehouses())();
-    }, []);
 
     useEffect(() => {
         if(request !== undefined) {
             form.setValues({
                 description: request.description,
                 type: request.description,
-                warehouse_id: request.warehouse_id,
+                warehouse_id: cachedData.warehouses.id,
             })
         }
     }, [request]);
 
-    async function fetchWarehouses() {
-        const service = OperationService.getInstance();
-        const data = await service.getAllRows(DatabaseTables.Warehouses);
-        setWarehouses(data);
-    }
-
     async function handleSubmit() {
         try {
-            const service = DatabaseService.getInstance();
-            const response = await service.add(DatabaseTables.Requests, {
+            const service = RequestService.getInstance()
+            const response = await service.createRequest({
                 ...form.getValues(),
                 user_id: cachedData.id,
                 status: RequestStatus.SUBMITTED
@@ -108,23 +94,6 @@ export default function ManagerRequestModal({open, close, request}: RequestModal
                                 ...ManagerRequestType
                             }).map(([name, type]) => ({label: type, value: name}))
                         }
-                    />
-                    <Select
-                        {...form.getInputProps('warehouse_id')}
-                        value={String(form.values.warehouse_id)}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setValues({
-                                    warehouse_id: Number(value),
-                                });
-                            }
-                        }}
-                        required
-                        searchable
-                        label={"Warehouse"}
-                        data={warehouses.map((s) => {
-                            return { label: s.name!, value: String(s.id) };
-                        })}
                     />
                     <TextInput
                         {...form.getInputProps('description')}
