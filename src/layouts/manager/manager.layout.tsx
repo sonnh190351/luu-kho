@@ -10,12 +10,20 @@ import {
 import {LocalStorage} from "../../enums/localStorage.ts";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconCommand, IconLogs, IconPackages, IconPizza} from "@tabler/icons-react";
+import {
+    IconBuildingWarehouse,
+    IconChartArea,
+    IconCommand,
+    IconLogs,
+    IconPackages,
+    IconPizza
+} from "@tabler/icons-react";
 import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ProductsTabs from "../../components/shared/products/products.tab.tsx";
 import ManagerStatusTab from "./components/status/status.main.tsx";
 import ManagerInventoryImportTab from "./components/inventoryImport/inventoryImport.main.tsx";
 import RequestsTab from "../../components/shared/requests/requests.tab.tsx";
+import ManagerDashboardTab from "./components/dashboard/dashboard.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -35,6 +43,7 @@ export default function ManagerLayout() {
     }
 
     const customerItems = [
+        <ManagerDashboardTab />,
         <ManagerInventoryImportTab />,
         <ManagerStatusTab />,
         <ProductsTabs />,
@@ -44,22 +53,32 @@ export default function ManagerLayout() {
 
     const customerTabs: TabGroup[] = [
         {
+          name: "",
+          items: [
+              {
+                  icon: <IconChartArea/>,
+                  title: "Dashboard",
+                  index: 0,
+              }
+          ]
+        },
+        {
             name: "Warehouses",
             items: [
                 {
                     icon: <IconBuildingWarehouse />,
                     title: "Import Tickets",
-                    index: 0
+                    index: 1
                 },
                 {
                     icon: <IconPackages />,
                     title: "Inventory Status",
-                    index: 1
+                    index: 2
                 },
                 {
                     icon: <IconPizza/>,
                     title: "Products",
-                    index: 2
+                    index: 3
                 }
             ]
         },
@@ -69,7 +88,7 @@ export default function ManagerLayout() {
                 {
                     icon: <IconCommand />,
                     title: "Requests",
-                    index: 3
+                    index: 4
                 }
             ]
         },
@@ -79,7 +98,7 @@ export default function ManagerLayout() {
                 {
                     icon: <IconLogs/>,
                     title: "Logs",
-                    index: 4
+                    index: 5
                 }
             ]
         }

@@ -11,11 +11,19 @@ import {LocalStorage} from "../../enums/localStorage.ts";
 import StaffWarehousesLayout from "./components/warehouses/warehouses.main.tsx";
 import {useState} from "react";
 import type {TabGroup} from "../common.types.ts";
-import {IconBuildingWarehouse, IconCommand, IconLogs, IconMenuOrder, IconTemplate} from "@tabler/icons-react";
+import {
+    IconBuildingWarehouse,
+    IconChartArea,
+    IconCommand,
+    IconLogs,
+    IconMenuOrder,
+    IconTemplate
+} from "@tabler/icons-react";
 import StaffOrdersLayout from "./components/orders/orders.tab.tsx";
 import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ItemsTab from "../../components/shared/items/items.tab.tsx";
 import RequestsLayout from "./components/requests/requests.main.tsx";
+import StaffDashboardTab from "./components/dashboard/dashboard.tab.tsx";
 
 const openMenuWidth = 200;
 
@@ -35,6 +43,7 @@ export default function StaffLayout() {
     }
 
     const staffItems = [
+        <StaffDashboardTab />,
         <ItemsTab />,
         <StaffWarehousesLayout />,
         <LogsTab />,
@@ -44,22 +53,32 @@ export default function StaffLayout() {
 
     const staffTabs: TabGroup[] = [
         {
+            name: "",
+            items: [
+                {
+                    icon: <IconChartArea/>,
+                    title: "Dashboard",
+                    index: 0,
+                }
+            ]
+        },
+        {
             name: "Warehouses",
             items: [
                 {
                     icon: <IconTemplate />,
                     title: "Items",
-                    index: 0
+                    index: 1
                 },
                 {
                     icon: <IconBuildingWarehouse />,
                     title: "Inventory",
-                    index: 1
+                    index: 2
                 },
                 {
                     icon: <IconLogs />,
                     title: "Logs",
-                    index: 2
+                    index: 3
                 }
             ]
         },
@@ -69,7 +88,7 @@ export default function StaffLayout() {
                 {
                     icon: <IconCommand />,
                     title: "Requests",
-                    index: 3
+                    index: 4
                 }
             ]
         },
@@ -79,7 +98,7 @@ export default function StaffLayout() {
                 {
                     icon: <IconMenuOrder />,
                     title: "Orders",
-                    index: 4
+                    index: 5
                 }
             ]
         }

@@ -44,10 +44,10 @@ export default class InventoryService {
         }
     }
 
-    private async checkOrderAvailability(data: any): Promise<boolean> {
-        console.log(data)
+    private async checkOrderAvailability(data: any): Promise<void> {
         // Check remaining items in inventory. If not available, return false
         const products = await this.database.getDatabase().from(DatabaseTables.ProductItems).select().eq('product_id', data.product_id)
+
 
         if (products.error) {
             throw products.error.message
@@ -71,13 +71,13 @@ export default class InventoryService {
             }
 
             const currentProductData = currentProduct.data[0]
-            if (currentProductData.quantity < productItem.quantity) {
+            if (currentProductData.quantity < productItem.quantity * data.quantity) {
                 throw `Not enough ingredients in Inventory for item: ${productItem.id}! Please refill!`
             }
 
             currentProducts.push({
                 id: currentProductData.id,
-                quantity: currentProductData.quantity - productItem.quantity
+                quantity: currentProductData.quantity - (productItem.quantity * data.quantity)
             })
         }
 
@@ -89,13 +89,9 @@ export default class InventoryService {
                 }
             ).eq('id', currentProducts[i].id,)
         }
-
-        return true
     }
 
     public async editOrderEntry(data: any) {
-        // TO-DO: Check availability of order
-
         const response = await this.database.edit(DatabaseTables.Orders,
             data.id, {
                 ...data,
@@ -120,7 +116,6 @@ export default class InventoryService {
 
     public async addInventoryEntry(data: any) {
         // Tạo phiếu nhập kho
-        console.log(data)
         const response = await this.database.add(DatabaseTables.Inventories, {
             ...data,
             warehouse_id: this.userData.warehouses.id
@@ -145,7 +140,6 @@ export default class InventoryService {
                     'quantity': data.quantity + currentItem.quantity
             }).eq('id', currentItem.id)
         } else {
-            console.log('new')
             // Chưa tồn tại, thì tạo mới
             await this.database.getDatabase().from(DatabaseTables.InventoryStatus).insert({
                 item_id: data.item_id,

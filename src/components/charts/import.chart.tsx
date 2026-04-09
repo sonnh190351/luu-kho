@@ -1,8 +1,8 @@
+import type {ChartProps} from "./charts.type.ts";
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
 import {APP_COLOR} from "../../enums/styling.ts";
-import type {ChartProps} from "./charts.type.ts";
 
-export default function SalesChart({chartData} : ChartProps) {
+export default function ImportChart({chartData} : ChartProps) {
     return (
         <LineChart
             responsive={true}

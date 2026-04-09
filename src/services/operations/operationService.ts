@@ -153,6 +153,35 @@ export default class OperationService {
         return response.data;
     }
 
+    public async getAllItems() {
+        const data = await this.database.getDatabase().from(DatabaseTables.Items).select(`
+                id,
+                name,
+                created_at,
+                updated_at,
+                warning_limit,
+                quantity_type,  
+                tags,
+                categories(
+                    name
+                ),
+                suppliers(
+                    name
+                )
+            `)
+
+        if(data.error) {
+            console.log(data)
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get product items: ${data.error}`,
+            );
+            return []
+        }
+
+        return data.data
+    }
+
     public async editItemName(table: DatabaseTables, data: any) {
         const matching = await this.database.getByField(
             table,

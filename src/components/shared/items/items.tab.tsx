@@ -11,7 +11,6 @@ import {
 } from "@mantine/core";
 import {
     IconEdit,
-    IconInfoCircle,
     IconPlus,
     IconRefresh,
     IconSearch,
@@ -35,7 +34,7 @@ import {BUTTON_COLOR} from "../../../enums/styling.ts";
 export default function ItemsTab() {
     const [isLoading, setLoading] = useState(true);
 
-    const [items, setItems] = useState<Items[]>([]);
+    const [items, setItems] = useState<any[]>([]);
 
     const [keyword, setKeyword] = useState<string>("");
 
@@ -50,7 +49,7 @@ export default function ItemsTab() {
         const service = OperationService.getInstance();
 
         try {
-            const data = await service.getAllRows(DatabaseTables.Items);
+            const data = await service.getAllItems()
             setItems(data);
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
@@ -146,52 +145,28 @@ export default function ItemsTab() {
             },
         },
         {
-            accessor: "category_id",
+            accessor: "categories",
             title: "Category ID",
             sortable: true,
             width: 175,
-            render: ({category_id}: any) => {
+            render: ({ categories }: any) => {
                 return (
-                    <Button
-                        color={BUTTON_COLOR.PRIMARY}
-                        style={{
-                            width: "100%",
-                        }}
-                        leftSection={<IconInfoCircle/>}
-                        onClick={() => {
-                            InformationService.getInstance().showItemDetailsById(
-                                DatabaseTables.Categories,
-                                "Category Details",
-                                category_id!,
-                            );
-                        }}>
-                        Details ({category_id})
-                    </Button>
+                    <Group>
+                        {categories.name}
+                    </Group>
                 );
             },
         },
         {
-            accessor: "supplier_id",
+            accessor: "suppliers",
             title: "Supplier ID",
             sortable: true,
             width: 175,
-            render: ({supplier_id}: any) => {
+            render: ({ suppliers }: any) => {
                 return (
-                    <Button
-                        style={{
-                            width: "100%",
-                        }}
-                        color={BUTTON_COLOR.PRIMARY}
-                        leftSection={<IconInfoCircle/>}
-                        onClick={() => {
-                            InformationService.getInstance().showItemDetailsById(
-                                DatabaseTables.Suppliers,
-                                "Supplier Details",
-                                supplier_id!,
-                            );
-                        }}>
-                        Details ({supplier_id})
-                    </Button>
+                    <Group>
+                        {suppliers.name}
+                    </Group>
                 );
             },
         },
@@ -199,7 +174,7 @@ export default function ItemsTab() {
             accessor: "actions",
             title: "Actions",
             width: 120,
-            render: ({id}: any) => {
+            render: ({ id }: any) => {
                 return (
                     <Group>
                         <ActionIcon

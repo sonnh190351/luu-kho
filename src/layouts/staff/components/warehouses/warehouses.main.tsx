@@ -16,7 +16,7 @@ import {
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import {IconPlus, IconRefresh, IconSearch} from "@tabler/icons-react";
+import { IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import dayjs from "dayjs";
 import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
@@ -26,6 +26,7 @@ import type {Inventories} from "../../../../models/inventories.ts";
 import {ExpiringStatus} from "../../../../enums/data.ts";
 import UtilsService from "../../../../services/utils.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -197,22 +198,7 @@ export default function StaffWarehousesTab() {
                     </Group>
                 );
             },
-        },
-        {
-            accessor: "actions",
-            title: "Actions",
-            sortable: false,
-            width: 80,
-            render: ({id}: Inventories) => {
-                return (
-                    <Group>
-                        {
-                            id
-                        }
-                    </Group>
-                );
-            },
-        },
+        }
     ];
 
     return (
@@ -282,11 +268,7 @@ export default function StaffWarehousesTab() {
                         }}>Controls</Text>
                         <Group>
                             <Button
-                                onClick={() => setOpenModal(true)}
-                                leftSection={<IconPlus/>}>
-                                Add
-                            </Button>
-                            <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchItems()}
                                 leftSection={<IconRefresh/>}>
                                 Refresh

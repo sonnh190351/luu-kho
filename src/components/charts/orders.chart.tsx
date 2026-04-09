@@ -1,8 +1,8 @@
 import {CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis} from "recharts";
-import {APP_COLOR} from "../../enums/styling.ts";
 import type {ChartProps} from "./charts.type.ts";
+import {OrderStatus} from "../../enums/orders.ts";
 
-export default function SalesChart({chartData} : ChartProps) {
+export default function OrdersChart({chartData} : ChartProps) {
     return (
         <LineChart
             responsive={true}
@@ -17,7 +17,9 @@ export default function SalesChart({chartData} : ChartProps) {
             <YAxis />
             <Tooltip/>
             <Legend/>
-            <Line type="monotone" dataKey="total" stroke={APP_COLOR.PRIMARY}/>
+            <Line type="monotone" dataKey={OrderStatus.RECEIVED} stroke={"#339af0"}/>
+            <Line type="monotone" dataKey={OrderStatus.PROCESSING} stroke={"#fcc419"}/>
+            <Line type="monotone" dataKey={OrderStatus.FINISHED} stroke={"#12b886"}/>
         </LineChart>
     )
 }

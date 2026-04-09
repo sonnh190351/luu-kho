@@ -4,6 +4,7 @@ import type {ChartProps} from "./charts.type.ts";
 export default function CategoryChart({chartData}: ChartProps) {
     return (
         <PieChart
+            responsive={true}
             style={{width: '100%', height: '500px', aspectRatio: 1}}
         >
             <Pie
