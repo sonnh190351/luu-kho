@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import {DateTimePicker} from "@mantine/dates";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
+import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -35,7 +36,8 @@ export default function StaffInventoriesModal({
             ),
         },
         validate: {
-
+            item_id: FormValidationService.validateItemId,
+            quantity: FormValidationService.validateQuantity,
         },
     });
 

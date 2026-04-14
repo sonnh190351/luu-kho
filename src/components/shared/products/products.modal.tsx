@@ -5,6 +5,7 @@ import OperationService from "../../../services/operations/operationService.ts";
 import {DatabaseTables} from "../../../enums/tables.ts";
 import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../services/utils.ts";
+import {FormValidationService} from "../../../services/validatior/form-validation.service.ts";
 
 interface ProductModalProps {
     product: any,
@@ -24,6 +25,9 @@ export default function ProductModal({product, open, close, refresh}: ProductMod
     const form = useForm<ProductModalForm>({
         initialValues: {
             name: ""
+        },
+        validate: {
+            name: FormValidationService.validateName
         }
     })
 

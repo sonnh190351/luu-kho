@@ -5,6 +5,7 @@ import {RequestStatus} from "../../../enums/request.ts";
 import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
 import {LocalStorage} from "../../../enums/localStorage.ts";
 import RequestService from "../../../services/operations/request/request.service.ts";
+import {FormValidationService} from "../../../services/validatior/form-validation.service.ts";
 
 interface RequestsModalProps {
     request: any;
@@ -14,7 +15,7 @@ interface RequestsModalProps {
 }
 
 interface RequestsFormValues {
-    status?: string;
+    status: string;
     remark: string
 }
 
@@ -33,7 +34,9 @@ export default function RequestsModal({
             status: "",
             remark: "",
         },
-        validate: {},
+        validate: {
+            status: FormValidationService.validateStatus
+        },
     });
 
     useEffect(() => {

@@ -45,7 +45,6 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
             const data = await service.getProductDetails(product.id)
             if(data) {
                 setProductItem(data)
-                console.log(data)
             } else {
                 close()
             }

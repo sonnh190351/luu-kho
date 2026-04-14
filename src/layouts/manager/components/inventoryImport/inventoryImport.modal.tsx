@@ -6,6 +6,7 @@ import { DatabaseTables } from "../../../../enums/tables.ts";
 import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
+import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -16,6 +17,7 @@ interface InventoriesModalProps {
 interface InventoriesFormValues {
     quantity: number;
     item_id: number;
+    supplier_id: number;
 }
 
 export default function ManagerInventoryImportModal({
@@ -26,21 +28,27 @@ export default function ManagerInventoryImportModal({
 
     const cachedData = localStorage.getItem(LocalStorage.userData);
 
+    const [suppliers, setSuppliers] = useState<any[]>([]);
+
     const userData = JSON.parse(cachedData!)
 
     const form = useForm<InventoriesFormValues>({
         initialValues: {
             quantity: 0,
             item_id: -1,
+            supplier_id: -1,
         },
         validate: {
-
+            item_id: FormValidationService.validateItemId,
+            quantity: FormValidationService.validateQuantity,
+            supplier_id: FormValidationService.validateSupplierId,
         },
     });
 
     const [items, setItems] = useState<any[]>([]);
 
     useEffect(() => {
+        (async () => await fetchSuppliers())();
         (async () => await fetchItems())();
     }, []);
 
@@ -52,6 +60,18 @@ export default function ManagerInventoryImportModal({
         } catch (e: any) {
 
             NotificationsService.error("Fetch Items", e.toString());
+        }
+    }
+
+    async function fetchSuppliers() {
+        try {
+            const service = OperationService.getInstance();
+            const data = await service.getAllRows(DatabaseTables.Suppliers);
+            setSuppliers(data);
+
+            localStorage.setItem(DatabaseTables.Suppliers, JSON.stringify(data));
+        } catch (e: any) {
+            NotificationsService.error("Fetch Suppliers", e.toString());
         }
     }
 
@@ -109,6 +129,25 @@ export default function ManagerInventoryImportModal({
                             };
                         })}
                     />
+
+                    <Select
+                        {...form.getInputProps('supplier_id')}
+                        value={String(form.values.supplier_id)}
+                        onChange={(value) => {
+                            if (value) {
+                                form.setValues({
+                                    supplier_id: Number(value),
+                                });
+                            }
+                        }}
+                        required
+                        searchable
+                        label={"Supplier"}
+                        data={suppliers.map((s) => {
+                            return { label: s.name!, value: String(s.id) };
+                        })}
+                    />
+
                     <NumberInput
                         required
                         label={`Quantity`}

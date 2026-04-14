@@ -92,6 +92,11 @@ export default class InventoryService {
     }
 
     public async editOrderEntry(data: any) {
+        const exists = await this.database.isExist(DatabaseTables.Orders, 'id', data.id)
+        if(!exists) {
+            throw `Does not exist order with id: ${data.id}`
+        }
+
         const response = await this.database.edit(DatabaseTables.Orders,
             data.id, {
                 ...data,
@@ -115,6 +120,11 @@ export default class InventoryService {
     }
 
     public async addInventoryEntry(data: any) {
+        const existsWarehouse = await this.database.isExist(DatabaseTables.Warehouses, 'id', this.userData.warehouses.id)
+        if(!existsWarehouse) {
+            throw `Does not exist warehouse with id: ${this.userData.warehouses.id}`
+        }
+
         // Tạo phiếu nhập kho
         const response = await this.database.add(DatabaseTables.Inventories, {
             ...data,
@@ -131,7 +141,6 @@ export default class InventoryService {
         if(exist.error) {
             throw exist.error.message
         }
-
 
         if (exist.data!.length > 0) {
             // Nếu đã tồn tại, update thêm vào

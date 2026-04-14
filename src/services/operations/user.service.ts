@@ -51,12 +51,11 @@ export default class UserService {
     }
 
     public async registerUser(user: any) {
-        console.log(user);
-        // const currentUser = await this.getCurrentUser();
+        const currentUser = await this.getCurrentUser();
 
-        // if (currentUser.role < user.role) {
-        //     throw "Cannot register user with higher role!";
-        // }
+        if (currentUser.role < user.role) {
+            throw "Cannot register user with higher role!";
+        }
 
         const existingUser = await this.database.isExist(
             DatabaseTables.UserDetails,
@@ -68,10 +67,6 @@ export default class UserService {
             throw `Duplicate email detected!`;
         }
 
-        // const encrypted = EncryptionService.getInstance().encryptData(
-        //     user.password!,
-        // );
-        // user.password = encrypted;
 
         await this.database.add(DatabaseTables.UserDetails, user);
     }

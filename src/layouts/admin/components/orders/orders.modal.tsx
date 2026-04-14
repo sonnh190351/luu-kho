@@ -6,6 +6,7 @@ import OperationService from "../../../../services/operations/operationService.t
 import {DatabaseTables} from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
+import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
 
 interface OrderModalProps {
     order: any;
@@ -35,6 +36,11 @@ export default function OrderModal({
             product_id: -1,
             quantity: 0,
             status: OrderStatus.RECEIVED
+        },
+        validate: {
+            product_id: FormValidationService.validateProductId,
+            quantity: FormValidationService.validateQuantity,
+            status: FormValidationService.validateStatus,
         }
     })
 

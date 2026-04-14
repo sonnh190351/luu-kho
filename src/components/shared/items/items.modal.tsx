@@ -1,4 +1,3 @@
-import type { Items } from "../../../models/items.ts";
 import {
     Button, FileInput,
     Modal,
@@ -9,7 +8,6 @@ import {
     TextInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import type { Suppliers } from "../../../models/suppliers.ts";
 import type { Categories } from "../../../models/categories.ts";
 import { useForm } from "@mantine/form";
 import OperationService from "../../../services/operations/operationService.ts";
@@ -23,7 +21,7 @@ import {IconFile} from "@tabler/icons-react";
 import DatabaseService from "../../../services/database/database.service.ts";
 
 interface ItemsModalProps {
-    item: Items | null;
+    item: any;
     open: boolean;
     refresh: any;
     close: any;
@@ -33,7 +31,6 @@ interface ItemFormValues {
     category_id: number;
     name: string;
     quantity_type: string;
-    supplier_id: number;
     tags: string[];
     warning_limit: number;
 }
@@ -45,8 +42,6 @@ export default function ItemsModal({
     refresh,
 }: ItemsModalProps) {
     const isEdit = Boolean(item);
-
-    const [suppliers, setSuppliers] = useState<Suppliers[]>([]);
     const [categories, setCategories] = useState<Categories[]>([]);
     const [tags, setTags] = useState<Tags[]>([]);
 
@@ -57,7 +52,6 @@ export default function ItemsModal({
             category_id: -1,
             name: "",
             quantity_type: "N/A",
-            supplier_id: -1,
             tags: [],
             warning_limit: 0,
         },
@@ -65,17 +59,29 @@ export default function ItemsModal({
             name: FormValidationService.validateName,
             quantity_type: FormValidationService.validateQuantityType,
             category_id: FormValidationService.validateCategoryId,
-            supplier_id: FormValidationService.validateSupplierId,
+
         },
     });
 
     useEffect(() => {
         if (item) {
+            // Get cache data of supplier & category to map corresponding ID
+            let item_category_id = -1
+
+            const cacheCategories = localStorage.getItem(DatabaseTables.Categories);
+            if(cacheCategories) {
+                const categories = JSON.parse(cacheCategories);
+                const matchingCategory = categories.find((s: any) => s.name === item.categories.name)
+                if(matchingCategory) {
+                    item_category_id = matchingCategory.id
+                }
+            }
+
+            // Set initial values
             form.setValues({
-                category_id: item.category_id!,
+                category_id: item_category_id,
                 name: item.name!,
                 quantity_type: item.quantity_type!,
-                supplier_id: item.supplier_id!,
                 tags: item.tags! ?? [],
                 warning_limit: Number(item.warning_limit ?? 0),
             });
@@ -83,26 +89,19 @@ export default function ItemsModal({
     }, [isEdit]);
 
     useEffect(() => {
-        (async () => await fetchSuppliers())();
         (async () => await fetchCategories())();
         (async () => await fetchTags())();
     }, []);
 
-    async function fetchSuppliers() {
-        try {
-            const service = OperationService.getInstance();
-            const data = await service.getAllRows(DatabaseTables.Suppliers);
-            setSuppliers(data);
-        } catch (e: any) {
-            NotificationsService.error("Fetch Suppliers", e.toString());
-        }
-    }
+
 
     async function fetchCategories() {
         try {
             const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Categories);
             setCategories(data);
+
+            localStorage.setItem(DatabaseTables.Categories, JSON.stringify(data));
         } catch (e: any) {
             NotificationsService.error("Fetch Categories", e.toString());
         }
@@ -113,6 +112,7 @@ export default function ItemsModal({
             const service = OperationService.getInstance();
             const data = await service.getAllRows(DatabaseTables.Tags);
             setTags(data);
+
         } catch (e: any) {
             NotificationsService.error("Fetch Tags", e.toString());
         }
@@ -180,23 +180,7 @@ export default function ItemsModal({
                         }
                     />
 
-                    <Select
-                        {...form.getInputProps('supplier_id')}
-                        value={String(form.values.supplier_id)}
-                        onChange={(value) => {
-                            if (value) {
-                                form.setValues({
-                                    supplier_id: Number(value),
-                                });
-                            }
-                        }}
-                        required
-                        searchable
-                        label={"Supplier"}
-                        data={suppliers.map((s) => {
-                            return { label: s.name!, value: String(s.id) };
-                        })}
-                    />
+
 
                     <Select
                         {...form.getInputProps('category_id')}

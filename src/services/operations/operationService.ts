@@ -164,14 +164,10 @@ export default class OperationService {
                 tags,
                 categories(
                     name
-                ),
-                suppliers(
-                    name
                 )
             `)
 
         if(data.error) {
-            console.log(data)
             NotificationsService.error(
                 "Management Service",
                 `Failed to get product items: ${data.error}`,
@@ -291,6 +287,9 @@ export default class OperationService {
                     quantity_type,
                     warning_limit,
                     category_id
+                ),
+                suppliers(
+                    name
                 )
             `).in(
             'warehouse_id', [warehouse_id]

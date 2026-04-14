@@ -38,8 +38,5 @@ export class LogService {
             details: data,
         })
     }
-    
-    async readAllLogs() {
-        
-    }
+
 }

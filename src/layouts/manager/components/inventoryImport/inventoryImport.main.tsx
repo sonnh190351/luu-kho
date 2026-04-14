@@ -138,6 +138,18 @@ export default function ManagerInventoryImportTab() {
             },
         },
         {
+            accessor: "supplier",
+            title: "Supplier",
+            sortable: true,
+            render: ({ suppliers }: any) => {
+                return (
+                    <Group>
+                        <Text>{suppliers && suppliers.name}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
             accessor: "created_at",
             title: "Import Date",
             width: 250,

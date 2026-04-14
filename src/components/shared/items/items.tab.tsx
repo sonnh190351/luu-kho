@@ -1,30 +1,11 @@
-import {
-    ActionIcon,
-    Badge,
-    Button,
-    Group,
-    Stack,
-    Text,
-    TextInput,
-    LoadingOverlay,
-    Title, Divider,
-} from "@mantine/core";
-import {
-    IconEdit,
-    IconPlus,
-    IconRefresh,
-    IconSearch,
-    IconTrash, IconX,
-} from "@tabler/icons-react";
+import {ActionIcon, Badge, Button, Divider, Group, LoadingOverlay, Stack, Text, TextInput, Title,} from "@mantine/core";
+import {IconEdit, IconPlus, IconRefresh, IconSearch, IconTrash, IconX,} from "@tabler/icons-react";
 import {type ChangeEvent, useEffect, useState} from "react";
 import type {Items} from "../../../models/items.ts";
 import ItemsModal from "./items.modal.tsx";
 import CommonTable from "../../dataTable/common.table.tsx";
 import OperationService from "../../../services/operations/operationService.ts";
-import {
-    DatabaseTables,
-    DISPLAY_TIME_FORMAT,
-} from "../../../enums/tables.ts";
+import {DatabaseTables, DISPLAY_TIME_FORMAT,} from "../../../enums/tables.ts";
 import type {DataTableColumn} from "mantine-datatable";
 import {InformationService} from "../../../services/notifications/information.service.ts";
 import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
@@ -35,6 +16,7 @@ export default function ItemsTab() {
     const [isLoading, setLoading] = useState(true);
 
     const [items, setItems] = useState<any[]>([]);
+    const [cachedTags, setCachedTags] = useState<any[]>([]);
 
     const [keyword, setKeyword] = useState<string>("");
 
@@ -43,6 +25,7 @@ export default function ItemsTab() {
 
     useEffect(() => {
         (async () => await fetchItems())();
+        (async () => await fetchTags())();
     }, []);
 
     async function fetchItems() {
@@ -52,10 +35,29 @@ export default function ItemsTab() {
             const data = await service.getAllItems()
             setItems(data);
         } catch (e: any) {
-            NotificationsService.error("Fetch categories", e.toString());
+            NotificationsService.error("Fetch all items", e.toString());
         }
 
         setLoading(false);
+    }
+
+    async function fetchTags(forced: boolean = false) {
+        let data: any[]
+
+        const cache = localStorage.getItem(DatabaseTables.Tags)
+        if (!cache) {
+            data = await OperationService.getInstance().getAllRows(DatabaseTables.Tags)
+            localStorage.setItem(DatabaseTables.Tags, JSON.stringify(data))
+        } else {
+            data = JSON.parse(cache);
+        }
+
+        setCachedTags(data)
+
+        if(forced) {
+            data = await OperationService.getInstance().getAllRows(DatabaseTables.Tags)
+            localStorage.setItem(DatabaseTables.Tags, JSON.stringify(data))
+        }
     }
 
     function handleCloseItemModal() {
@@ -94,11 +96,18 @@ export default function ItemsTab() {
                 return (
                     <Group>
                         {tags
-                            ? tags.map((tag: any, idx: number) => (
-                                <Badge key={`item-${id}-tag-${index}-${idx}`}>
-                                    {tag}
-                                </Badge>
-                            ))
+                            ? tags.map((tag: any, idx: number) => {
+                                let tag_id = tag
+                                const cache = cachedTags.find((t: any) => Number(tag) === t.id)
+                                if(cache) {
+                                    tag_id = cache.name
+                                }
+                                return (
+                                    <Badge key={`item-${id}-tag-${index}-${idx}`}>
+                                        {tag_id}
+                                    </Badge>
+                                )
+                            })
                             : "N/A"}
                     </Group>
                 );
@@ -153,19 +162,6 @@ export default function ItemsTab() {
                 return (
                     <Group>
                         {categories.name}
-                    </Group>
-                );
-            },
-        },
-        {
-            accessor: "suppliers",
-            title: "Supplier ID",
-            sortable: true,
-            width: 175,
-            render: ({ suppliers }: any) => {
-                return (
-                    <Group>
-                        {suppliers.name}
                     </Group>
                 );
             },
@@ -288,7 +284,10 @@ export default function ItemsTab() {
                             </Button>
                             <Button
                                 color={BUTTON_COLOR.PRIMARY}
-                                onClick={() => fetchItems()}
+                                onClick={async () => {
+                                    await fetchItems()
+                                    await fetchTags(true)
+                                }}
                                 leftSection={<IconRefresh/>}>
                                 Refresh
                             </Button>

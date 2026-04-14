@@ -1,7 +1,10 @@
 import { QUANTITY_TYPES } from "../../enums/data";
 import { USER_ROLES } from "../../enums/roles";
+import {RequestStatus} from "../../enums/request.ts";
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+const NAME_REGEX = /^[A-Za-z_0-9]+(?: [A-Za-z0-9_]+)*$/;
 
 export class FormValidationService {
     public static validateItemId(id: number) {
@@ -11,6 +14,12 @@ export class FormValidationService {
         return null;
     }
 
+    public static validateProductId(id: number) {
+        if (id === -1) {
+            return "Please select a product!";
+        }
+        return null;
+    }
 
     public static validateWarehouseId(id: number) {
         if (id === -1) {
@@ -50,6 +59,10 @@ export class FormValidationService {
             return "Name must not have more than 50 characters!";
         }
 
+        if (!NAME_REGEX.test(name)) {
+            return "Name can only contains alphabet character and blank space!";
+        }
+
         return null;
     }
 
@@ -70,6 +83,7 @@ export class FormValidationService {
         if (!ROLES.includes(role)) {
             return "Invalid role!";
         }
+
         return null;
     }
 
@@ -116,5 +130,13 @@ export class FormValidationService {
         }
 
         return null;
+    }
+
+    public static validateStatus(status: string) {
+        if (!Object.values(RequestStatus).includes(status as RequestStatus)) {
+            return `Invalid status! ${status}`
+        }
+
+        return null
     }
 }
