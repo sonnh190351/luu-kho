@@ -93,7 +93,7 @@ export default class InventoryService {
 
     public async editOrderEntry(data: any) {
         const exists = await this.database.isExist(DatabaseTables.Orders, 'id', data.id)
-        if(!exists) {
+        if (!exists) {
             throw `Does not exist order with id: ${data.id}`
         }
 
@@ -121,7 +121,7 @@ export default class InventoryService {
 
     public async addInventoryEntry(data: any) {
         const existsWarehouse = await this.database.isExist(DatabaseTables.Warehouses, 'id', this.userData.warehouses.id)
-        if(!existsWarehouse) {
+        if (!existsWarehouse) {
             throw `Does not exist warehouse with id: ${this.userData.warehouses.id}`
         }
 
@@ -138,7 +138,7 @@ export default class InventoryService {
             .eq('warehouse_id', this.userData.warehouses.id)
             .eq('item_id', data.item_id)
 
-        if(exist.error) {
+        if (exist.error) {
             throw exist.error.message
         }
 
@@ -146,7 +146,7 @@ export default class InventoryService {
             // Nếu đã tồn tại, update thêm vào
             const currentItem = exist.data[0]
             await this.database.getDatabase().from(DatabaseTables.InventoryStatus).update({
-                    'quantity': data.quantity + currentItem.quantity
+                'quantity': data.quantity + currentItem.quantity
             }).eq('id', currentItem.id)
         } else {
             // Chưa tồn tại, thì tạo mới
@@ -180,16 +180,30 @@ export default class InventoryService {
     }
 
     public async editProductItem(data: any) {
-
         const matching = await this.database.getByField(
             DatabaseTables.ProductItems, 'id', data.id
         )
+
         if (matching.error) {
             throw matching.error.message;
         }
 
         if (matching.data!.length === 0) {
             throw `Does not exist this item in the product!`
+        }
+
+        const existing = await this.database.getDatabase().from(DatabaseTables.ProductItems).select()
+            .eq('item_id', data.item_id)
+            .eq('product_id', data.product_id)
+
+        if (existing.error) {
+            throw existing.error.message
+        }
+
+        if (existing.data!.length > 0) {
+            if (existing.data![0].id !== data.id) {
+                throw `Already exists this item in the product!`
+            }
         }
 
         const response = await this.database.edit(DatabaseTables.ProductItems, data.id, data)

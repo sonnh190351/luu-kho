@@ -169,12 +169,6 @@ export default function AdminDashboardTab() {
 
                 <Grid.Col span={{base: 12}}>
                     <Card withBorder={true}>
-                        <Group mb={'sm'} gap={5}>
-                            <IconChartArea/>
-                            <Text>
-                                Total Order Sales
-                            </Text>
-                        </Group>
                         <SalesChart chartData={salesData} />
                     </Card>
                 </Grid.Col>

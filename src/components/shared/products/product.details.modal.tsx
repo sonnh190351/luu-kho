@@ -67,7 +67,8 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
             if(isEdit) {
                 await service.editProductItem({
                     id: product_details.id,
-                    quantity: form.getValues()["quantity"],
+                    product_id: product_id,
+                    ...form.getValues(),
                 });
             } else {
                 await service.addProductItem({
@@ -89,8 +90,10 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
     }
 
     function handleClose() {
-        form.reset();
         close();
+        setTimeout(() => {
+            form.reset();
+        }, 200)
     }
 
     return (
@@ -108,7 +111,6 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
                                 });
                             }
                         }}
-                        disabled={isEdit}
                         required
                         searchable
                         label={"Item"}
