@@ -34,6 +34,7 @@ export default function ItemsTab() {
         try {
             const data = await service.getAllItems()
             setItems(data);
+            localStorage.setItem(DatabaseTables.Items, JSON.stringify(data));
         } catch (e: any) {
             NotificationsService.error("Fetch all items", e.toString());
         }
@@ -230,6 +231,10 @@ export default function ItemsTab() {
 
     async function handleSearchByName(e: ChangeEvent<HTMLInputElement>) {
         setKeyword(e.target.value)
+        if(e.target.value === "") {
+            await clearSearch()
+            return
+        }
 
         const temp = localStorage.getItem(DatabaseTables.Items);
         let cache = []
