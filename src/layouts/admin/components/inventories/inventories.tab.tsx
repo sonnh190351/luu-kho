@@ -12,7 +12,7 @@ import {
     IconPlus,
     IconRefresh,
     IconSearch,
-    IconTrash, IconX,
+    IconX,
 } from "@tabler/icons-react";
 import {type ChangeEvent, useEffect, useState} from "react";
 import type {Inventories} from "../../../../models/inventories.ts";
@@ -23,15 +23,16 @@ import {
     DatabaseTables,
     DISPLAY_TIME_FORMAT,
 } from "../../../../enums/tables.ts";
-import {InformationService} from "../../../../services/notifications/information.service.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import dayjs from "dayjs";
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import type {DataTableRowExpansionProps} from "mantine-datatable";
 
 export default function InventoriesTab() {
     const [isLoading, setLoading] = useState(true);
 
-    const [items, setInventories] = useState<Inventories[]>([]);
+    const [rootData, setRootData] = useState<Inventories[]>([]);
+    const [inventories, setInventories] = useState<Inventories[]>([]);
 
     const [keyword, setKeyword] = useState<string>("");
 
@@ -46,8 +47,8 @@ export default function InventoriesTab() {
 
         try {
             const data = await service.getAllInventoryItems()
-            console.log(data)
-            setInventories(data);
+            mappingData(data)
+            setRootData(data)
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
         }
@@ -55,23 +56,49 @@ export default function InventoriesTab() {
         setLoading(false);
     }
 
+    function mappingData(data: any[]) {
+        const items: Record<string, any> = {}
+        for(let i = 0; i < data.length; i++) {
+            const item = JSON.parse(JSON.stringify(data[i]));
+            if(!items[item.items.name]) {
+                items[item.items.name] = item;
+            } else {
+                items[item.items.name].quantity += item.quantity;
+            }
+        }
+
+        setInventories(Object.values(items));
+    }
+
     function handleCloseItemModal() {
         setOpenItemModal(false);
     }
 
+    const rowExpansion: DataTableRowExpansionProps = {
+        content: ({ record }: any) => {
+            const data = rootData.filter((r) => r.items.name === record.items.name)
+
+            return <Stack gap={6} pb={'md'}>
+                <Group>
+                    <Text style={{width: 70}}>Index</Text>
+                    <Text style={{width: 100}}>Quantity</Text>
+                    <Text style={{width: 200}}>Quantity Type</Text>
+                    <Text style={{width: 200}}>Import Date</Text>
+                </Group>
+                <Divider />
+                {
+                    data.map((item: any, index: number) => <Group key={`record-${item.items.name}-${index}`}>
+                        <Text style={{width: 70}}>{index + 1}</Text>
+                        <Text style={{width: 100}}>{item.quantity}</Text>
+                        <Text style={{width: 200}}>{item.items.quantity_type}</Text>
+                        <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
+                    </Group>)
+                }
+            </Stack>
+        }
+    }
+
     const columns: any[] = [
-        {
-            accessor: "id",
-            title: "ID",
-            sortable: true,
-            render: ({id}: Inventories) => {
-                return (
-                    <Group>
-                        <Text>{id}</Text>
-                    </Group>
-                );
-            },
-        },
         {
             accessor: "items",
             title: "Items",
@@ -138,46 +165,8 @@ export default function InventoriesTab() {
                     </Group>
                 );
             },
-        },
-        {
-            accessor: "actions",
-            title: "Actions",
-            sortable: false,
-            width: 80,
-            render: ({id}: Inventories) => {
-                return (
-                    <Group>
-                        <ActionIcon
-                            color={BUTTON_COLOR.PRIMARY}
-                            style={{
-                                width: "100%",
-                            }}
-                            onClick={() => handleDelete(id)}
-                            size={"lg"}>
-                            <IconTrash/>
-                        </ActionIcon>
-                    </Group>
-                );
-            },
-        },
+        }
     ];
-
-
-    function handleDelete(id: number) {
-        InformationService.getInstance().confirm(async () => {
-            try {
-                const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.Inventories, id);
-                NotificationsService.success(
-                    "Delete Inventory",
-                    "Inventory has been deleted!",
-                );
-            } catch (e: any) {
-                NotificationsService.error("Delete Inventory", e.toString());
-            }
-            await fetchInventories();
-        });
-    }
 
     async function clearSearch(){
         setKeyword("")
@@ -195,8 +184,8 @@ export default function InventoriesTab() {
         const temp = localStorage.getItem(DatabaseTables.Inventories);
         let cache = []
         if(!temp) {
-            localStorage.setItem(DatabaseTables.Inventories, JSON.stringify(items));
-            cache = JSON.parse(JSON.stringify(items));
+            localStorage.setItem(DatabaseTables.Inventories, JSON.stringify(inventories));
+            cache = JSON.parse(JSON.stringify(inventories));
         } else {
             cache = JSON.parse(temp);
         }
@@ -215,7 +204,7 @@ export default function InventoriesTab() {
 
                 <Stack gap={0}>
                     <Text>Management</Text>
-                    <Title>Inventories Data</Title>
+                    <Title>Inventories Import Data</Title>
                 </Stack>
                 <Divider/>
 
@@ -257,7 +246,7 @@ export default function InventoriesTab() {
                     </Stack>
                 </Group>
 
-                <CommonTable data={items} columns={columns}/>
+                <CommonTable rowExpansion={rowExpansion} data={inventories} columns={columns}/>
             </Stack>
 
             {/*Item modal*/}

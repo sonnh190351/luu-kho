@@ -194,11 +194,15 @@ export default function ItemsTab() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.Items, id);
-                NotificationsService.success(
-                    "Delete Item",
-                    "Item has been deleted!",
-                );
+                const result = await service.deleteById(DatabaseTables.Items, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Delete Item", e.toString());
             }

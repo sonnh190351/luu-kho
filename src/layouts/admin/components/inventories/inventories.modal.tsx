@@ -1,13 +1,13 @@
 import {Button, Modal, NumberInput, Select, Stack} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect, useState } from "react";
-import type { Warehouses } from "../../../../models/warehouses.ts";
+import {useForm} from "@mantine/form";
+import {useEffect, useState} from "react";
+import type {Warehouses} from "../../../../models/warehouses.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
-import { DatabaseTables } from "../../../../enums/tables.ts";
+import {DatabaseTables} from "../../../../enums/tables.ts";
 import dayjs from "dayjs";
 import {DatePickerInput, DateTimePicker} from "@mantine/dates";
-import { NotificationsService } from "../../../../services/notifications/notifications.service.ts";
-import { FormValidationService } from "../../../../services/validatior/form-validation.service.ts";
+import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
+import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
 import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
 
 interface InventoriesModalProps {
@@ -25,10 +25,10 @@ interface InventoriesFormValues {
 }
 
 export default function InventoriesModal({
-    open = false,
-    close,
-    refresh,
-}: InventoriesModalProps) {
+                                             open = false,
+                                             close,
+                                             refresh,
+                                         }: InventoriesModalProps) {
     const form = useForm<InventoriesFormValues>({
         initialValues: {
             warehouse_id: -1,
@@ -114,7 +114,7 @@ export default function InventoriesModal({
                         searchable
                         label={"Warehouse"}
                         data={warehouses.map((s) => {
-                            return { label: s.name!, value: String(s.id) };
+                            return {label: s.name!, value: String(s.id)};
                         })}
                     />
                     <DatePickerInput

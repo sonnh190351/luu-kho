@@ -42,7 +42,7 @@ export default function SalesChart({chartData} : ChartProps) {
 
         let date = year;
         if(month !== "N/A"){
-            const monthStr = month < 10 ? '0' + month : month
+            const monthStr = Number(month) < 10 ? '0' + month : month
             date = [year, monthStr].join("-")
         }
 
@@ -57,7 +57,7 @@ export default function SalesChart({chartData} : ChartProps) {
     }
 
     function handleChangeSort(data: any[], sortType: string) {
-        const names = {}
+        const names: Record<string, any> = {}
 
         // Create data point map
         for(let i = 0; i < data.length; i++) {

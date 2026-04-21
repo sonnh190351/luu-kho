@@ -120,11 +120,15 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.ProductItems, id);
-                NotificationsService.success(
-                    "Delete Product Item",
-                    `Product item ${id} has been deleted!`,
-                );
+                const result = await service.deleteById(DatabaseTables.ProductItems, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Delete Product Item", e.toString());
             }

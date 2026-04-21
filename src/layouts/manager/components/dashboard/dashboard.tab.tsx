@@ -32,14 +32,19 @@ export default function ManagerDashboardTab() {
             const service = OperationService.getInstance();
 
             // Create import data
-            const imports = await service.getAllMatching(DatabaseTables.Inventories, 'warehouse_id', cacheData.warehouses.id)
-            updateImportChart(imports)
+            const imports = await service.getAllMatching(
+                DatabaseTables.Inventories,
+                "warehouse_id",
+                cacheData.warehouses.id,
+            );
+            updateImportChart(imports);
 
             //
-            const inventoryItems = await service.getWarehouseInventoryItems(cacheData.warehouses.id)
-            const categories = await service.getAllRows(DatabaseTables.Categories)
-            updateInventoryStatusChart(inventoryItems, categories)
-
+            const inventoryItems = await service.getWarehouseInventoryItems(
+                cacheData.warehouses.id,
+            );
+            const categories = await service.getAllRows(DatabaseTables.Categories);
+            updateInventoryStatusChart(inventoryItems, categories);
         } catch (e: any) {
             NotificationsService.error("Fetch dashboard data", e.toString());
         }
@@ -49,70 +54,83 @@ export default function ManagerDashboardTab() {
         let importData: any[] = [
             {
                 name: dayjs().format("YYYY-MM-DD"),
-                total: 0
-            }
-        ]
+                total: 0,
+            },
+        ];
 
         for (let i = 0; i < imports.length; i++) {
             const inventoryImportData = imports[i];
-            const date = dayjs(inventoryImportData.created_at).format('YYYY-MM-DD')
-            const matching = importData.find((d) => d.name === date)
+            const date = dayjs(inventoryImportData.created_at).format("YYYY-MM-DD");
+            const matching = importData.find((d) => d.name === date);
             if (matching) {
-                matching.total += inventoryImportData.quantity
+                matching.total += inventoryImportData.quantity;
             } else {
                 importData.push({
                     name: date,
-                    total: inventoryImportData.quantity
-                })
+                    total: inventoryImportData.quantity,
+                });
             }
         }
 
-        importData = importData.sort((a, b) => dayjs(a.name).unix() - dayjs(b.name).unix())
+        importData = importData.sort(
+            (a, b) => dayjs(a.name).unix() - dayjs(b.name).unix(),
+        );
 
-        setImportData(importData)
+        setImportData(importData);
     }
 
-    function updateInventoryStatusChart(inventoryItems: any[], categories: any[]) {
-        setInventoryItems(inventoryItems)
+    function updateInventoryStatusChart(
+        inventoryItems: any[],
+        categories: any[],
+    ) {
+        setInventoryItems(inventoryItems);
 
-        const categoriesData: any[] = []
-        const itemsData: any[] = []
+        const categoriesData: any[] = [];
+        const itemsData: any[] = [];
 
         for (let i = 0; i < categories.length; i++) {
             categoriesData.push({
-                name: categories[i].name, total: 0, id: categories[i].id,
-            })
+                name: categories[i].name,
+                total: 0,
+                id: categories[i].id,
+            });
         }
 
         for (let i = 0; i < inventoryItems.length; i++) {
-            const item = inventoryItems[i]
-            const matching = categoriesData.find((d) => d.id === item.items.category_id)
+            const item = inventoryItems[i];
+            const matching = categoriesData.find(
+                (d) => d.id === item.items.category_id,
+            );
             if (matching) {
-                matching.total += item.quantity
+                matching.total += item.quantity;
             }
 
-            const matchingItem = itemsData.find((d) => d.name === item.items.name)
-            if(!matchingItem) {
+            const matchingItem = itemsData.find((d) => d.name === item.items.name);
+            if (!matchingItem) {
                 itemsData.push({
                     name: item.items.name,
                     quantity: item.quantity,
-                })
+                });
             } else {
-                matchingItem.quantity += item.quantity
+                matchingItem.quantity += item.quantity;
             }
         }
 
-        setCategoriesData(categoriesData)
-        setItemsData(itemsData)
+        setCategoriesData(categoriesData);
+        setItemsData(itemsData);
     }
 
     return (
         <Stack pt={"lg"} pl={"sm"}>
             <Stack gap={0}>
                 <Title>Welcome back, {cacheData.first_name}</Title>
-                <Text style={{
-                    color: 'rgba(255,255,255,0.45)'
-                }}>Manage all warehouses inventory items with ease</Text>
+                <Text
+                    style={{
+                        color: "rgba(255,255,255,0.45)",
+                    }}
+                >
+                    Manage all warehouses inventory items with ease
+                </Text>
             </Stack>
             <Divider/>
             <Grid>
@@ -134,9 +152,13 @@ export default function ManagerDashboardTab() {
                                 <IconBox/>
                                 <Text>Expiring Items</Text>
                             </Group>
-                            <Title order={2}>{
-                                inventoryItems.filter((i) => dayjs(i.expired_at).unix() - dayjs().unix() > 0).length
-                            }</Title>
+                            <Title order={2}>
+                                {
+                                    inventoryItems.filter(
+                                        (i) => dayjs(i.expired_at).unix() - dayjs().unix() > 0,
+                                    ).length
+                                }
+                            </Title>
                         </Stack>
                     </Card>
                 </Grid.Col>
@@ -147,9 +169,13 @@ export default function ManagerDashboardTab() {
                                 <IconBox/>
                                 <Text>Warning Limit Items</Text>
                             </Group>
-                            <Title order={2}>{
-                                inventoryItems.filter((i) => i.quantity < i.items.warning_limit).length
-                            }</Title>
+                            <Title order={2}>
+                                {
+                                    inventoryItems.filter(
+                                        (i) => i.quantity < i.items.warning_limit,
+                                    ).length
+                                }
+                            </Title>
                         </Stack>
                     </Card>
                 </Grid.Col>
@@ -160,49 +186,38 @@ export default function ManagerDashboardTab() {
                                 <IconBox/>
                                 <Text>Out of stock Items</Text>
                             </Group>
-                            <Title order={2}>{
-                                inventoryItems.filter((i) => i.quantity === 0).length
-                            }</Title>
+                            <Title order={2}>
+                                {inventoryItems.filter((i) => i.quantity === 0).length}
+                            </Title>
                         </Stack>
                     </Card>
                 </Grid.Col>
 
                 <Grid.Col span={{base: 12}}>
                     <Card withBorder={true}>
-                        <Group mb={'sm'} gap={5}>
-                            <IconChartArea/>
-                            <Text>
-                                Total Inventory Import Data
-                            </Text>
-                        </Group>
                         <ImportChart chartData={importData}/>
                     </Card>
                 </Grid.Col>
 
                 <Grid.Col span={{base: 12, md: 6}}>
                     <Card withBorder={true}>
-                        <Group mb={'sm'} gap={5}>
+                        <Group mb={"sm"} gap={5}>
                             <IconChartArea/>
-                            <Text>
-                                Items in this Warehouse Inventories
-                            </Text>
+                            <Text>Items in this Warehouse Inventories</Text>
                         </Group>
-                        <CategoryChart chartData={categoriesData} />
+                        <CategoryChart chartData={categoriesData}/>
                     </Card>
                 </Grid.Col>
                 <Grid.Col span={{base: 12, md: 6}}>
                     <Card withBorder={true}>
-                        <Group mb={'sm'} gap={5}>
+                        <Group mb={"sm"} gap={5}>
                             <IconChartArea/>
-                            <Text>
-                                Most Stored Items
-                            </Text>
+                            <Text>Most Stored Items</Text>
                         </Group>
-                        <ItemsChart chartData={itemsData} />
+                        <ItemsChart chartData={itemsData}/>
                     </Card>
                 </Grid.Col>
             </Grid>
-
         </Stack>
-    )
+    );
 }

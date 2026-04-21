@@ -109,11 +109,15 @@ export default function ProductsTabs() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.Products, id);
-                NotificationsService.success(
-                    "Delete Products",
-                    `Product ${id} has been deleted!`,
-                );
+                const result = await service.deleteById(DatabaseTables.Products, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Delete Product", e.toString());
             }

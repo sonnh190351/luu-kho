@@ -5,7 +5,7 @@ import sortBy from "lodash/sortBy";
 
 const PAGE_SIZE = 15;
 
-export default function CommonTable({ data, columns, height }: DataTableProps) {
+export default function CommonTable({ data, columns, height, rowExpansion }: DataTableProps) {
     const [sortStatus, setSortStatus] = useState<any>({
         direction: "desc",
     });
@@ -32,6 +32,7 @@ export default function CommonTable({ data, columns, height }: DataTableProps) {
             style={{
                 width: "100%",
             }}
+            rowExpansion={rowExpansion}
             sortStatus={sortStatus}
             onSortStatusChange={setSortStatus}
             withTableBorder

@@ -160,10 +160,6 @@ export default function StaffDashboardTab() {
                 <Grid.Col>
                     <Card withBorder={true}>
                         <Stack gap={10}>
-                            <Group gap={5}>
-                                <IconUser/>
-                                <Text>Orders Summary</Text>
-                            </Group>
                             <OrdersChart chartData={ordersChartData} />
                         </Stack>
                     </Card>

@@ -4,7 +4,7 @@ import {RequestStatus} from "../../enums/request.ts";
 
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-const NAME_REGEX = /^[A-Za-z_0-9]+(?: [A-Za-z0-9_]+)*$/;
+const NAME_REGEX = /^[\p{L}\p{N}_]+(?:\s[\p{L}\p{N}_]+)*$/u;
 
 export class FormValidationService {
     public static validateItemId(id: number) {

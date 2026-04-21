@@ -186,11 +186,15 @@ export default function RequestsTab() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.Requests, id);
-                NotificationsService.success(
-                    "Delete Request",
-                    "Request has been deleted!",
-                );
+                const result = await service.deleteById(DatabaseTables.Requests, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Delete Request", e.toString());
             }

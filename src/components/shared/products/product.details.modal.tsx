@@ -23,8 +23,6 @@ interface ProductDetailsForm {
 export default function ProductDetailsModal({ open, close, refresh, product_details, product_id }: ProductDetailsModalProps) {
     const isEdit = Boolean(product_details);
 
-    console.log(product_details)
-
     const [items, setItems] = useState<any[]>([]);
 
     const form = useForm<ProductDetailsForm>({
@@ -134,7 +132,6 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
                             }
                         }}
                     />
-
                     <Button type="submit" fullWidth mt="md">
                         Submit
                     </Button>

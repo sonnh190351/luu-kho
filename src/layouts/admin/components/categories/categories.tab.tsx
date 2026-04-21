@@ -137,11 +137,15 @@ export default function CategoriesTab() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.Categories, id);
-                NotificationsService.success(
-                    "Delete Category",
-                    "Category has been deleted!",
-                );
+                const result = await service.deleteById(DatabaseTables.Categories, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Delete Category", e.toString());
             }

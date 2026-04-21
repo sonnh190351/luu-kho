@@ -241,7 +241,13 @@ export default class OperationService {
             throw `Cannot find matching id: "${id}"!`;
         }
 
-        await this.database.delete(table, id);
+        const response = await this.database.delete(table, id);
+
+        if (response.error) {
+            return `Reason: ${response.error.message}; ${response.error.details}`;
+        }
+
+        return ""
     }
 
     public async getWarehouseStatus(warehouse_id: number) {

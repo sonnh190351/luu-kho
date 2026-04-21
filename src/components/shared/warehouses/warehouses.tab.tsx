@@ -145,11 +145,15 @@ export default function WarehousesTab() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.Warehouses, id);
-                NotificationsService.success(
-                    "Delete Warehouse",
-                    "Warehouse has been deleted!",
-                );
+                const result = await service.deleteById(DatabaseTables.Warehouses, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Delete Warehouse", e.toString());
             }

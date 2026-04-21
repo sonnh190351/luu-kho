@@ -256,11 +256,15 @@ export default function UserDetailsTab() {
         InformationService.getInstance().confirm(async () => {
             try {
                 const service = OperationService.getInstance();
-                await service.deleteById(DatabaseTables.UserDetails, id);
-                NotificationsService.success(
-                    "Deactivate User",
-                    "User has been deactivated!",
-                );
+                const result = await service.deleteById(DatabaseTables.UserDetails, id);
+                if(result.length > 0) {
+                    NotificationsService.error("Delete Result", result)
+                } else {
+                    NotificationsService.success(
+                        "Delete Result",
+                        "Deleted successfully!",
+                    );
+                }
             } catch (e: any) {
                 NotificationsService.error("Deactivate User", e.toString());
             }
