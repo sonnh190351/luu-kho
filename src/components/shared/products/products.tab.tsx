@@ -186,7 +186,7 @@ export default function ProductsTabs() {
             />
             <Stack gap={0}>
                 <Text>Management</Text>
-                <Title>Products Data</Title>
+                <Title>Dishes Data</Title>
             </Stack>
             <Divider/>
             {

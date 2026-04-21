@@ -40,6 +40,7 @@ import AdminDashboardTab from "./components/dashboard/dashboard.tab.tsx";
 import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ProductsTabs from "../../components/shared/products/products.tab.tsx";
 import OrdersTab from "./components/orders/orders.tab.tsx";
+import {LOG_ACTIONS} from "../../enums/log.ts";
 
 const openMenuWidth = 200;
 
@@ -60,7 +61,7 @@ export default function AdminLayout() {
         <UsersTab/>,
         <SuppliersTab/>,
         <RequestsTab/>,
-        <LogsTab/>
+        <LogsTab log_actions={LOG_ACTIONS}/>
     ];
 
     const adminTabs: TabGroup[] = [
@@ -114,7 +115,7 @@ export default function AdminLayout() {
             items: [
                 {
                     icon: <IconPizza/>,
-                    title: "Products",
+                    title: "Dishes",
                     index: 6,
                 },
                 {

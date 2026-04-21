@@ -24,6 +24,7 @@ import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ItemsTab from "../../components/shared/items/items.tab.tsx";
 import RequestsLayout from "./components/requests/requests.main.tsx";
 import StaffDashboardTab from "./components/dashboard/dashboard.tab.tsx";
+import {STAFF_LOG_ACTIONS} from "../../enums/log.ts";
 
 const openMenuWidth = 200;
 
@@ -46,7 +47,7 @@ export default function StaffLayout() {
         <StaffDashboardTab />,
         <ItemsTab />,
         <StaffWarehousesLayout />,
-        <LogsTab />,
+        <LogsTab log_actions={STAFF_LOG_ACTIONS} />,
         <RequestsLayout />,
         <StaffOrdersLayout />
     ]

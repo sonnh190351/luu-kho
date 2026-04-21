@@ -57,12 +57,12 @@ export default function ProductModal({product, open, close, refresh}: ProductMod
             refresh();
             handleClose();
             NotificationsService.success(
-                `${isEdit ? "Edit" : "Add"} Product`,
-                `New product has been ${isEdit ? "edit" : "added"} successfully!`,
+                `${isEdit ? "Edit" : "Add"} Dish`,
+                `New dish has been ${isEdit ? "edit" : "added"} successfully!`,
             );
         } catch (e: any) {
             NotificationsService.error(
-                `${isEdit ? "Edit" : "Add"} Product`,
+                `${isEdit ? "Edit" : "Add"} Dish`,
                 e.toString(),
             );
         }
@@ -74,7 +74,7 @@ export default function ProductModal({product, open, close, refresh}: ProductMod
     }
 
     return (
-        <Modal title={isEdit ? "Edit Product" : "Add Product"} opened={open} onClose={close} centered={true}>
+        <Modal title={isEdit ? "Edit Dish" : "Add Dish"} opened={open} onClose={close} centered={true}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <TextInput

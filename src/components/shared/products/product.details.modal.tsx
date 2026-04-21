@@ -55,7 +55,7 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
             const data = await service.getAllRows(DatabaseTables.Items);
             setItems(data);
         } catch (e: any) {
-            NotificationsService.error("Fetch Items", e.toString());
+            NotificationsService.error("Fetch Dish Items", e.toString());
         }
     }
 
@@ -78,12 +78,12 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
             refresh()
             handleClose()
             NotificationsService.success(
-                `${isEdit ? "Edit" : "Add"} Product Item`,
-                `New product item has been added!`
+                `${isEdit ? "Edit" : "Add"} Dish Item`,
+                `New dish item has been added!`
             )
         } catch (e: any) {
             console.log(e);
-            NotificationsService.error(`${isEdit ? "Edit" : "Add"} Product Item`, e.toString());
+            NotificationsService.error(`${isEdit ? "Edit" : "Add"} Dish Item`, e.toString());
         }
     }
 
@@ -95,7 +95,7 @@ export default function ProductDetailsModal({ open, close, refresh, product_deta
     }
 
     return (
-        <Modal title={`${isEdit ? "Edit" : "Add"} Product Item`} centered={true} opened={open} onClose={handleClose}>
+        <Modal title={`${isEdit ? "Edit" : "Add"} Dish Item`} centered={true} opened={open} onClose={handleClose}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <Select

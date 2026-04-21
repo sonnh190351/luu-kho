@@ -49,7 +49,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                 close()
             }
         } catch (e: any) {
-            NotificationsService.error("Fetch product items", e.toString())
+            NotificationsService.error("Fetch dish items", e.toString())
         }
         setIsLoading(false)
     }
@@ -130,7 +130,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
                     );
                 }
             } catch (e: any) {
-                NotificationsService.error("Delete Product Item", e.toString());
+                NotificationsService.error("Delete Dish Item", e.toString());
             }
             await fetchProductItems()
         });

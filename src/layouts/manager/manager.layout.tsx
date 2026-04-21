@@ -24,6 +24,7 @@ import ManagerStatusTab from "./components/status/status.main.tsx";
 import ManagerInventoryImportTab from "./components/inventoryImport/inventoryImport.main.tsx";
 import RequestsTab from "../../components/shared/requests/requests.tab.tsx";
 import ManagerDashboardTab from "./components/dashboard/dashboard.tab.tsx";
+import {MANAGER_LOG_ACTIONS} from "../../enums/log.ts";
 
 const openMenuWidth = 200;
 
@@ -48,7 +49,7 @@ export default function ManagerLayout() {
         <ManagerStatusTab />,
         <ProductsTabs />,
         <RequestsTab />,
-        <LogsTab />,
+        <LogsTab log_actions={MANAGER_LOG_ACTIONS} />,
     ]
 
     const customerTabs: TabGroup[] = [
@@ -77,7 +78,7 @@ export default function ManagerLayout() {
                 },
                 {
                     icon: <IconPizza/>,
-                    title: "Products",
+                    title: "Dishes",
                     index: 3
                 }
             ]

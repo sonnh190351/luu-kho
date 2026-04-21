@@ -9,7 +9,6 @@ import {IconCalendar, IconFilter, IconHandClick, IconMail, IconRefresh} from "@t
 import {DateTimePicker} from "@mantine/dates";
 import {LocalStorage} from "../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {LOG_ACTIONS} from "../../../enums/log.ts";
 
 interface FilterFormValues {
     email: string,
@@ -18,7 +17,11 @@ interface FilterFormValues {
     action_type?: string
 }
 
-export default function LogsTab() {
+interface LogsTabProps {
+    log_actions: Record<string, string>;
+}
+
+export default function LogsTab({ log_actions }: LogsTabProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [isSorted, setIsSorted] = useState(false);
 
@@ -38,7 +41,14 @@ export default function LogsTab() {
         setIsLoading(true);
         try {
             const data = await OperationService.getInstance().getAllRows(DatabaseTables.Logs);
-            setLogs(data);
+            const sorted = data.filter((d) => {
+                const matching = Object.values(log_actions)
+                for(let i = 0; i < matching.length; i++) {
+                    if(d.details.includes(`[${matching[i]}]`)) return true
+                }
+                return false
+            })
+            setLogs(sorted);
             calculateSortData()
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
@@ -93,7 +103,7 @@ export default function LogsTab() {
         await fetchLogs()
     }
 
-    const action_options = Object.values(LOG_ACTIONS).map((v) => ({
+    const action_options = Object.values(log_actions).map((v) => ({
         value: v,
         label: v
     }))
