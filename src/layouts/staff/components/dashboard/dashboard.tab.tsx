@@ -39,10 +39,7 @@ export default function StaffDashboardTab() {
 
         let orderChartData: any[] = [
             {
-                name: dayjs().format("YYYY-MM-DD"),
-                [OrderStatus.RECEIVED]: 0,
-                [OrderStatus.FINISHED]: 0,
-                [OrderStatus.PROCESSING]: 0,
+                name: dayjs().format("YYYY-MM-DD"), [OrderStatus.RECEIVED]: 0, [OrderStatus.FINISHED]: 0, [OrderStatus.PROCESSING]: 0,
             }
         ]
 
@@ -68,26 +65,17 @@ export default function StaffDashboardTab() {
                 switch (order.status) {
                     case OrderStatus.RECEIVED:
                         orderChartData.push({
-                            name: date,
-                            [OrderStatus.RECEIVED]: 1,
-                            [OrderStatus.FINISHED]: 0,
-                            [OrderStatus.PROCESSING]: 0,
+                            name: date, [OrderStatus.RECEIVED]: 1, [OrderStatus.FINISHED]: 0, [OrderStatus.PROCESSING]: 0,
                         })
                         break
                     case OrderStatus.FINISHED:
                         orderChartData.push({
-                            name: date,
-                            [OrderStatus.RECEIVED]: 0,
-                            [OrderStatus.FINISHED]: 1,
-                            [OrderStatus.PROCESSING]: 0,
+                            name: date, [OrderStatus.RECEIVED]: 0, [OrderStatus.FINISHED]: 1, [OrderStatus.PROCESSING]: 0,
                         })
                         break
                     case OrderStatus.PROCESSING:
                         orderChartData.push({
-                            name: date,
-                            [OrderStatus.RECEIVED]: 0,
-                            [OrderStatus.FINISHED]: 0,
-                            [OrderStatus.PROCESSING]: 1,
+                            name: date, [OrderStatus.RECEIVED]: 0, [OrderStatus.FINISHED]: 0, [OrderStatus.PROCESSING]: 1,
                         })
                         break
                     default:
@@ -98,7 +86,6 @@ export default function StaffDashboardTab() {
         }
 
         orderChartData = orderChartData.sort((a, b) => dayjs(a.name).unix() - dayjs(b.name).unix())
-
         setOrdersChartData(orderChartData)
     }
 

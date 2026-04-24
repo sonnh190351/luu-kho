@@ -13,50 +13,25 @@ export default class AuthService {
                 `id,address,avatar,created_at,dob,email,first_name,last_name,password,role,status,updated_at,warehouses(id, name)`
             ).eq("email", email)
 
-            if (error) {
-                return {
-                    status: false,
-                    message: error,
-                };
-            }
+            if (error) { return { status: false, message: error }; }
 
-            if (data.length === 0) {
-                return {
-                    status: false,
-                    message: "Cannot find matching user email!",
-                };
-            }
+            if (data.length === 0) { return { status: false, message: "Cannot find matching user email!",} }
 
             if (!data[0].status) {
-                return {
-                    status: false,
-                    message: "User is not activated! Please contact the admin!",
-                };
+                return { status: false, message: "User is not activated! Please contact the admin!" };
             }
 
             if (data[0].password !== password) {
-                return {
-                    status: false,
-                    message: "Incorrect password!",
-                };
+                return { status: false, message: "Incorrect password!" };
             }
 
-            await LogService.getInstance().writeLog(
-                LOG_ACTIONS.LOGIN,
-                `User logged in success: ${email}`
-            )
+            await LogService.getInstance().writeLog(LOG_ACTIONS.LOGIN, `User logged in success: ${email}`)
 
-            return {
-                status: true,
-                data: data[0],
+            return { status: true, data: data[0],
             };
 
         } catch (e: any) {
-            console.log(e)
-            await LogService.getInstance().writeLog(
-                LOG_ACTIONS.LOGIN,
-                `User logged in failed: ${email}. Reason: ${e.toString()}`
-            )
+            await LogService.getInstance().writeLog( LOG_ACTIONS.LOGIN, `User logged in failed: ${email}. Reason: ${e.toString()}`)
             return {
                 status: false,
                 message: e.toString(),

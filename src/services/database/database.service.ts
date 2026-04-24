@@ -47,7 +47,7 @@ export default class DatabaseService {
     }
 
     public async add(table: DatabaseTables, data: any) {
-        return this.database.from(table).insert(data);
+        return this.database.from(table).insert(data).select('id').single();
     }
 
     public async delete(table: DatabaseTables, id: any) {

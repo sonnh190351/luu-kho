@@ -19,7 +19,7 @@ import {NotificationsService} from "../../../../services/notifications/notificat
 import { IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import dayjs from "dayjs";
-import {DISPLAY_DATE_FORMAT} from "../../../../enums/tables.ts";
+import {DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import ExportInventoryModal from "../../../../components/modals/export.modal.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {Inventories} from "../../../../models/inventories.ts";
@@ -27,6 +27,7 @@ import {ExpiringStatus} from "../../../../enums/data.ts";
 import UtilsService from "../../../../services/utils.ts";
 import OperationService from "../../../../services/operations/operationService.ts";
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import type {DataTableRowExpansionProps} from "mantine-datatable";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -50,6 +51,7 @@ export default function StaffWarehousesTab() {
     const warehouse_id = loginData.warehouses.id;
 
     const [items, setItems] = useState<any[]>([]);
+    const [rootData, setRootData] = useState<any[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -76,14 +78,29 @@ export default function StaffWarehousesTab() {
         try {
             if(warehouse_id !== null) {
                 const service = OperationService.getInstance();
-                const data = await service.getWarehouseInventoryItems(warehouse_id)
-                setItems(data);
+                const data = await service.getWarehouseInventoriesImportItems(warehouse_id)
+                mappingData(data);
+                setRootData(data)
                 updateStatistics(data)
             }
         } catch (e: any) {
             NotificationsService.error("Fetch Items", e.toString());
         }
         setIsLoading(false)
+    }
+
+    function mappingData(data: any[]) {
+        const items: Record<string, any> = {}
+        for(let i = 0; i < data.length; i++) {
+            const item = JSON.parse(JSON.stringify(data[i]));
+            if(!items[item.items.name]) {
+                items[item.items.name] = item;
+            } else {
+                items[item.items.name].quantity += item.quantity;
+            }
+        }
+
+        setItems(Object.values(items));
     }
 
     function updateStatistics(data: any[]) {
@@ -170,36 +187,42 @@ export default function StaffWarehousesTab() {
                     </Group>
                 );
             },
-        },
-        {
-            accessor: "expired_at",
-            title: "Expired At",
-            sortable: true,
-            render: ({expired_at}: Inventories) => {
-                return (
-                    <Group>
-                        {dayjs(expired_at).format(DISPLAY_DATE_FORMAT)}
-                    </Group>
-                );
-            },
-        },
-        {
-            accessor: "status",
-            title: "Status",
-            sortable: true,
-            render: ({ expired_at }: Inventories) => {
-                const time = new Date(expired_at!).getTime() - new Date().getTime()
-                const status = time < 0 ? ExpiringStatus.EXPIRED : time <= ONE_DAY_MS ? ExpiringStatus.EXPIRING_SOON : ExpiringStatus.FRESH
-                return (
-                    <Group>
-                        <Badge color={UtilsService.getExpireBadgeColor(status)}>
-                            {status}
-                        </Badge>
-                    </Group>
-                );
-            },
         }
     ];
+
+    const rowExpansion: DataTableRowExpansionProps = {
+        content: ({ record }: any) => {
+            const data = rootData.filter((r) => r.items.name === record.items.name)
+            const time = new Date(record.expired_at!).getTime() - new Date().getTime()
+            const status = time < 0 ? ExpiringStatus.EXPIRED : time <= ONE_DAY_MS ? ExpiringStatus.EXPIRING_SOON : ExpiringStatus.FRESH
+
+            return <Stack gap={6} pb={'md'}>
+                <Group>
+                    <Text style={{width: 70}}>Index</Text>
+                    <Text style={{width: 100}}>Quantity</Text>
+                    <Text style={{width: 200}}>Quantity Type</Text>
+                    <Text style={{width: 200}}>Import Date</Text>
+                    <Text style={{width: 200}}>Expire Date</Text>
+                    <Text style={{width: 100}}>Status</Text>
+                </Group>
+                <Divider />
+                {
+                    data.map((item: any, index: number) => <Group key={`record-${item.items.name}-${index}`}>
+                        <Text style={{width: 70}}>{index + 1}</Text>
+                        <Text style={{width: 100}}>{item.quantity}</Text>
+                        <Text style={{width: 200}}>{item.items.quantity_type}</Text>
+                        <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
+                        <Text style={{width: 200}}>{dayjs(item.expired).format(DISPLAY_TIME_FORMAT)}</Text>
+                        <Text style={{width: 100}}>
+                            <Badge color={UtilsService.getExpireBadgeColor(status)}>
+                                {status}
+                            </Badge>
+                        </Text>
+                    </Group>)
+                }
+            </Stack>
+        }
+    }
 
     return (
         <>
@@ -277,7 +300,7 @@ export default function StaffWarehousesTab() {
                     </Stack>
                 </Group>
                 <Divider />
-                <CommonTable height={'51vh'} data={items} columns={columns} />
+                <CommonTable rowExpansion={rowExpansion} height={'51vh'} data={items} columns={columns} />
             </Stack>
 
             <WarehouseItemModal open={openModal} close={handleCloseModal} refresh={fetchItems} />

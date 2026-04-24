@@ -71,16 +71,21 @@ export default function StaffOrderModal({
         }
     }
 
+    // Event xu li luc tao order
     async function handleSubmit() {
         try {
             const service = InventoryService.getInstance()
 
             if(isEdit) {
+                // Update trang thai order
                 await service.editOrderEntry({
                     id: order.id,
                     ...form.getValues()
                 })
             } else {
+                // Tao order moi
+                // - Update trang thai kho
+                // - Tao export inventory data
                 await service.addOrderEntry(form.getValues())
             }
 
@@ -100,7 +105,7 @@ export default function StaffOrderModal({
 
     return (
         <Modal opened={open} onClose={handleClose} centered
-               title={"Order Manage"}>
+               title={"Staff Order Manage"}>
             <form onSubmit={handleSubmit}>
                 <Stack>
                     <Select
@@ -128,7 +133,7 @@ export default function StaffOrderModal({
                         {...form.getInputProps('status')}
                         required
                         searchable
-                        label={"Supplier"}
+                        label={"Status"}
                         data={Object.entries(OrderStatus).map(([_, value]) => {
                             return { label: value, value: value };
                         })}

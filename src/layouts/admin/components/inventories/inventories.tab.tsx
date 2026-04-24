@@ -46,7 +46,7 @@ export default function InventoriesTab() {
         const service = OperationService.getInstance();
 
         try {
-            const data = await service.getAllInventoryItems()
+            const data = await service.getAllInventoriesImportItems()
             mappingData(data)
             setRootData(data)
         } catch (e: any) {
@@ -170,7 +170,7 @@ export default function InventoriesTab() {
 
     async function clearSearch(){
         setKeyword("")
-        const temp = localStorage.getItem(DatabaseTables.Inventories);
+        const temp = localStorage.getItem(DatabaseTables.InventoriesImport);
         if(!temp) {
             setInventories([])
         } else {
@@ -181,10 +181,10 @@ export default function InventoriesTab() {
     async function handleSearchByWarehouseId(e: ChangeEvent<HTMLInputElement>) {
         setKeyword(e.target.value)
 
-        const temp = localStorage.getItem(DatabaseTables.Inventories);
+        const temp = localStorage.getItem(DatabaseTables.InventoriesImport);
         let cache = []
         if(!temp) {
-            localStorage.setItem(DatabaseTables.Inventories, JSON.stringify(inventories));
+            localStorage.setItem(DatabaseTables.InventoriesImport, JSON.stringify(inventories));
             cache = JSON.parse(JSON.stringify(inventories));
         } else {
             cache = JSON.parse(temp);

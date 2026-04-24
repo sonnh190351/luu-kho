@@ -44,27 +44,25 @@ export default class InventoryService {
         }
     }
 
-    private async checkOrderAvailability(data: any): Promise<void> {
+    private async checkOrderAvailability(data: any): Promise<any[]> {
+        // List item du kien se tru
+        const items = []
+
         // Check remaining items in inventory. If not available, return false
         const products = await this.database.getDatabase().from(DatabaseTables.ProductItems).select().eq('product_id', data.product_id)
 
-
-        if (products.error) {
-            throw products.error.message
-        }
-
+        if (products.error) { throw products.error.message }
         // Keep track inventory data
         const currentProducts = []
 
         for (let i = 0; i < products.data.length; i++) {
             const productItem = products.data[i]
+
             const currentProduct = await this.database.getDatabase().from(DatabaseTables.InventoryStatus).select()
                 .eq('warehouse_id', this.userData.warehouses.id)
                 .eq('item_id', productItem.item_id)
 
-            if (currentProduct.error) {
-                throw currentProduct.error.message
-            }
+            if (currentProduct.error) { throw currentProduct.error.message }
 
             if (currentProduct.data.length === 0) {
                 throw `Inventory does not contain item: "${productItem.item_id}"`
@@ -79,16 +77,24 @@ export default class InventoryService {
                 id: currentProductData.id,
                 quantity: currentProductData.quantity - (productItem.quantity * data.quantity)
             })
+
+            // Keep track item
+            items.push({
+                item_id: productItem.item_id,
+                quantity: productItem.quantity * data.quantity
+            })
         }
 
         // Update remaining items in inventory.
         for (let i = 0; i < currentProducts.length; i++) {
-            await this.database.getDatabase().from(DatabaseTables.InventoryStatus).update(
-                {
-                    'quantity': currentProducts[i].quantity,
-                }
-            ).eq('id', currentProducts[i].id,)
+            console.log(currentProducts[i])
+            await this.database.getDatabase().from(DatabaseTables.InventoryStatus)
+                .update({ 'quantity': currentProducts[i].quantity })
+                .eq('id', currentProducts[i].id,)
         }
+
+        console.log(items)
+        return items
     }
 
     public async editOrderEntry(data: any) {
@@ -106,8 +112,14 @@ export default class InventoryService {
     }
 
     public async addOrderEntry(data: any) {
+        // Check ton tai cua warehouse
+        const existsWarehouse = await this.database.isExist(DatabaseTables.Warehouses, 'id', this.userData.warehouses.id)
+        if (!existsWarehouse) {
+            throw `Does not exist warehouse with id: ${this.userData.warehouses.id}`
+        }
+
         // Check the possibility of the order
-        await this.checkOrderAvailability(data)
+        const items = await this.checkOrderAvailability(data)
 
         // Proceed create order
         const response = await this.database.add(DatabaseTables.Orders, {
@@ -116,6 +128,20 @@ export default class InventoryService {
             user_id: this.userData.id
         })
 
+        // Tao phieu xuat kho cho tung item trong order
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i]
+
+            // Tao phieu xuat kho
+            await this.database.add(DatabaseTables.InventoriesExport, {
+                order_id: response.data.id,
+                quantity: item.quantity,
+                item_id: item.item_id,
+                warehouse_id: this.userData.warehouses.id
+            })
+        }
+
+        // Log ket qua
         await this.responseLog(response, LOG_ACTIONS.ADD_ORDER, data)
     }
 
@@ -124,23 +150,17 @@ export default class InventoryService {
         if (!existsWarehouse) {
             throw `Does not exist warehouse with id: ${this.userData.warehouses.id}`
         }
-
         // Tạo phiếu nhập kho
-        const response = await this.database.add(DatabaseTables.Inventories, {
-            ...data,
-            warehouse_id: this.userData.warehouses.id
+        const response = await this.database.add(DatabaseTables.InventoriesImport, {
+            ...data, warehouse_id: this.userData.warehouses.id
         });
-
         // Update status của kho
         const exist = await this.database.getDatabase()
-            .from(DatabaseTables.InventoryStatus)
-            .select()
+            .from(DatabaseTables.InventoryStatus).select()
             .eq('warehouse_id', this.userData.warehouses.id)
             .eq('item_id', data.item_id)
 
-        if (exist.error) {
-            throw exist.error.message
-        }
+        if (exist.error) { throw exist.error.message }
 
         if (exist.data!.length > 0) {
             // Nếu đã tồn tại, update thêm vào
@@ -156,7 +176,6 @@ export default class InventoryService {
                 quantity: data.quantity
             })
         }
-
         await this.responseLog(response, LOG_ACTIONS.ADD_INVENTORY, data)
     }
 

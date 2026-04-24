@@ -1,6 +1,6 @@
 import DatabaseService from "../database/database.service.ts";
 import {DatabaseTables} from "../../enums/tables.ts";
-import { NotificationsService } from "../notifications/notifications.service.ts";
+import {NotificationsService} from "../notifications/notifications.service.ts";
 
 export default class OperationService {
     private static instance: OperationService;
@@ -38,7 +38,7 @@ export default class OperationService {
     }
 
     public async getAllWarehousesOrders() {
-        const db =  this.database.getDatabase();
+        const db = this.database.getDatabase();
 
         const response = await db.from(DatabaseTables.Orders).select(
             `
@@ -70,7 +70,7 @@ export default class OperationService {
     }
 
     public async getWarehouseOrders(warehouse_id: number) {
-        const db =  this.database.getDatabase();
+        const db = this.database.getDatabase();
 
         const response = await db.from(DatabaseTables.Orders).select(
             `
@@ -102,11 +102,12 @@ export default class OperationService {
         return response.data;
     }
 
-    public async getAllInventoryItems() {
+
+    public async getAllInventoriesImportItems() {
         const db = this.database.getDatabase();
 
         const response = await db
-            .from(DatabaseTables.Inventories)
+            .from(DatabaseTables.InventoriesImport)
             .select(
                 `
                 id,
@@ -167,7 +168,7 @@ export default class OperationService {
                 )
             `)
 
-        if(data.error) {
+        if (data.error) {
             NotificationsService.error(
                 "Management Service",
                 `Failed to get product items: ${data.error}`,
@@ -268,7 +269,7 @@ export default class OperationService {
             'warehouse_id', [warehouse_id]
         )
 
-        if(data.error) {
+        if (data.error) {
             NotificationsService.error(
                 "Management Service",
                 `Failed to get warehouse status: ${data.error}`,
@@ -279,10 +280,41 @@ export default class OperationService {
         return data.data
     }
 
-    public async getWarehouseInventoryItems(warehouse_id: number) {
+    public async getWarehouseInventoriesExportItem(warehouse_id: number) {
+        // get matching data
+        const data = await this.database.getDatabase().from(DatabaseTables.InventoriesExport).select(`
+                id,
+                created_at,
+                quantity,
+                items(
+                    id,
+                    name,
+                    quantity_type
+                ),
+                orders(
+                products(
+                    name
+                    )
+                )
+            `).in(
+            'warehouse_id', [warehouse_id]
+        )
+
+        if (data.error) {
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get items: ${data.error.message}`,
+            );
+            return []
+        }
+
+        return data.data
+    }
+
+    public async getWarehouseInventoriesImportItems(warehouse_id: number) {
 
         // get matching data
-        const data = await this.database.getDatabase().from(DatabaseTables.Inventories).select(`
+        const data = await this.database.getDatabase().from(DatabaseTables.InventoriesImport).select(`
                 id,
                 created_at,
                 updated_at,
@@ -301,7 +333,7 @@ export default class OperationService {
             'warehouse_id', [warehouse_id]
         )
 
-        if(data.error) {
+        if (data.error) {
             NotificationsService.error(
                 "Management Service",
                 `Failed to get items: ${data.error}`,
@@ -312,7 +344,7 @@ export default class OperationService {
         return data.data
     }
 
-    public async getProductsItems(){
+    public async getProductsItems() {
         // get matching data
         const data = await this.database.getDatabase().from(DatabaseTables.Products).select(`
                 id,
@@ -320,7 +352,7 @@ export default class OperationService {
                 name
             `)
 
-        if(data.error) {
+        if (data.error) {
             console.log(data)
             NotificationsService.error(
                 "Management Service",
@@ -348,7 +380,7 @@ export default class OperationService {
                 )
             `).eq('id', product_id)
 
-        if(data.error) {
+        if (data.error) {
             NotificationsService.error(
                 "Management Service",
                 `Failed to get product item details: ${data.error}`,
@@ -356,7 +388,7 @@ export default class OperationService {
             return []
         }
 
-        if(data.data.length === 0) {
+        if (data.data.length === 0) {
             NotificationsService.error(
                 "Management Service",
                 `Failed to get product item details: Does not exist any product details with id ${product_id}`,

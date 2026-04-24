@@ -33,14 +33,14 @@ export default function ManagerDashboardTab() {
 
             // Create import data
             const imports = await service.getAllMatching(
-                DatabaseTables.Inventories,
+                DatabaseTables.InventoriesImport,
                 "warehouse_id",
                 cacheData.warehouses.id,
             );
             updateImportChart(imports);
 
             //
-            const inventoryItems = await service.getWarehouseInventoryItems(
+            const inventoryItems = await service.getWarehouseInventoriesImportItems(
                 cacheData.warehouses.id,
             );
             const categories = await service.getAllRows(DatabaseTables.Categories);

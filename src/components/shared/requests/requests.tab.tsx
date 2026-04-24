@@ -5,13 +5,11 @@ import {
     Stack,
     Text,
     LoadingOverlay,
-    TextInput,
-    Title, Divider, Badge,
+    Title, Divider, Badge, Select,
 } from "@mantine/core";
 import {
-    IconEdit,
+    IconEdit, IconFilter,
     IconRefresh,
-    IconSearch,
     IconTrash,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -28,15 +26,28 @@ import { InformationService } from "../../../services/notifications/information.
 import dayjs from "dayjs";
 import {BUTTON_COLOR} from "../../../enums/styling.ts";
 import UtilsService from "../../../services/utils.ts";
-import type {RequestStatus} from "../../../enums/request.ts";
+import {ManagerRequestType, type RequestStatus} from "../../../enums/request.ts";
 import RequestService from "../../../services/operations/request/request.service.ts";
+import {useForm} from "@mantine/form";
+
+interface requestFilterFormType {
+    type: string;
+    status: RequestStatus | ""
+}
 
 export default function RequestsTab() {
+
+    const requestFilterFrom = useForm<requestFilterFormType>({
+        initialValues: {
+            type: "",
+            status: "",
+        },
+    })
+
+
     const [isLoading, setLoading] = useState(true);
 
     const [items, setRequests] = useState<any[]>([]);
-
-    const [keyword, setKeyword] = useState<string>("");
 
     const [selectedItem, setSelectedItem] = useState<Requests | null>(null);
     const [openItemModal, setOpenItemModal] = useState<boolean>(false);
@@ -228,13 +239,23 @@ export default function RequestsTab() {
                     <Stack gap={5}>
                         <Text>Filter</Text>
                         <Group>
-                            <TextInput
-                                placeholder={"Search by Name"}
-                                value={keyword}
-                                onChange={(e) => setKeyword(e.target.value)}
+                            <Select
+                                data={Object.keys(ManagerRequestType)}
+                                key={requestFilterFrom.key("type")}
+                                { ...requestFilterFrom.getInputProps("type")}
                             />
-                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
-                                <IconSearch />
+                            <Select
+                                data={Object.entries(ManagerRequestType).map(([k, v]) => {
+                                    return {
+                                        value: k,
+                                        label: v
+                                    }
+                                })}
+                                key={requestFilterFrom.key("type")}
+                                { ...requestFilterFrom.getInputProps("status")}
+                            />
+                            <ActionIcon size={'lg'} variant={'transparent'} color={BUTTON_COLOR.PRIMARY}>
+                                <IconFilter />
                             </ActionIcon>
                         </Group>
                     </Stack>

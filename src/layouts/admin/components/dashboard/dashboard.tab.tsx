@@ -40,7 +40,7 @@ export default function AdminDashboardTab() {
             updateSalesChart(orders)
 
             // Create inventory data
-            const inventoryItems = await service.getAllInventoryItems()
+            const inventoryItems = await service.getAllInventoriesImportItems()
             const categories = await service.getAllRows(DatabaseTables.Categories)
             updateInventoryStatusChart(inventoryItems, categories)
 

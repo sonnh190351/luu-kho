@@ -97,7 +97,7 @@ export default function OrderModal({
 
     return (
         <Modal opened={open} onClose={handleClose} centered
-               title={"Order Manage"}>
+               title={"Admin Order Manage"}>
             <form onSubmit={handleSubmit}>
                 <Stack>
                     <Select

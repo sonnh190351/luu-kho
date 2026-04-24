@@ -23,7 +23,7 @@ import OperationService from "../../../../services/operations/operationService.t
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 import {useForm} from "@mantine/form";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
-import type {DataTableColumn} from "mantine-datatable";
+import type {DataTableColumn, DataTableRowExpansionProps} from "mantine-datatable";
 
 
 interface SortFormValues {
@@ -49,6 +49,7 @@ export default function ManagerInventoryImportTab() {
     const warehouse_id = loginData.warehouses.id;
 
     const [items, setItems] = useState<any[]>([]);
+    const [rootData, setRootData] = useState<any[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -83,14 +84,28 @@ export default function ManagerInventoryImportTab() {
         try {
             if(warehouse_id !== null) {
                 const service = OperationService.getInstance();
-                const data = await service.getWarehouseInventoryItems(warehouse_id)
-                setItems(data);
-                console.log(data);
+                const data = await service.getWarehouseInventoriesImportItems(warehouse_id)
+                mappingData(data)
+                setRootData(data)
             }
         } catch (e: any) {
             NotificationsService.error("Fetch Items", e.toString());
         }
         setIsLoading(false)
+    }
+
+    function mappingData(data: any[]) {
+        const items: Record<string, any> = {}
+        for(let i = 0; i < data.length; i++) {
+            const item = JSON.parse(JSON.stringify(data[i]));
+            if(!items[item.items.name]) {
+                items[item.items.name] = item;
+            } else {
+                items[item.items.name].quantity += item.quantity;
+            }
+        }
+
+        setItems(Object.values(items));
     }
 
     function handleCloseModal() {
@@ -150,19 +165,6 @@ export default function ManagerInventoryImportTab() {
             },
         },
         {
-            accessor: "created_at",
-            title: "Import Date",
-            width: 250,
-            sortable: true,
-            render: ({ created_at }: any) => {
-                return (
-                    <Group>
-                        <Text>{dayjs(created_at).format(DISPLAY_TIME_FORMAT)}</Text>
-                    </Group>
-                );
-            },
-        },
-        {
             accessor: "quantity",
             title: "Quantity",
             sortable: true,
@@ -188,6 +190,29 @@ export default function ManagerInventoryImportTab() {
             },
         },
     ]
+
+    const rowExpansion: DataTableRowExpansionProps = {
+        content: ({ record }: any) => {
+            const data = rootData.filter((r) => r.items.name === record.items.name)
+            return <Stack gap={6} pb={'md'}>
+                <Group>
+                    <Text style={{width: 70}}>Index</Text>
+                    <Text style={{width: 100}}>Quantity</Text>
+                    <Text style={{width: 200}}>Quantity Type</Text>
+                    <Text style={{width: 200}}>Import Date</Text>
+                </Group>
+                <Divider />
+                {
+                    data.map((item: any, index: number) => <Group key={`record-${item.items.name}-${index}`}>
+                        <Text style={{width: 70}}>{index + 1}</Text>
+                        <Text style={{width: 100}}>{item.quantity}</Text>
+                        <Text style={{width: 200}}>{item.items.quantity_type}</Text>
+                        <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
+                    </Group>)
+                }
+            </Stack>
+        }
+    }
 
     return (
         <>
@@ -290,8 +315,7 @@ export default function ManagerInventoryImportTab() {
                 </Group>
                 <Divider />
 
-
-                <CommonTable height={'56dvh'} data={items} columns={columns} />
+                <CommonTable rowExpansion={rowExpansion} height={'56dvh'} data={items} columns={columns} />
             </Stack>
 
             <WarehouseItemModal open={openModal} close={handleCloseModal} refresh={fetchItems} />
