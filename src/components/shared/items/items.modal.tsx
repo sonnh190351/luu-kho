@@ -1,5 +1,5 @@
 import {
-    Button, FileInput,
+    Button,
     Modal,
     MultiSelect,
     NumberInput,
@@ -11,14 +11,12 @@ import { useEffect, useState } from "react";
 import type { Categories } from "../../../models/categories.ts";
 import { useForm } from "@mantine/form";
 import OperationService from "../../../services/operations/operationService.ts";
-import {DatabaseTables, StorageBuckets} from "../../../enums/tables.ts";
+import {DatabaseTables} from "../../../enums/tables.ts";
 import { QUANTITY_TYPES } from "../../../enums/data.ts";
 import type { Tags } from "../../../models/tags.ts";
 import { NotificationsService } from "../../../services/notifications/notifications.service.ts";
 import UtilsService from "../../../services/utils.ts";
 import { FormValidationService } from "../../../services/validatior/form-validation.service.ts";
-import {IconFile} from "@tabler/icons-react";
-import DatabaseService from "../../../services/database/database.service.ts";
 
 interface ItemsModalProps {
     item: any;
@@ -45,8 +43,6 @@ export default function ItemsModal({
     const [categories, setCategories] = useState<Categories[]>([]);
     const [tags, setTags] = useState<Tags[]>([]);
 
-    const [image, setImage] = useState<File | null>(null);
-
     const form = useForm<ItemFormValues>({
         initialValues: {
             category_id: -1,
@@ -59,7 +55,6 @@ export default function ItemsModal({
             name: FormValidationService.validateName,
             quantity_type: FormValidationService.validateQuantityType,
             category_id: FormValidationService.validateCategoryId,
-
         },
     });
 
@@ -133,12 +128,6 @@ export default function ItemsModal({
                 );
             }
 
-            if(image) {
-                await DatabaseService.getInstance().uploadImage(
-                    StorageBuckets.Items, `${form.getValues().name}.jpg`, image
-                )
-            }
-
             refresh();
             handleClose();
             NotificationsService.success(
@@ -179,9 +168,6 @@ export default function ItemsModal({
                             })
                         }
                     />
-
-
-
                     <Select
                         {...form.getInputProps('category_id')}
                         value={String(form.values.category_id)}
@@ -249,12 +235,6 @@ export default function ItemsModal({
                             }
                         }}
                     />
-
-                    <FileInput leftSection={<IconFile />} accept={"image/*"} label={"Item Image"} value={image} onChange={(e) => {
-                        if(e){
-                            setImage(e)
-                        }
-                    }} />
 
                     <Button type="submit" fullWidth mt="md">
                         Submit
