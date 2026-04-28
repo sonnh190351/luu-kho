@@ -10,7 +10,7 @@ import {
 import {
     IconEdit, IconFilter,
     IconRefresh,
-    IconTrash,
+    IconTrash, IconX,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import type { Requests } from "../../../models/requests.ts";
@@ -26,7 +26,7 @@ import { InformationService } from "../../../services/notifications/information.
 import dayjs from "dayjs";
 import {BUTTON_COLOR} from "../../../enums/styling.ts";
 import UtilsService from "../../../services/utils.ts";
-import {ManagerRequestType, type RequestStatus} from "../../../enums/request.ts";
+import {CommonRequestType, ManagerRequestType, RequestStatus, StaffRequestType} from "../../../enums/request.ts";
 import RequestService from "../../../services/operations/request/request.service.ts";
 import {useForm} from "@mantine/form";
 
@@ -37,17 +37,17 @@ interface requestFilterFormType {
 
 export default function RequestsTab() {
 
-    const requestFilterFrom = useForm<requestFilterFormType>({
+    const requestFilterForm = useForm<requestFilterFormType>({
         initialValues: {
             type: "",
             status: "",
         },
     })
-
+    const [isFiltered, setFiltered] = useState<boolean>(false);
 
     const [isLoading, setLoading] = useState(true);
 
-    const [items, setRequests] = useState<any[]>([]);
+    const [items, setItems] = useState<any[]>([]);
 
     const [selectedItem, setSelectedItem] = useState<Requests | null>(null);
     const [openItemModal, setOpenItemModal] = useState<boolean>(false);
@@ -61,10 +61,9 @@ export default function RequestsTab() {
 
         try {
             const data = await service.getRequestDetails()
-            console.log(data)
-            setRequests(data);
+            setItems(data);
         } catch (e: any) {
-            NotificationsService.error("Fetch categories", e.toString());
+            NotificationsService.error("Fetch requests", e.toString());
         }
 
         setLoading(false);
@@ -107,13 +106,13 @@ export default function RequestsTab() {
             },
         },
         {
+            width: 140,
             accessor: "status",
             title: "Status",
             sortable: true,
             render: ({ status }: Requests) => {
                 return <Group>
                     <Badge color={UtilsService.getRequestBadgeColor(status as RequestStatus)}>{status}</Badge>
-
                 </Group>;
             },
         },
@@ -221,6 +220,40 @@ export default function RequestsTab() {
         }
     }
 
+    function handleFilter() {
+        const {type, status} = requestFilterForm.getValues()
+        if (!type && !status) {
+            return
+        }
+
+        setFiltered(true)
+        const temp = sessionStorage.getItem(DatabaseTables.Requests);
+        let cache
+        if (!temp) {
+            sessionStorage.setItem(DatabaseTables.Requests, JSON.stringify(items));
+            cache = JSON.parse(JSON.stringify(items));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        if (status) {
+            console.log(status)
+            cache = cache.filter((i: any) => i.status === status);
+        }
+
+        if (type) {
+            cache = cache.filter((i: any) => i.type === type);
+        }
+
+        setItems(cache)
+    }
+
+    async function handleClearFilter() {
+        setFiltered(false)
+        requestFilterForm.reset()
+        await fetchRequests()
+    }
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
@@ -240,23 +273,28 @@ export default function RequestsTab() {
                         <Text>Filter</Text>
                         <Group>
                             <Select
-                                data={Object.keys(ManagerRequestType)}
-                                key={requestFilterFrom.key("type")}
-                                { ...requestFilterFrom.getInputProps("type")}
+                                placeholder={"Request Type"}
+                                allowDeselect={true} clearable={true}
+                                data={[...Object.keys(ManagerRequestType), ...Object.keys(StaffRequestType), ...Object.keys(CommonRequestType)]}
+                                key={requestFilterForm.key("type")}
+                                { ...requestFilterForm.getInputProps("type")}
                             />
                             <Select
-                                data={Object.entries(ManagerRequestType).map(([k, v]) => {
-                                    return {
-                                        value: k,
-                                        label: v
-                                    }
-                                })}
-                                key={requestFilterFrom.key("type")}
-                                { ...requestFilterFrom.getInputProps("status")}
+                                placeholder={"Status"}
+                                allowDeselect={true} clearable={true}
+                                data={Object.values(RequestStatus)}
+                                key={requestFilterForm.key("status")}
+                                { ...requestFilterForm.getInputProps("status")}
                             />
-                            <ActionIcon size={'lg'} variant={'transparent'} color={BUTTON_COLOR.PRIMARY}>
-                                <IconFilter />
+                            <ActionIcon onClick={handleFilter} color={BUTTON_COLOR.PRIMARY} variant={'outline'}
+                                        size={"lg"}>
+                                <IconFilter/>
                             </ActionIcon>
+                            {
+                                isFiltered && <ActionIcon size={"lg"} onClick={handleClearFilter} color={"red"}>
+                                    <IconX/>
+                                </ActionIcon>
+                            }
                         </Group>
                     </Stack>
                     <Stack gap={5}>

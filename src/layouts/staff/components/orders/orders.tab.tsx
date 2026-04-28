@@ -1,4 +1,5 @@
 import {
+    ActionIcon,
     Badge,
     Button,
     Card, Divider,
@@ -7,7 +8,7 @@ import {
     LoadingOverlay,
     type MantineStyleProp, Select,
     Stack,
-    Text,
+    Text, TextInput,
     Title
 } from "@mantine/core";
 import {useEffect, useState} from "react";
@@ -16,10 +17,13 @@ import OperationService from "../../../../services/operations/operationService.t
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
-import {IconEdit, IconPlus, IconRefresh} from "@tabler/icons-react";
+import {IconEdit, IconFilter, IconPlus, IconRefresh, IconX} from "@tabler/icons-react";
 import {OrderStatus} from "../../../../enums/orders.ts";
 import StaffOrderModal from "./order.modal.tsx";
 import UtilsService from "../../../../services/utils.ts";
+import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import {useForm} from "@mantine/form";
+import {DatabaseTables} from "../../../../enums/tables.ts";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
@@ -33,7 +37,21 @@ interface OrderStatistics {
     finished: number;
 }
 
+interface FilterFormType {
+    product: string;
+    user: string;
+    status?: OrderStatus | null
+}
+
 export default function StaffOrdersLayout() {
+
+    const filterForm = useForm<FilterFormType>({
+        initialValues: {
+            product: "",
+            user: "",
+            status: null
+        }
+    })
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -59,13 +77,15 @@ export default function StaffOrdersLayout() {
         return;
     }
 
+    const [isFiltered, setFiltered] = useState<boolean>(false);
+
     const cached = JSON.parse(cachedData!)
 
     const columns: DataTableColumn[] = [
         {
             accessor: "id",
             title: "ID",
-            width: 120,
+            width: 80,
             sortable: true,
             render: ({id}: any) => {
                 return (
@@ -77,7 +97,7 @@ export default function StaffOrdersLayout() {
         },
         {
             accessor: "products",
-            title: "Product",
+            title: "Dish",
             sortable: true,
             render: ({products}: any) => {
                 return (
@@ -145,10 +165,10 @@ export default function StaffOrdersLayout() {
             render: (order: any) => {
                 return (
                     <Group>
-                        <Button onClick={() => {
+                        <Button disabled={order.status === OrderStatus.FINISHED} onClick={() => {
                             setSelectedOrder(order)
                             setOpenModal(true)
-                        }} leftSection={<IconEdit/>}>Update</Button>
+                        }} color={BUTTON_COLOR.PRIMARY} leftSection={<IconEdit/>}>Update</Button>
                     </Group>
                 );
             },
@@ -182,7 +202,7 @@ export default function StaffOrdersLayout() {
         let processing = 0
         let finished = 0
 
-        for(let i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             switch (data[i].status) {
                 case OrderStatus.RECEIVED:
                     received += 1
@@ -211,6 +231,43 @@ export default function StaffOrdersLayout() {
         setTimeout(() => {
             setSelectedOrder(null)
         }, 200)
+    }
+
+    function handleFilter() {
+        const {user, product, status} = filterForm.getValues()
+        if(user.length === 0 && product.length === 0 && !status) {
+            return
+        }
+
+        setFiltered(true)
+        const temp = sessionStorage.getItem(DatabaseTables.Orders);
+        let cache
+        if (!temp) {
+            sessionStorage.setItem(DatabaseTables.Orders, JSON.stringify(orders));
+            cache = JSON.parse(JSON.stringify(orders));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        if (user.length > 0) {
+            cache = cache.filter((i: any) => [i.users.last_name, i.users.first_name].join(" ").startsWith(user));
+        }
+
+        if (status) {
+            cache = cache.filter((i: any) => i.status === status);
+        }
+
+        if (product.length > 0) {
+            cache = cache.filter((i: any) => i.products.name.startsWith(product));
+        }
+
+        setOrders(cache)
+    }
+
+    async function handleClearFilter() {
+        setFiltered(false)
+        filterForm.reset()
+        await fetchOrders()
     }
 
     return (
@@ -274,16 +331,33 @@ export default function StaffOrdersLayout() {
                     <Stack gap={5}>
                         <Text>Filter</Text>
                         <Group gap={10}>
-                            <Text style={{
-                                fontWeight: "bold"
-                            }}>Status:</Text>
-                            <Select/>
+                            <Select data={Object.values(OrderStatus).map((v) => {
+                                return {
+                                    label: v,
+                                    value: v
+                                }
+                            })} allowDeselect={true} clearable={true} {...filterForm.getInputProps("status")}
+                                    style={{width: 200}}
+                                    placeholder={"Status"}/>
+                            <TextInput {...filterForm.getInputProps("product")} style={{width: 200}}
+                                       placeholder={"Dish"}/>
+                            <TextInput {...filterForm.getInputProps("user")} style={{width: 200}} placeholder={"User"}/>
+                            <ActionIcon onClick={handleFilter} color={BUTTON_COLOR.PRIMARY} variant={'outline'}
+                                        size={"lg"}>
+                                <IconFilter/>
+                            </ActionIcon>
+                            {
+                                isFiltered && <ActionIcon size={"lg"} onClick={handleClearFilter} color={"red"}>
+                                    <IconX/>
+                                </ActionIcon>
+                            }
                         </Group>
                     </Stack>
                     <Stack gap={5}>
                         <Text>Controls</Text>
                         <Group>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => {
                                     setOpenModal(true)
                                 }}
@@ -291,6 +365,7 @@ export default function StaffOrdersLayout() {
                                 Add
                             </Button>
                             <Button
+                                color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchOrders()}
                                 leftSection={<IconRefresh/>}>
                                 Refresh
@@ -301,7 +376,7 @@ export default function StaffOrdersLayout() {
                 <CommonTable height={'50dvh'} data={orders} columns={columns}/>
             </Stack>
 
-            <StaffOrderModal order={selectedOrder} open={openModal} close={handleCloseModal} refresh={fetchOrders} />
+            <StaffOrderModal order={selectedOrder} open={openModal} close={handleCloseModal} refresh={fetchOrders}/>
         </>
     )
 }

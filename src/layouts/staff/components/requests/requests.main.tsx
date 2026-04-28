@@ -1,7 +1,8 @@
 import {
+    ActionIcon,
     Badge,
     Button,
-    Card,
+    Card, Center,
     Divider,
     Grid,
     Group,
@@ -9,39 +10,52 @@ import {
     type MantineStyleProp, Select,
     Stack,
     Text,
-    TextInput,
     Title
 } from "@mantine/core";
-import {type ChangeEvent, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import { IconPlus, IconRefresh} from "@tabler/icons-react";
+import {IconFilter, IconPlus, IconRefresh, IconX} from "@tabler/icons-react";
 import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {CommonRequestType} from "../../../../enums/request.ts";
+import {CommonRequestType, RequestStatus, StaffRequestType} from "../../../../enums/request.ts";
 import StaffRequestModal from "./request.modal.tsx";
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 import UtilsService from "../../../../services/utils.ts";
 import RequestService from "../../../../services/operations/request/request.service.ts";
+import {useForm} from "@mantine/form";
 
 const cardStyle: MantineStyleProp = {
     height: '150px',
     position: 'relative',
 }
 
+interface RequestFilterForm {
+    requestType: StaffRequestType | null,
+    status: RequestStatus | null
+}
+
 export default function RequestsLayout() {
+
+    const requestFilterForm = useForm<RequestFilterForm>({
+        initialValues: {
+            requestType: null,
+            status: null
+        }
+    });
+
+    const [isFiltered, setFiltered] = useState<boolean>(false);
+
     const cachedData = JSON.parse(localStorage.getItem(LocalStorage.userData)!);
 
     const [isLoading, setIsLoading] = useState(false);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
 
-    const [keyword, setKeyword] = useState<string>("");
-
     const [items, setItems] = useState<any[]>([]);
 
     useEffect(() => {
-        (async() => await fetchRequests())();
+        (async () => await fetchRequests())();
     }, [])
 
     async function fetchRequests() {
@@ -52,7 +66,6 @@ export default function RequestsLayout() {
         try {
             const response = await service.getRequestDetailsByUserId(cachedData.id)
             setItems(response);
-            console.log(response)
         } catch (e: any) {
             NotificationsService.error("Fetch requests", e.toString());
         }
@@ -64,20 +77,39 @@ export default function RequestsLayout() {
         setIsOpenModal(false)
     }
 
-    async function handleSearchByName(e: ChangeEvent<HTMLInputElement>) {
-        setKeyword(e.target.value)
 
-        const temp = localStorage.getItem(DatabaseTables.Requests);
-        let cache = []
-        if(!temp) {
-            localStorage.setItem(DatabaseTables.Requests, JSON.stringify(items));
+    function handleFilter() {
+        const {requestType, status} = requestFilterForm.getValues()
+        if (!requestType && !status) {
+            return
+        }
+        console.log(requestType)
+
+        setFiltered(true)
+        const temp = sessionStorage.getItem(DatabaseTables.Requests);
+        let cache
+        if (!temp) {
+            sessionStorage.setItem(DatabaseTables.Requests, JSON.stringify(items));
             cache = JSON.parse(JSON.stringify(items));
         } else {
             cache = JSON.parse(temp);
         }
 
-        const matchingItems = cache.filter((i: any) => i.name.startsWith(e.target.value));
-        setItems(matchingItems)
+        if (status) {
+            cache = cache.filter((i: any) => i.status === status);
+        }
+
+        if (requestType) {
+            cache = cache.filter((i: any) => i.type === requestType);
+        }
+
+        setItems(cache)
+    }
+
+    async function handleClearFilter() {
+        setFiltered(false)
+        requestFilterForm.reset()
+        await fetchRequests()
     }
 
     return (
@@ -87,7 +119,7 @@ export default function RequestsLayout() {
                     position: "fixed",
                 }}
                 visible={isLoading}
-                overlayProps={{ radius: "sm", blur: 2 }}
+                overlayProps={{radius: "sm", blur: 2}}
             />
             <Stack gap={0}>
                 <Text>Management</Text>
@@ -136,16 +168,30 @@ export default function RequestsLayout() {
                     </Card>
                 </Grid.Col>
             </Grid>
-            <Divider mt={'sm'} />
+            <Divider mt={'sm'}/>
             <Group justify={"space-between"}>
                 <Stack gap={5}>
+                    <Text>Filter</Text>
                     <Group>
-                        <TextInput
-                            label={"Search by Date"}
-                            value={keyword}
-                            onChange={handleSearchByName}
-                        />
-                        <Select label={"Search By Status"}></Select>
+                        <Select
+                            {...requestFilterForm.getInputProps('requestType')}
+                            allowDeselect={true} clearable={true}
+                            data={[...Object.keys(StaffRequestType), ...Object.keys(CommonRequestType)]}
+                            placeholder={"Request Type"}></Select>
+                        <Select
+                            {...requestFilterForm.getInputProps('status')}
+                            allowDeselect={true} clearable={true}
+                            data={Object.values(RequestStatus)}
+                            placeholder={"Search By Status"}></Select>
+                        <ActionIcon onClick={handleFilter} color={BUTTON_COLOR.PRIMARY} variant={'outline'}
+                                    size={"lg"}>
+                            <IconFilter/>
+                        </ActionIcon>
+                        {
+                            isFiltered && <ActionIcon size={"lg"} onClick={handleClearFilter} color={"red"}>
+                                <IconX/>
+                            </ActionIcon>
+                        }
                     </Group>
                 </Stack>
                 <Stack gap={5} mt={20}>
@@ -153,13 +199,13 @@ export default function RequestsLayout() {
                         <Button
                             color={BUTTON_COLOR.PRIMARY}
                             onClick={() => setIsOpenModal(true)}
-                            leftSection={<IconPlus />}>
+                            leftSection={<IconPlus/>}>
                             New Request
                         </Button>
                         <Button
                             color={BUTTON_COLOR.PRIMARY}
                             onClick={() => fetchRequests()}
-                            leftSection={<IconRefresh />}>
+                            leftSection={<IconRefresh/>}>
                             Refresh
                         </Button>
                     </Group>
@@ -167,7 +213,7 @@ export default function RequestsLayout() {
             </Group>
             <Stack>
                 {
-                    items.map((item: any, index: number) => {
+                    items.length > 0 ? items.map((item: any, index: number) => {
                         return (
                             <Card key={`request-item-${index}`}>
                                 <Group justify={"space-between"}>
@@ -175,7 +221,7 @@ export default function RequestsLayout() {
                                         <Title style={{
                                             width: 30
                                         }}>{index + 1}</Title>
-                                        <Divider mr={'md'} orientation={'vertical'} />
+                                        <Divider mr={'md'} orientation={'vertical'}/>
                                         <Stack gap={5} style={{
                                             width: 250
                                         }}>
@@ -186,7 +232,7 @@ export default function RequestsLayout() {
                                             </Text>
                                             <Group>
                                                 {
-                                                    CommonRequestType[item.type as keyof typeof CommonRequestType]
+                                                    item.type
                                                 }
                                             </Group>
                                         </Stack>
@@ -216,7 +262,8 @@ export default function RequestsLayout() {
                                                 {
                                                     item.handler ? (
                                                         <>
-                                                            Handled by: {item.handler.last_name} {item.handler.first_name}
+                                                            Handled
+                                                            by: {item.handler.last_name} {item.handler.first_name}
                                                         </>
                                                     ) : <Text style={{
                                                         color: '#fa5252'
@@ -249,18 +296,25 @@ export default function RequestsLayout() {
                                                 Status
                                             </Text>
                                             <Group>
-                                                <Badge color={UtilsService.getRequestBadgeColor(item.status)}>{item.status}</Badge>
+                                                <Badge
+                                                    color={UtilsService.getRequestBadgeColor(item.status)}>{item.status}</Badge>
                                             </Group>
                                         </Stack>
                                     </Group>
                                 </Group>
                             </Card>
                         )
-                    })
+                    }) : <Group justify={"center"} style={{
+                        height: '100px'
+                    }}>
+                        <Center>
+                            <Text>No Request Available</Text>
+                        </Center>
+                    </Group>
                 }
             </Stack>
 
-            <StaffRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal} />
+            <StaffRequestModal open={isOpenModal} refresh={fetchRequests} close={handleCloseModal}/>
         </Stack>
     )
 }

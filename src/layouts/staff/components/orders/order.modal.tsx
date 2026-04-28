@@ -77,6 +77,14 @@ export default function StaffOrderModal({
             const service = InventoryService.getInstance()
 
             if(isEdit) {
+                if(order.status === OrderStatus.PROCESSING) {
+                    const currStatus = form.getValues()['status']
+                    if (currStatus == OrderStatus.RECEIVED) {
+                        NotificationsService.error("Order Manage", "Cannot update a processing order status to be received!")
+                        return
+                    }
+                }
+
                 // Update trang thai order
                 await service.editOrderEntry({
                     id: order.id,
@@ -102,6 +110,10 @@ export default function StaffOrderModal({
             form.reset()
         }, 200)
     }
+
+    const statusData = Object.entries(OrderStatus).map(([_, value]) => {
+        return { label: value, value: value };
+    })
 
     return (
         <Modal opened={open} onClose={handleClose} centered
@@ -134,9 +146,7 @@ export default function StaffOrderModal({
                         required
                         searchable
                         label={"Status"}
-                        data={Object.entries(OrderStatus).map(([_, value]) => {
-                            return { label: value, value: value };
-                        })}
+                        data={statusData}
                     />
 
                     <TextInput {...form.getInputProps('remark')} label={"Remark"} />

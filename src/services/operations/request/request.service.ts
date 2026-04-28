@@ -34,7 +34,9 @@ export default class RequestService {
             ),
             remark,
             requester:users!user_id(id, first_name, last_name, email),
-            handler:users!handler_id(id, first_name, last_name, email)
+            handler:users!handler_id(id, first_name, last_name, email),
+            created_at,
+            updated_at
             `
         )
 

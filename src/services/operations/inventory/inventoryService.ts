@@ -134,7 +134,7 @@ export default class InventoryService {
 
             // Tao phieu xuat kho
             await this.database.add(DatabaseTables.InventoriesExport, {
-                order_id: response.data.id,
+                order_id: response.data!.id,
                 quantity: item.quantity,
                 item_id: item.item_id,
                 warehouse_id: this.userData.warehouses.id

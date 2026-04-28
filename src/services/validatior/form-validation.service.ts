@@ -108,6 +108,10 @@ export class FormValidationService {
     }
 
     public static validatePassword(password: string) {
+        if(!password) {
+            return "Password must be at least 8 characters";
+        }
+
         // 1. Length Check
         if (password.length < 8)
             return "Password must be at least 8 characters";

@@ -5,6 +5,29 @@ import {LOG_ACTIONS} from "../../enums/log.ts";
 
 export default class AuthService {
 
+    public async updateInformation(currentData: any, information: any) {
+        const database = DatabaseService.getInstance().getDatabase();
+        if(currentData.password !== information.old_password) {
+            return {
+                status: false,
+                data: "Incorrect old password!"
+            }
+        }
+
+        await database.from(DatabaseTables.UserDetails).update({
+            dob: information.dob,
+            address: information.address,
+            password: information.new_password
+        }).eq('email', currentData.email)
+
+        await LogService.getInstance().writeLog(LOG_ACTIONS.UPDATE_USER_INFO, `User updated user information! Address: ${currentData.address} -> ${information.address}; Date of birth: ${currentData.dob} -> ${information.dob}`)
+
+        return {
+            status: true,
+            data: ""
+        }
+    }
+
     public async login(email: string, password: string) {
         try {
             const database = DatabaseService.getInstance().getDatabase();

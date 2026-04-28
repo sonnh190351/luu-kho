@@ -24,6 +24,7 @@ import {FormValidationService} from "../../services/validatior/form-validation.s
 import {IconLock} from "@tabler/icons-react";
 import {DatePickerInput} from "@mantine/dates";
 import DatabaseService from "../../services/database/database.service.ts";
+import AuthService from "../../services/auth/auth.service.ts";
 
 interface UserDetailsFormValues {
     old_password: string;
@@ -66,7 +67,6 @@ export default function UserDetails() {
         },
         validate: {
             address: FormValidationService.validateAddress,
-            old_password: FormValidationService.validatePassword,
             new_password: FormValidationService.validatePassword,
         },
     });
@@ -103,7 +103,21 @@ export default function UserDetails() {
             } catch (e: any) {
                 NotificationsService.error("Upload Error", e.toString());
             }
+        }
+    }
 
+    async function handleSaveInformation(){
+        const data = form.getValues();
+        try {
+            const authService = new AuthService()
+            const result = await authService.updateInformation(loginData, data)
+            if(result.status) {
+                NotificationsService.success("Update Information", "User information has been updated!")
+            } else {
+                NotificationsService.error("Update Information", result.data)
+            }
+        } catch (e: any) {
+            NotificationsService.error("Update Information", e.toString());
         }
     }
 
@@ -132,7 +146,7 @@ export default function UserDetails() {
                 </Group>
                 <Divider/>
                 <Title order={4}>Personal Information</Title>
-                <form>
+                <form onSubmit={form.onSubmit(handleSaveInformation)}>
                     <Grid>
                         <Grid.Col span={12}>
                             <Stack gap={3}>
@@ -175,12 +189,13 @@ export default function UserDetails() {
                         <Grid.Col span={6}>
                             <Stack gap={3}>
                                 <PasswordInput
+                                    key={form.key("old_password")}
+                                    {...form.getInputProps("old_password")}
                                     visible={showPassword}
                                     onVisibilityChange={(e) => setShowPassword(e)}
                                     label="Old Password"
                                     placeholder="Old password"
                                     leftSection={<IconLock size={16}/>}
-                                    {...form.getInputProps("old_password")}
                                     required
                                 />
                             </Stack>
@@ -188,18 +203,19 @@ export default function UserDetails() {
                         <Grid.Col span={6}>
                             <Stack gap={3}>
                                 <PasswordInput
+                                    {...form.getInputProps("new_password")}
                                     visible={showPassword}
                                     onVisibilityChange={(e) => setShowPassword(e)}
                                     label="New Password"
                                     placeholder="New password"
                                     leftSection={<IconLock size={16}/>}
-                                    {...form.getInputProps("new_password")}
+
                                     required
                                 />
                             </Stack>
                         </Grid.Col>
                         <Grid.Col span={12}>
-                            <Button fullWidth={true}>
+                            <Button type={"submit"} fullWidth={true}>
                                 Save
                             </Button>
                         </Grid.Col>

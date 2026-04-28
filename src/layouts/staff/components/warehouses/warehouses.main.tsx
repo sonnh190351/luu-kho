@@ -7,7 +7,6 @@ import {
     Group,
     LoadingOverlay,
     type MantineStyleProp,
-    Select,
     Stack,
     Text,
     TextInput,
@@ -19,7 +18,7 @@ import {NotificationsService} from "../../../../services/notifications/notificat
 import { IconRefresh, IconSearch} from "@tabler/icons-react";
 import WarehouseItemModal from "./warehouseItem.modal.tsx";
 import dayjs from "dayjs";
-import {DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
+import {DatabaseTables, DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import ExportInventoryModal from "../../../../components/modals/export.modal.tsx";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {Inventories} from "../../../../models/inventories.ts";
@@ -42,6 +41,9 @@ interface InventoryStatistics {
 }
 
 export default function StaffWarehousesTab() {
+
+    const [keyword, setKeyword] = useState<string>("");
+
     const ONE_DAY_MS = 86400000
 
     const cachedData = localStorage.getItem(LocalStorage.userData);
@@ -59,8 +61,6 @@ export default function StaffWarehousesTab() {
 
     const [openExportModal, setOpenExportModal] = useState(false);
 
-    const [selectedItem, setSelectedItem] = useState<any>(null);
-
     const [statistics, setStatistics] = useState<InventoryStatistics>({
         total: 0,
         expired: 0,
@@ -69,7 +69,6 @@ export default function StaffWarehousesTab() {
     });
 
     useEffect(() => {
-        console.log(selectedItem);
         (async () => await fetchItems())();
     }, []);
 
@@ -122,16 +121,30 @@ export default function StaffWarehousesTab() {
 
     function handleCloseModal() {
         setOpenModal(false);
-        setTimeout(() => {
-            setSelectedItem(null);
-        }, 200)
     }
 
     function handleCloseExportModal() {
         setOpenExportModal(false);
-        setTimeout(() => {
-            setSelectedItem(null);
-        }, 200)
+    }
+
+    async function handleChangeKeyword(e: any) {
+        setKeyword(e.target.value)
+        if(e.target.value === "") {
+            await fetchItems()
+            return
+        }
+
+        const temp = localStorage.getItem(DatabaseTables.InventoriesImport);
+        let cache = []
+        if (!temp) {
+            localStorage.setItem(DatabaseTables.InventoriesImport, JSON.stringify(items));
+            cache = JSON.parse(JSON.stringify(items));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        const matchingItems = cache.filter((i: any) => i.items.name.startsWith(e.target.value));
+        setItems(matchingItems)
     }
 
     const columns: any[] = [
@@ -280,10 +293,7 @@ export default function StaffWarehousesTab() {
                 </Grid>
                 <Group justify={'space-between'}>
                     <Group>
-                        <TextInput label={"Name"} leftSection={<IconSearch />} />
-                        <Select label={"Warehouse"}></Select>
-                        <Select label={"Category"}></Select>
-                        <Select label={"Status"}></Select>
+                        <TextInput value={keyword} onChange={handleChangeKeyword} label={"Name"} leftSection={<IconSearch />} />
                     </Group>
                     <Stack gap={2}>
                         <Text style={{
