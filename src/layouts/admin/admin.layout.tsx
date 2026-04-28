@@ -41,8 +41,9 @@ import LogsTab from "../../components/shared/logs/logs.tab.tsx";
 import ProductsTabs from "../../components/shared/products/products.tab.tsx";
 import OrdersTab from "./components/orders/orders.tab.tsx";
 import {LOG_ACTIONS} from "../../enums/log.ts";
+import InventoryExportTab from "../../components/shared/inventoryExport/inventoryExport.main.tsx";
 
-const openMenuWidth = 200;
+const openMenuWidth = 230;
 
 export default function AdminLayout() {
     const {colorScheme} = useMantineColorScheme();
@@ -55,6 +56,7 @@ export default function AdminLayout() {
         <CategoriesTab/>,
         <TagsTab/>,
         <InventoriesTab/>,
+        <InventoryExportTab />,
         <WarehousesTab/>,
         <ProductsTabs/>,
         <OrdersTab/>,
@@ -100,13 +102,18 @@ export default function AdminLayout() {
             items: [
                 {
                     icon: <IconPackage/>,
-                    title: "Inventories",
+                    title: "Inventories Import",
                     index: 4,
+                },
+                {
+                    icon: <IconPackage/>,
+                    title: "Inventories Export",
+                    index: 5,
                 },
                 {
                     icon: <IconBuildingWarehouse/>,
                     title: "Warehouses",
-                    index: 5,
+                    index: 6,
                 },
             ],
         },
@@ -116,12 +123,12 @@ export default function AdminLayout() {
                 {
                     icon: <IconPizza/>,
                     title: "Dishes",
-                    index: 6,
+                    index: 7,
                 },
                 {
                     icon: <IconMenuOrder/>,
                     title: "Orders",
-                    index: 7,
+                    index: 8,
                 },
             ],
         },
@@ -131,18 +138,18 @@ export default function AdminLayout() {
                 {
                     icon: <IconUser/>,
                     title: "Users",
-                    index: 8,
+                    index: 9,
                 },
                 {
                     icon: <IconUserDollar/>,
                     title: "Suppliers",
-                    index: 9,
+                    index: 10,
                 },
 
                 {
                     icon: <IconReceipt/>,
                     title: "Requests",
-                    index: 10,
+                    index: 11,
                 },
             ],
         },
@@ -152,7 +159,7 @@ export default function AdminLayout() {
                 {
                     icon: <IconLogs/>,
                     title: "Logs",
-                    index: 11,
+                    index: 12,
                 },
             ],
         },

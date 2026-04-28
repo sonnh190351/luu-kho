@@ -83,7 +83,6 @@ export default function RequestsLayout() {
         if (!requestType && !status) {
             return
         }
-        console.log(requestType)
 
         setFiltered(true)
         const temp = sessionStorage.getItem(DatabaseTables.Requests);

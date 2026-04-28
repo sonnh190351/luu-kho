@@ -130,7 +130,7 @@ export default function ManagerInventoryImportTab() {
         {
             accessor: "id",
             title: "ID",
-            width: 170,
+            width: 50,
             sortable: true,
             render: ({ id }: any) => {
                 return (
@@ -172,7 +172,7 @@ export default function ManagerInventoryImportTab() {
             render: ({ quantity }: any) => {
                 return (
                     <Group>
-                        <Text>{quantity}</Text>
+                        <Text>{quantity.toLocaleString("en-US")}</Text>
                     </Group>
                 );
             },

@@ -280,6 +280,35 @@ export default class OperationService {
         return data.data
     }
 
+    public async getAllWarehouseInventoriesExportItem() {
+        // get matching data
+        const data = await this.database.getDatabase().from(DatabaseTables.InventoriesExport).select(`
+                id,
+                created_at,
+                quantity,
+                items(
+                    id,
+                    name,
+                    quantity_type
+                ),
+                orders(
+                products(
+                    name
+                    )
+                )
+            `)
+
+        if (data.error) {
+            NotificationsService.error(
+                "Management Service",
+                `Failed to get items: ${data.error.message}`,
+            );
+            return []
+        }
+
+        return data.data
+    }
+
     public async getWarehouseInventoriesExportItem(warehouse_id: number) {
         // get matching data
         const data = await this.database.getDatabase().from(DatabaseTables.InventoriesExport).select(`

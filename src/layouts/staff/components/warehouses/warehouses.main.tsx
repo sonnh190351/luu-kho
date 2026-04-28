@@ -183,7 +183,7 @@ export default function StaffWarehousesTab() {
             render: ({quantity, items}: Inventories) => {
                 return (
                     <Group gap={5}>
-                        <Text>{quantity}</Text>
+                        <Text>{quantity.toLocaleString("en-US")}</Text>
                         <Text>({items.quantity_type})</Text>
                     </Group>
                 );
@@ -222,7 +222,7 @@ export default function StaffWarehousesTab() {
                 {
                     data.map((item: any, index: number) => <Group key={`record-${item.items.name}-${index}`}>
                         <Text style={{width: 70}}>{index + 1}</Text>
-                        <Text style={{width: 100}}>{item.quantity}</Text>
+                        <Text style={{width: 100}}>{item.quantity.toLocaleString("en-US")}</Text>
                         <Text style={{width: 200}}>{item.items.quantity_type}</Text>
                         <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
                         <Text style={{width: 200}}>{dayjs(item.expired).format(DISPLAY_TIME_FORMAT)}</Text>

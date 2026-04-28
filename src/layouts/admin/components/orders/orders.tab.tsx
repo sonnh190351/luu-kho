@@ -87,7 +87,7 @@ export default function OrdersTabs() {
             render: ({quantity}: any) => {
                 return (
                     <Group>
-                        <Text>{quantity}</Text>
+                        <Text>{quantity.toLocaleString("en-US")}</Text>
                     </Group>
                 );
             },

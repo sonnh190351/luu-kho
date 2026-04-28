@@ -1,24 +1,18 @@
 import {ActionIcon, Button, Divider, Group, LoadingOverlay, Stack, Text, TextInput, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
-import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
-import OperationService from "../../../../services/operations/operationService.ts";
-import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {DataTableColumn, DataTableRowExpansionProps} from "mantine-datatable";
-import {LocalStorage} from "../../../../enums/localStorage.ts";
 import dayjs from "dayjs";
-import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
 import {IconRefresh, IconX} from "@tabler/icons-react";
-import {BUTTON_COLOR} from "../../../../enums/styling.ts";
+import {DatabaseTables, DISPLAY_TIME_FORMAT} from "../../../enums/tables.ts";
+import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
+import OperationService from "../../../services/operations/operationService.ts";
+import {BUTTON_COLOR} from "../../../enums/styling.ts";
+import CommonTable from "../../dataTable/common.table.tsx";
 
-export default function ManagerInventoryExportTab() {
+export default function InventoryExportTab() {
     const [keyword, setKeyword] = useState("");
 
-    const cachedData = localStorage.getItem(LocalStorage.userData)!;
-    const loginData = JSON.parse(cachedData!);
-    const warehouse_id = loginData.warehouses.id;
-
     const [isLoading, setIsLoading] = useState(true);
-
     const [data, setData] = useState<any[]>([]);
     const [rootData, setRootData] = useState<any[]>([]);
 
@@ -31,7 +25,7 @@ export default function ManagerInventoryExportTab() {
         try {
             // Fetch data tu db
             const service = OperationService.getInstance()
-            const data = await service.getWarehouseInventoriesExportItem(warehouse_id)
+            const data = await service.getAllWarehouseInventoriesExportItem()
             mappingData(data)
             setRootData(data)
         } catch (e: any) {
@@ -182,7 +176,7 @@ export default function ManagerInventoryExportTab() {
                     />
                     {
                         keyword.length > 0 && <ActionIcon color={'red'} onClick={handleClear}>
-                        <IconX />
+                            <IconX />
                         </ActionIcon>
                     }
                 </Group>

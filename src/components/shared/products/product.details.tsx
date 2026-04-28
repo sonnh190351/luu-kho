@@ -82,7 +82,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
             sortable: true,
             width: 170,
             render: ({ quantity }: any) => {
-                return <Group>{quantity}</Group>;
+                return <Group>{quantity.toLocaleString("en-US")}</Group>;
             },
         },
         {

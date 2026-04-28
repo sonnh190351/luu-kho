@@ -89,7 +89,7 @@ export default function InventoriesTab() {
                 {
                     data.map((item: any, index: number) => <Group key={`record-${item.items.name}-${index}`}>
                         <Text style={{width: 70}}>{index + 1}</Text>
-                        <Text style={{width: 100}}>{item.quantity}</Text>
+                        <Text style={{width: 100}}>{item.quantity.toLocaleString("en-US")}</Text>
                         <Text style={{width: 200}}>{item.items.quantity_type}</Text>
                         <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
                     </Group>)
@@ -121,7 +121,7 @@ export default function InventoriesTab() {
             render: ({quantity, items}: Inventories) => {
                 return (
                     <Group gap={5}>
-                        <Text>{quantity}</Text>
+                        <Text>{quantity.toLocaleString("en-US")}</Text>
                         <Text>({items.quantity_type})</Text>
                     </Group>
                 );
@@ -170,16 +170,15 @@ export default function InventoriesTab() {
 
     async function clearSearch(){
         setKeyword("")
-        const temp = localStorage.getItem(DatabaseTables.InventoriesImport);
-        if(!temp) {
-            setInventories([])
-        } else {
-            setInventories(JSON.parse(temp));
-        }
+        await fetchInventories()
     }
 
     async function handleSearchByWarehouseId(e: ChangeEvent<HTMLInputElement>) {
         setKeyword(e.target.value)
+        if(e.target.value === "") {
+            await fetchInventories()
+            return
+        }
 
         const temp = localStorage.getItem(DatabaseTables.InventoriesImport);
         let cache = []
