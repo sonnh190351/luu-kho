@@ -72,7 +72,7 @@ export default function ManagerStatusTab() {
             render: ({quantity}: any) => {
                 return (
                     <Group>
-                        <Text>{quantity}</Text>
+                        <Text>{quantity.toLocaleString("en-US")}</Text>
                     </Group>
                 );
             },
