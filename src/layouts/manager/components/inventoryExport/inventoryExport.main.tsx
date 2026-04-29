@@ -167,7 +167,7 @@ export default function ManagerInventoryExportTab() {
         />
         <Stack gap={0}>
             <Text>Management</Text>
-            <Title>Warehouse Inventories Export Data</Title>
+            <Title>Warehouse Inventories Export Ticket</Title>
         </Stack>
         <Divider/>
 
