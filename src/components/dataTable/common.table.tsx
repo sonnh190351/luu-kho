@@ -26,6 +26,12 @@ export default function CommonTable({ data, columns, height, rowExpansion }: Dat
         setRecords(initialData.slice(from, to));
     }, [sortStatus, data, page]);
 
+
+    // Data change -> Page return back to 1
+    useEffect(() => {
+        setPage(1)
+    }, [data])
+
     return (
         <DataTable
             height={height ?? "70dvh"}

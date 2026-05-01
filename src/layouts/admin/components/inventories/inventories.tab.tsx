@@ -49,7 +49,7 @@ export default function InventoriesTab() {
             mappingData(data)
             setRootData(data)
         } catch (e: any) {
-            NotificationsService.error("Fetch categories", e.toString());
+            NotificationsService.error("Fetch Inventory Import", e.toString());
         }
 
         setLoading(false);
@@ -183,7 +183,7 @@ export default function InventoriesTab() {
 
         // Lọc trực tiếp từ rootData (đổi thành chữ thường để tìm kiếm không phân biệt hoa/thường)
         const filtered = rootData.filter((c: any) => 
-            c.items.name.toLowerCase().includes(value.toLowerCase())
+            c.items.name.toLowerCase().startsWith(value.toLowerCase())
         );
         
         // Gọi hàm mapping để gộp nhóm lại cái mảng vừa lọc xong

@@ -13,7 +13,6 @@ export enum DatabaseTables {
     Products = "products",
     ProductItems = "product_items",
     Orders = "orders",
-    Inventories = "Inventories",
 }
 
 export enum StorageBuckets {

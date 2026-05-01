@@ -5,6 +5,8 @@ import {
     LoadingOverlay,
     Select,
     Stack,
+    TextInput,
+    ActionIcon,
     Text,
     Title
 } from "@mantine/core";
@@ -14,14 +16,34 @@ import OperationService from "../../../../services/operations/operationService.t
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import type {DataTableColumn} from "mantine-datatable";
-import {IconEdit, IconPlus, IconRefresh} from "@tabler/icons-react";
+import {IconEdit, IconPlus, IconRefresh, IconX, IconFilter} from "@tabler/icons-react";
 import UtilsService from "../../../../services/utils.ts";
 import OrderModal from "./orders.modal.tsx";
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 import dayjs from "dayjs";
 import {DISPLAY_TIME_FORMAT} from "../../../../enums/tables.ts";
+import {useForm} from "@mantine/form";
+import {OrderStatus} from "../../../../enums/orders.ts";
+import {DatabaseTables} from "../../../../enums/tables.ts";
+
+interface FilterFormType {
+    product: string;
+    user: string;
+    status?: OrderStatus | null
+}
+
 
 export default function OrdersTabs() {
+
+    const filterForm = useForm<FilterFormType>({
+        initialValues: {
+            product: "",
+            user: "",
+            status: null
+        }
+    })
+
+    const [isFiltered, setFiltered] = useState<boolean>(false)
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -58,7 +80,7 @@ export default function OrdersTabs() {
         },
         {
             accessor: "products",
-            title: "Product",
+            title: "Dish",
             sortable: true,
             render: ({products}: any) => {
                 return (
@@ -163,6 +185,43 @@ export default function OrdersTabs() {
         }, 200)
     }
 
+    function handleFilter() {
+        const {user, product, status} = filterForm.getValues()
+        if(user.length === 0 && product.length === 0 && !status) {
+            return
+        }
+
+        setFiltered(true)
+        const temp = sessionStorage.getItem(DatabaseTables.Orders);
+        let cache
+        if (!temp) {
+            sessionStorage.setItem(DatabaseTables.Orders, JSON.stringify(orders));
+            cache = JSON.parse(JSON.stringify(orders));
+        } else {
+            cache = JSON.parse(temp);
+        }
+
+        if (user.length > 0) {
+            cache = cache.filter((i: any) => [i.users.last_name, i.users.first_name].join(" ").startsWith(user));
+        }
+
+        if (status) {
+            cache = cache.filter((i: any) => i.status === status);
+        }
+
+        if (product.length > 0) {
+            cache = cache.filter((i: any) => i.products.name.startsWith(product));
+        }
+
+        setOrders(cache)
+    }
+
+    async function handleClearFilter() {
+        setFiltered(false)
+        filterForm.reset()
+        await fetchOrders()
+    }
+
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
@@ -181,7 +240,26 @@ export default function OrdersTabs() {
                     <Stack gap={5}>
                         <Text>Filter</Text>
                         <Group gap={10}>
-                            <Select placeholder={"Status"} />
+                            <Select data={Object.values(OrderStatus).map((v) => {
+                                return {
+                                    label: v,
+                                    value: v
+                                }
+                            })} allowDeselect={true} clearable={true} {...filterForm.getInputProps("status")}
+                                    style={{width: 200}}
+                                    placeholder={"Status"}/>
+                            <TextInput {...filterForm.getInputProps("product")} style={{width: 200}}
+                                       placeholder={"Dish"}/>
+                            <TextInput {...filterForm.getInputProps("user")} style={{width: 200}} placeholder={"User"}/>
+                            <ActionIcon onClick={handleFilter} color={BUTTON_COLOR.PRIMARY} variant={'outline'}
+                                        size={"lg"}>
+                                <IconFilter/>
+                            </ActionIcon>
+                            {
+                                isFiltered && <ActionIcon size={"lg"} onClick={handleClearFilter} color={"red"}>
+                                    <IconX/>
+                                </ActionIcon>
+                            }
                         </Group>
                     </Stack>
                     <Stack gap={5}>

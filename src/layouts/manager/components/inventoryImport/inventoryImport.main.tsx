@@ -1,4 +1,5 @@
 import {
+    ActionIcon,
     Button,
     Card,
     Divider,
@@ -28,8 +29,7 @@ import type {DataTableColumn, DataTableRowExpansionProps} from "mantine-datatabl
 
 interface SortFormValues {
     name: string;
-    category: string;
-    status: string;
+    supplier: string | null;
 }
 
 export default function ManagerInventoryImportTab() {
@@ -37,8 +37,7 @@ export default function ManagerInventoryImportTab() {
     const form = useForm<SortFormValues>({
         initialValues: {
             name: "",
-            category: "-1",
-            status: ""
+            supplier: null,
         }
     })
 
@@ -59,23 +58,23 @@ export default function ManagerInventoryImportTab() {
 
     const [isSorting, setSorting] = useState<boolean>(false)
 
-    const [categories, setCategories] = useState<any[]>([])
+    const [suppliers, setSuppliers] = useState<any[]>([])
 
     useEffect(() => {
         (async () => await fetchItems())();
     }, []);
 
     useEffect(() => {
-        (async () => await fetchCategories())();
+        (async () => await fetchSuppliers())();
     }, [])
 
-    async function fetchCategories() {
+    async function fetchSuppliers() {
         try {
             const service = OperationService.getInstance();
-            const data = await service.getAllRows(DatabaseTables.Categories)
-            setCategories(data);
+            const data = await service.getAllRows(DatabaseTables.Suppliers)
+            setSuppliers(data);
         } catch (e: any) {
-            NotificationsService.error("Fetch Categories", e.toString());
+            NotificationsService.error("Fetch Suppliers", e.toString());
         }
     }
 
@@ -116,14 +115,34 @@ export default function ManagerInventoryImportTab() {
         setOpenExportModal(false);
     }
 
-
     function handleSort() {
         setSorting(true)
+
+        const {name, supplier} = form.getValues()
+        
+        if(name.length === 0 && supplier === null) {
+            return;
+        }
+        
+        let temp = JSON.parse(JSON.stringify(rootData))
+
+        // Sort row theo item name
+        if (name.length > 0) {
+            temp = temp.filter((r) => r.items.name.startsWith(name))
+        }
+        
+        // Sort row theo ten cua supplier
+        if(supplier) {
+            temp = temp.filter((r) => r.suppliers.name === supplier)
+        }
+
+        mappingData(temp)
     }
 
     function handleClearSort() {
         form.reset();
         setSorting(false)
+        mappingData(rootData)
     }
 
     const columns: DataTableColumn[] = [
@@ -279,20 +298,25 @@ export default function ManagerInventoryImportTab() {
                     </Grid.Col>
                 </Grid>
                 <Group justify={'space-between'}>
-                    <Group>
-                        <TextInput {...form.getInputProps("name")} label={"Name"} leftSection={<IconSearch />} />
-                        <Select clearable={true} data={categories.map((c: any) => {
-                            return {
-                                value: String(c.id),
-                                label: c.name
+                    <Stack gap={2}>
+                         <Text style={{
+                            fontSize: 14
+                        }}>Filter</Text>
+                        <Group>
+                            <TextInput {...form.getInputProps("name")} placeholder={"Filter by Name"} leftSection={<IconSearch />} />
+                            <Select clearable={true} data={suppliers.map((c: any) => {
+                                return {
+                                    value: c.name,
+                                    label: c.name
+                                }
+                            })} {...form.getInputProps("supplier")} placeholder={"Filter by Supplier"}></Select>
+                            <ActionIcon color={BUTTON_COLOR.PRIMARY} onClick={handleSort} size='lg'><IconFilter /></ActionIcon>
+                            {
+                                isSorting && <ActionIcon size={'lg'} color='red' onClick={handleClearSort}><IconX /></ActionIcon>
                             }
-                        })} {...form.getInputProps("category")} label={"Category"}></Select>
-                        <Select {...form.getInputProps("status")} label={"Status"}></Select>
-                        <Button color={BUTTON_COLOR.PRIMARY} mt={25} onClick={handleSort} leftSection={<IconFilter/>}>Sort</Button>
-                        {
-                            isSorting && <Button onClick={handleClearSort} leftSection={<IconX />}>Clear</Button>
-                        }
-                    </Group>
+                        </Group>
+                    </Stack>
+                    
                     <Stack gap={2}>
                         <Text style={{
                             fontSize: 14
