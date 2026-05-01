@@ -14,13 +14,12 @@ import {
     IconSearch,
     IconX,
 } from "@tabler/icons-react";
-import {type ChangeEvent, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 import type {Inventories} from "../../../../models/inventories.ts";
 import CommonTable from "../../../../components/dataTable/common.table.tsx";
 import OperationService from "../../../../services/operations/operationService.ts";
 import InventoriesModal from "./inventories.modal.tsx";
 import {
-    DatabaseTables,
     DISPLAY_TIME_FORMAT,
 } from "../../../../enums/tables.ts";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
@@ -169,28 +168,26 @@ export default function InventoriesTab() {
     ];
 
     async function clearSearch(){
-        setKeyword("")
-        await fetchInventories()
+        setKeyword("");
+        mappingData(rootData); // Phục hồi lại dữ liệu gốc từ rootData
     }
 
-    async function handleSearchByWarehouseId(e: ChangeEvent<HTMLInputElement>) {
-        setKeyword(e.target.value)
-        if(e.target.value === "") {
-            await fetchInventories()
-            return
+    async function handleSearch(e: any) {
+        const value = e.target.value;
+        setKeyword(value);
+
+        if(value === "") {
+            mappingData(rootData);
+            return;
         }
 
-        const temp = localStorage.getItem(DatabaseTables.InventoriesImport);
-        let cache = []
-        if(!temp) {
-            localStorage.setItem(DatabaseTables.InventoriesImport, JSON.stringify(inventories));
-            cache = JSON.parse(JSON.stringify(inventories));
-        } else {
-            cache = JSON.parse(temp);
-        }
-
-        const matchingItems = cache.filter((i: any) => String(i.warehouse_id).startsWith(e.target.value));
-        setInventories(matchingItems)
+        // Lọc trực tiếp từ rootData (đổi thành chữ thường để tìm kiếm không phân biệt hoa/thường)
+        const filtered = rootData.filter((c: any) => 
+            c.items.name.toLowerCase().includes(value.toLowerCase())
+        );
+        
+        // Gọi hàm mapping để gộp nhóm lại cái mảng vừa lọc xong
+        mappingData(filtered); 
     }
 
     return (
@@ -212,9 +209,9 @@ export default function InventoriesTab() {
                         <Text>Filter</Text>
                         <Group>
                             <TextInput
-                                placeholder={"Search by Warehouse ID"}
+                                placeholder={"Search by Name"}
                                 value={keyword}
-                                onChange={handleSearchByWarehouseId}
+                                onChange={handleSearch}
                             />
                             {
                                 keyword.length > 0 && <ActionIcon onClick={clearSearch} size={"lg"} color={'red'}>

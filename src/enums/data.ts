@@ -1,10 +1,6 @@
 export const QUANTITY_TYPES = [
-    'Thùng',
-    'Lon',
-    'Hộp',
-    'Kg',
-    'Gr',
-    'Mg',
+    'gr',
+    'ml',
 ]
 
 export enum ExpiringStatus {
