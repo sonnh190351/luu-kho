@@ -1,11 +1,11 @@
-import {Button, Modal, Stack, TextInput} from "@mantine/core";
-import {useForm} from "@mantine/form";
-import {useEffect} from "react";
-import OperationService from "../../../services/operations/operationService.ts";
-import {DatabaseTables} from "../../../enums/tables.ts";
-import {NotificationsService} from "../../../services/notifications/notifications.service.ts";
-import UtilsService from "../../../services/utils.ts";
-import {FormValidationService} from "../../../services/validatior/form-validation.service.ts";
+import { useForm } from "@mantine/form";
+import { FormValidationService } from "../../../services/validatior/form-validation.service";
+import { useEffect } from "react";
+import OperationService from "../../../services/operations/operationService";
+import { DatabaseTables } from "../../../enums/tables";
+import { NotificationsService } from "../../../services/notifications/notifications.service";
+import { Button, Modal, Stack, TextInput } from "@mantine/core";
+import UtilsService from "../../../services/utils";
 
 interface ProductModalProps {
     product: any,
@@ -74,7 +74,7 @@ export default function ProductModal({product, open, close, refresh}: ProductMod
     }
 
     return (
-        <Modal title={isEdit ? "Edit Dish" : "Add Dish"} opened={open} onClose={close} centered={true}>
+        <Modal title={isEdit ? "Edit Dish" : "Add Dish"} opened={open} onClose={handleClose} centered={true}>
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="xs">
                     <TextInput
