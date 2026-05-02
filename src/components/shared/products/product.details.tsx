@@ -73,7 +73,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
             title: "Name",
             sortable: true,
             render: ({ items }: any) => {
-                return <Group>{items.name}</Group>;
+                return <Group>{items?.name}</Group>;
             },
         },
         {
@@ -82,7 +82,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
             sortable: true,
             width: 170,
             render: ({ quantity }: any) => {
-                return <Group>{quantity.toLocaleString("en-US")}</Group>;
+                return <Group>{quantity?.toLocaleString("en-US")}</Group>;
             },
         },
         {
@@ -91,7 +91,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
             sortable: true,
             width: 170,
             render: ({ items }: any) => {
-                return <Group>{items.quantity_type}</Group>;
+                return <Group>{items?.quantity_type}</Group>;
             },
         },
         {
@@ -154,8 +154,8 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
 
         const temp = JSON.parse(tempData);
 
-        const matching = temp.filter((p: any) => p.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
-        setProductItem(matching)
+        const matching = temp.filter((p: any) => p.items.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
+        setProductItem({ ...productItem, product_items:matching})
     }
 
     async function handleClearSearch() {
