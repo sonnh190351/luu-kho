@@ -45,6 +45,7 @@ export default function ProductDetailsTab({product, close}: ProductDetailsTabPro
             const data = await service.getProductDetails(product.id)
             if(data) {
                 setProductItem(data)
+                localStorage.setItem(DatabaseTables.ProductItems, JSON.stringify(data.product_items));
             } else {
                 close()
             }

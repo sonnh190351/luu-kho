@@ -414,7 +414,7 @@ export default class OperationService {
                 "Management Service",
                 `Failed to get product item details: ${data.error}`,
             );
-            return []
+            return undefined
         }
 
         if (data.data.length === 0) {
