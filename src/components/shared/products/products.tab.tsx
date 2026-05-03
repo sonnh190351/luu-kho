@@ -36,6 +36,7 @@ export default function ProductsTabs() {
             const service = OperationService.getInstance()
             const data = await service.getProductsItems()
             setProducts(data)
+            localStorage.setItem(DatabaseTables.Products, JSON.stringify(data))
         } catch (e: any) {
             NotificationsService.error("Fetch products", e.toString());
         }
@@ -153,7 +154,7 @@ export default function ProductsTabs() {
         
         const temp = JSON.parse(tempData);
 
-        const matching = temp.filter((p: any) => p.name?.toLoweCase().startsWith(e.target.value.toLowerCase()));
+        const matching = temp.filter((p: any) => p.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
         setProducts(matching)
     }
 
