@@ -9,9 +9,7 @@ import {
     Title,
 } from "@mantine/core";
 import {
-    IconPlus,
     IconRefresh,
-    IconSearch,
     IconX,
 } from "@tabler/icons-react";
 import { useEffect, useState} from "react";
@@ -218,20 +216,13 @@ export default function InventoriesTab() {
                                     <IconX />
                                 </ActionIcon>
                             }
-                            <ActionIcon color={BUTTON_COLOR.PRIMARY} size={"lg"}>
-                                <IconSearch />
-                            </ActionIcon>
                         </Group>
                     </Stack>
                     <Stack gap={5}>
-                        <Text>Controls</Text>
+                        <Text style={{
+                            height: '25px'
+                        }}></Text>
                         <Group>
-                            <Button
-                                color={BUTTON_COLOR.PRIMARY}
-                                onClick={() => setOpenItemModal(true)}
-                                leftSection={<IconPlus/>}>
-                                Add
-                            </Button>
                             <Button
                                 color={BUTTON_COLOR.PRIMARY}
                                 onClick={() => fetchInventories()}

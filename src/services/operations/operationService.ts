@@ -347,6 +347,7 @@ export default class OperationService {
                 id,
                 created_at,
                 updated_at,
+                expired_at,
                 quantity,
                 items(
                     id,

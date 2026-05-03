@@ -152,7 +152,8 @@ export default class InventoryService {
         }
         // Tạo phiếu nhập kho
         const response = await this.database.add(DatabaseTables.InventoriesImport, {
-            ...data, warehouse_id: this.userData.warehouses.id
+            ...data,
+            warehouse_id: this.userData.warehouses.id
         });
         // Update status của kho
         const exist = await this.database.getDatabase()
@@ -173,7 +174,7 @@ export default class InventoryService {
             await this.database.getDatabase().from(DatabaseTables.InventoryStatus).insert({
                 item_id: data.item_id,
                 warehouse_id: this.userData.warehouses.id,
-                quantity: data.quantity
+                quantity: data.quantity,
             })
         }
         await this.responseLog(response, LOG_ACTIONS.ADD_INVENTORY, data)

@@ -132,7 +132,7 @@ export default function ItemsModal({
             handleClose();
             NotificationsService.success(
                 `${isEdit ? "Edit" : "Add"} Item`,
-                `New category has been ${isEdit ? "edit" : "added"} successfully!`,
+                `New item has been ${isEdit ? "edit" : "added"} successfully!`,
             );
         } catch (e: any) {
             NotificationsService.error(

@@ -7,6 +7,8 @@ import { NotificationsService } from "../../../../services/notifications/notific
 import {LocalStorage} from "../../../../enums/localStorage.ts";
 import InventoryService from "../../../../services/operations/inventory/inventoryService.ts";
 import {FormValidationService} from "../../../../services/validatior/form-validation.service.ts";
+import {DateTimePicker} from "@mantine/dates";
+import dayjs from "dayjs";
 
 interface InventoriesModalProps {
     open: boolean;
@@ -18,6 +20,7 @@ interface InventoriesFormValues {
     quantity: number;
     item_id: number;
     supplier_id: number;
+    expired_at: string;
 }
 
 export default function ManagerInventoryImportModal({
@@ -37,6 +40,7 @@ export default function ManagerInventoryImportModal({
             quantity: 0,
             item_id: -1,
             supplier_id: -1,
+            expired_at: "",
         },
         validate: {
             item_id: FormValidationService.validateItemId,
@@ -160,6 +164,28 @@ export default function ManagerInventoryImportModal({
                             }
                         }}
                     />
+
+                    <DateTimePicker
+                        label={"Expiration Date"}
+                        required={true}
+                        valueFormat="YYYY-MM-DD hh:mm A"
+                        value={
+                            form.values.expired_at
+                                ? new Date(form.values.expired_at)
+                                : new Date()
+                        }
+                        onChange={(e) => {
+                            if (e) {
+                                form.setValues({
+                                    expired_at:
+                                        dayjs(e).format(
+                                            "YYYY-MM-DD hh:mm A",
+                                        ),
+                                });
+                            }
+                        }}
+                    />
+
                     <Button type="submit" fullWidth mt="md">
                         Submit
                     </Button>
