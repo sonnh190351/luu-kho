@@ -95,6 +95,7 @@ export default function InventoriesTab() {
         }
     }
 
+    // Array chua definition cua cac cot
     const columns: any[] = [
         {
             accessor: "items",
