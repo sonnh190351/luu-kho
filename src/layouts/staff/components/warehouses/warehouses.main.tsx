@@ -206,8 +206,8 @@ export default function StaffWarehousesTab() {
     const rowExpansion: DataTableRowExpansionProps = {
         content: ({ record }: any) => {
             const data = rootData.filter((r) => r.items.name === record.items.name)
-            const time = new Date(record.expired_at!).getTime() - new Date().getTime()
-            const status = time < 0 ? ExpiringStatus.EXPIRED : time <= ONE_DAY_MS ? ExpiringStatus.EXPIRING_SOON : ExpiringStatus.FRESH
+            // const time = new Date(record.expired_at!).getTime() - new Date().getTime()
+            const status = ExpiringStatus.FRESH
 
             return <Stack gap={6} pb={'md'}>
                 <Group>
@@ -250,7 +250,7 @@ export default function StaffWarehousesTab() {
                 </Stack>
                 <Divider/>
                 <Grid>
-                    <Grid.Col span={3}>
+                    <Grid.Col span={6}>
                         <Card style={{
                             ...cardStyle
                         }}>
@@ -260,27 +260,7 @@ export default function StaffWarehousesTab() {
                             </Stack>
                         </Card>
                     </Grid.Col>
-                    <Grid.Col span={3}>
-                        <Card style={{
-                            ...cardStyle
-                        }}>
-                            <Stack justify={'flex-end'} align={'start'}>
-                                <Text>Expired</Text>
-                                <Title>{statistics.expired}</Title>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                        <Card style={{
-                            ...cardStyle
-                        }}>
-                            <Stack justify={'flex-end'} align={'start'}>
-                                <Text>Expires in 1 day</Text>
-                                <Title>{statistics.expiring}</Title>
-                            </Stack>
-                        </Card>
-                    </Grid.Col>
-                    <Grid.Col span={3}>
+                    <Grid.Col span={6}>
                         <Card style={{
                             ...cardStyle
                         }}>

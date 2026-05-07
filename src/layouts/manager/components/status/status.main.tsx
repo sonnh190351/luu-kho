@@ -1,4 +1,4 @@
-import {ActionIcon, Button, Divider, Group, Stack, Text, TextInput, Title} from "@mantine/core";
+import {ActionIcon, Button, Divider, Group, LoadingOverlay, Stack, Text, TextInput, Title} from "@mantine/core";
 import {useEffect, useState} from "react";
 import {NotificationsService} from "../../../../services/notifications/notifications.service.ts";
 import {LocalStorage} from "../../../../enums/localStorage.ts";
@@ -10,6 +10,8 @@ import {DatabaseTables} from "../../../../enums/tables.ts";
 import {BUTTON_COLOR} from "../../../../enums/styling.ts";
 
 export default function ManagerStatusTab() {
+
+    const [loading, setLoading] = useState(true);
 
     const [keyword, setKeyword] = useState<string>("");
 
@@ -26,6 +28,7 @@ export default function ManagerStatusTab() {
     }, [])
 
     async function fetchStatus() {
+        setLoading(true);
         try {
             if (warehouse_id !== null) {
                 const service = OperationService.getInstance();
@@ -36,6 +39,7 @@ export default function ManagerStatusTab() {
         } catch (e: any) {
             NotificationsService.error("Fetch Status", e.toString())
         }
+        setLoading(false);
     }
 
     const columns: DataTableColumn[] = [
@@ -117,6 +121,7 @@ export default function ManagerStatusTab() {
     return (
         <>
             <Stack pt={"lg"} pl={"sm"}>
+                <LoadingOverlay visible={loading} />
                 <Stack gap={0}>
                     <Text>Management</Text>
                     <Title>Warehouse Inventory Status</Title>

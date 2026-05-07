@@ -219,7 +219,7 @@ export default function ManagerInventoryImportTab() {
                     <Text style={{width: 100}}>Quantity</Text>
                     <Text style={{width: 200}}>Quantity Type</Text>
                     <Text style={{width: 200}}>Import Date</Text>
-                    <Text style={{width: 200}}>Expired Date</Text>
+                    {/*<Text style={{width: 200}}>Expired Date</Text>*/}
                 </Group>
                 <Divider />
                 {
@@ -228,7 +228,7 @@ export default function ManagerInventoryImportTab() {
                         <Text style={{width: 100}}>{item.quantity.toLocaleString("en-US")}</Text>
                         <Text style={{width: 200}}>{item.items.quantity_type}</Text>
                         <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
-                        <Text style={{width: 200}}>{item.expired_at ? dayjs(item.expired_at).format(DISPLAY_TIME_FORMAT) : "N/A"}</Text>
+                        {/*<Text style={{width: 200}}>{item.expired_at ? dayjs(item.expired_at).format(DISPLAY_TIME_FORMAT) : "N/A"}</Text>*/}
                     </Group>)
                 }
             </Stack>
