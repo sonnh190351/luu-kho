@@ -83,7 +83,8 @@ export default function ManagerInventoryExportTab() {
         },
         {
             accessor: "quantity",
-            title: "Quantity",           width: 170,
+            title: "Quantity",
+            width: 170,
             sortable: true,
             render: ({ quantity }: any) => {
                 return (
@@ -96,12 +97,23 @@ export default function ManagerInventoryExportTab() {
         {
             accessor: "quantity_type",
             title: "Quantity Type",
-            width: 170,
             sortable: true,
             render: ({ items }: any) => {
                 return (
                     <Group>
                         <Text>{items.quantity_type}</Text>
+                    </Group>
+                );
+            },
+        },
+        {
+            accessor: "created_at",
+            title: "Created At",
+            sortable: true,
+            render: ({ created_at }: any) => {
+                return (
+                    <Group>
+                        {dayjs(created_at).format(DISPLAY_TIME_FORMAT)}
                     </Group>
                 );
             },

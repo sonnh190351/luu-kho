@@ -215,7 +215,7 @@ export default function StaffWarehousesTab() {
                     <Text style={{width: 100}}>Quantity</Text>
                     <Text style={{width: 200}}>Quantity Type</Text>
                     <Text style={{width: 200}}>Import Date</Text>
-                    <Text style={{width: 200}}>Expire Date</Text>
+                    {/*<Text style={{width: 200}}>Expire Date</Text>*/}
                     <Text style={{width: 100}}>Status</Text>
                 </Group>
                 <Divider />
@@ -225,7 +225,7 @@ export default function StaffWarehousesTab() {
                         <Text style={{width: 100}}>{item.quantity.toLocaleString("en-US")}</Text>
                         <Text style={{width: 200}}>{item.items.quantity_type}</Text>
                         <Text style={{width: 200}}>{dayjs(item.created_at).format(DISPLAY_TIME_FORMAT)}</Text>
-                        <Text style={{width: 200}}>{dayjs(item.expired).format(DISPLAY_TIME_FORMAT)}</Text>
+                        {/*<Text style={{width: 200}}>{dayjs(item.expired).format(DISPLAY_TIME_FORMAT)}</Text>*/}
                         <Text style={{width: 100}}>
                             <Badge color={UtilsService.getExpireBadgeColor(status)}>
                                 {status}
