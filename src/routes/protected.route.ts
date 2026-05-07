@@ -10,6 +10,7 @@ const ProtectedRoute = ({ children, role } : { children: any, role: number}) => 
         return;
     }
 
+    // Check stored credentials in local storage
     const cached = JSON.parse(cachedData)
 
     // Temporary disabled for dev purposes

@@ -92,7 +92,7 @@ export default function UserDetailsModal({
                 dob: user.dob,
                 role: user.role!,
                 status: user.status,
-                warehouse_id: user.warehouse_id,
+                warehouse_id: user.warehouses.id,
             });
         }
     }, [isEdit]);
