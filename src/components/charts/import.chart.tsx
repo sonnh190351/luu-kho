@@ -24,7 +24,7 @@ export default function ImportChart({chartData} : ChartProps) {
 
     const [isFiltered, setIsFiltered] = useState<boolean>(false);
 
-    const [sortType, setSortType] = useState<string>("Month");
+    const [sortType, setSortType] = useState<string>("Day");
 
     const [sortedData, setSortedData] = useState<any[]>([])
 

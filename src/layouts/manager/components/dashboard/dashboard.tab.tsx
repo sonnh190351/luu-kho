@@ -134,7 +134,7 @@ export default function ManagerDashboardTab() {
             </Stack>
             <Divider/>
             <Grid>
-                <Grid.Col span={{base: 6, md: 3}}>
+                <Grid.Col span={{base: 12, md: 4}}>
                     <Card withBorder={true}>
                         <Stack gap={10}>
                             <Group gap={5}>
@@ -145,24 +145,7 @@ export default function ManagerDashboardTab() {
                         </Stack>
                     </Card>
                 </Grid.Col>
-                <Grid.Col span={{base: 6, md: 3}}>
-                    <Card withBorder={true}>
-                        <Stack gap={10}>
-                            <Group gap={5}>
-                                <IconBox/>
-                                <Text>Expiring Items</Text>
-                            </Group>
-                            <Title order={2}>
-                                {
-                                    inventoryItems.filter(
-                                        (i) => dayjs(i.expired_at).unix() - dayjs().unix() > 0,
-                                    ).length
-                                }
-                            </Title>
-                        </Stack>
-                    </Card>
-                </Grid.Col>
-                <Grid.Col span={{base: 6, md: 3}}>
+                <Grid.Col span={{base: 12, md: 4}}>
                     <Card withBorder={true}>
                         <Stack gap={10}>
                             <Group gap={5}>
@@ -179,7 +162,7 @@ export default function ManagerDashboardTab() {
                         </Stack>
                     </Card>
                 </Grid.Col>
-                <Grid.Col span={{base: 6, md: 3}}>
+                <Grid.Col span={{base: 12, md: 4}}>
                     <Card withBorder={true}>
                         <Stack gap={10}>
                             <Group gap={5}>
