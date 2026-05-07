@@ -14,7 +14,7 @@ export enum StaffRequestType {
 }
 
 export enum RequestStatus {
-    SUBMITTED = "Submitted",
+    SUBMITTED = "Received",
     PROCESSING = "Processing",
     ACCEPTED = "Accepted",
     REJECTED = "Rejected",

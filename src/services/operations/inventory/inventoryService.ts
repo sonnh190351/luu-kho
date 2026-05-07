@@ -87,13 +87,11 @@ export default class InventoryService {
 
         // Update remaining items in inventory.
         for (let i = 0; i < currentProducts.length; i++) {
-            console.log(currentProducts[i])
             await this.database.getDatabase().from(DatabaseTables.InventoryStatus)
                 .update({ 'quantity': currentProducts[i].quantity })
                 .eq('id', currentProducts[i].id,)
         }
 
-        console.log(items)
         return items
     }
 

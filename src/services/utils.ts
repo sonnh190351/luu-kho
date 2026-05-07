@@ -8,13 +8,13 @@ export default class UtilsService {
     static getRoleLevel(role: number) {
         switch (role) {
             case USER_ROLES.manager:
-                return "Admin";
+                return "Manager";
             case USER_ROLES.guest:
                 return "Guest";
             case USER_ROLES.super_admin:
                 return "Super Admin";
             case USER_ROLES.staff:
-                return "User";
+                return "Staff";
         }
     }
 

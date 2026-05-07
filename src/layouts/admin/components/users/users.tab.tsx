@@ -11,7 +11,6 @@ import {
 } from "@mantine/core";
 import {
     IconEdit,
-    IconInfoCircle,
     IconPlus,
     IconRefresh,
     IconSearch,
@@ -51,7 +50,7 @@ export default function UserDetailsTab() {
         const service = OperationService.getInstance();
 
         try {
-            const data = await service.getAllRows(DatabaseTables.UserDetails);
+            const data = await service.getAllUsers()
             setUserDetails(data);
         } catch (e: any) {
             NotificationsService.error("Fetch categories", e.toString());
@@ -125,7 +124,7 @@ export default function UserDetailsTab() {
                         textAlign: "center"
                     }}>
                         {
-                            Boolean(avatar) ?
+                            avatar ?
                                 <img alt={"avatar"} width={100} src={UtilsService.getAvatarUrl(avatar!)}/> :
                                 <Text>No Avatar Available</Text>
                         }
@@ -162,25 +161,13 @@ export default function UserDetailsTab() {
             title: "Warehouse",
             sortable: true,
             width: 175,
-            render: ({warehouse_id}: UserDetails) => {
+            render: ({warehouses}: UserDetails) => {
                 return (
                     <Group>
-                        {warehouse_id ? (
-                            <Button
-                                color={BUTTON_COLOR.PRIMARY}
-                                style={{
-                                    width: "100%",
-                                }}
-                                leftSection={<IconInfoCircle/>}
-                                onClick={() => {
-                                    InformationService.getInstance().showItemDetailsById(
-                                        DatabaseTables.Warehouses,
-                                        "Warehouse Details",
-                                        warehouse_id!,
-                                    );
-                                }}>
-                                Details ({warehouse_id})
-                            </Button>
+                        {warehouses ? (
+                            <Text>{
+                                warehouses.name
+                            }</Text>
                         ) : (
                             <Text>N/A</Text>
                         )}
@@ -257,7 +244,7 @@ export default function UserDetailsTab() {
             try {
                 const service = OperationService.getInstance();
                 const result = await service.deleteById(DatabaseTables.UserDetails, id);
-                if(result.length > 0) {
+                if (result.length > 0) {
                     NotificationsService.error("Delete Result", result)
                 } else {
                     NotificationsService.success(

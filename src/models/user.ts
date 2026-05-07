@@ -11,5 +11,5 @@ export interface UserDetails {
     email: string;
     password: string;
     status: boolean;
-    warehouse_id: number;
+    warehouses: any
 }

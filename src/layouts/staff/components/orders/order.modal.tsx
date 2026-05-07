@@ -1,4 +1,4 @@
-import {Button, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
+import {Button, LoadingOverlay, Modal, NumberInput, Select, Stack, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {OrderStatus} from "../../../../enums/orders.ts";
 import {useEffect, useState} from "react";
@@ -30,12 +30,14 @@ export default function StaffOrderModal({
                                         }: OrderModalProps) {
     const isEdit = Boolean(order);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const [products, setProducts] = useState<any[]>([]);
 
     const form  = useForm<OrderFormValues>({
         initialValues: {
             product_id: -1,
-            quantity: 0,
+            quantity: 1,
             remark: "",
             status: OrderStatus.RECEIVED
         },
@@ -73,6 +75,7 @@ export default function StaffOrderModal({
 
     // Event xu li luc tao order
     async function handleSubmit() {
+        setIsLoading(true)
         try {
             const service = InventoryService.getInstance()
 
@@ -102,6 +105,7 @@ export default function StaffOrderModal({
         } catch (e: any) {
             NotificationsService.error("Order Manage", e.toString());
         }
+        setIsLoading(false)
     }
 
     function handleClose() {
@@ -118,9 +122,11 @@ export default function StaffOrderModal({
     return (
         <Modal opened={open} onClose={handleClose} centered
                title={"Staff Order Manage"}>
-            <form onSubmit={handleSubmit}>
+            <LoadingOverlay visible={isLoading} />
+            <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack>
                     <Select
+                        key={form.key('product_id')}
                         {...form.getInputProps('product_id')}
                         value={String(form.values.product_id)}
                         onChange={(value) => {
@@ -139,9 +145,10 @@ export default function StaffOrderModal({
                         })}
                     />
 
-                    <NumberInput disabled={isEdit} {...form.getInputProps("quantity")} label={"Quantity"} required />
+                    <NumberInput  key={form.key('quantity')} disabled={isEdit} {...form.getInputProps("quantity")} label={"Quantity"} required />
 
                     <Select
+                        key={form.key('status')}
                         {...form.getInputProps('status')}
                         required
                         searchable
@@ -151,7 +158,7 @@ export default function StaffOrderModal({
 
                     <TextInput {...form.getInputProps('remark')} label={"Remark"} />
 
-                    <Button onClick={handleSubmit} fullWidth>Submit</Button>
+                    <Button type={'submit'} fullWidth>Submit</Button>
                 </Stack>
             </form>
         </Modal>

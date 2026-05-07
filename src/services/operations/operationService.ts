@@ -140,6 +140,38 @@ export default class OperationService {
         return response.data;
     }
 
+    public async getAllUsers() {
+        const response = await this.database.getDatabase().from(DatabaseTables.UserDetails).select(
+            `
+            id,
+            email,
+            first_name,
+            last_name,
+            avatar,
+            address,
+            dob,
+            role,
+            updated_at,
+            created_at,
+            warehouses(
+                id,
+                name
+            ),
+            status
+            `
+        )
+
+        if (response.error) {
+            NotificationsService.error(
+                "Inventory Service",
+                `Failed to get items: ${response.error}`,
+            );
+            return [];
+        }
+
+        return response.data;
+    }
+
     public async getAllRows(table: DatabaseTables) {
         const response = await this.database.getAll(table);
 
